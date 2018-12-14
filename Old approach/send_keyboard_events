@@ -1,0 +1,26 @@
+#!/bin/bash
+# keycomb.sh
+# https://unix.stackexchange.com/questions/381831/keyboard-emulation-in-wayland
+# It needs the package evemu installed and sudo-confguration for evemu-event without password-notification. EVDEVICE is the device used to emulate the input. /dev/input/event8 is my keyboard (use sudo evemu-record to find yours)
+
+
+cd "/home/vchs/Документы/Dropbox/Settings/Keyb client-server"
+
+DATE_WITH_TIME=`date "+%Y.%m.%d %H:%M:%S"`
+
+echo $DATE_WITH_TIME VAL1=$1 VAL2=$2 VAL3=$3 VAL4=$4 >>log.txt
+
+
+
+EVDEVICE=/dev/input/event3
+
+for key in $@; do
+    sudo evemu-event $EVDEVICE --type EV_KEY --code KEY_$key --value 1 --sync
+done
+
+#sleep .05
+
+# reverse order
+for (( idx=${#@}; idx>0; idx-- )); do
+    sudo evemu-event $EVDEVICE --type EV_KEY --code KEY_${!idx} --value 0 --sync
+done

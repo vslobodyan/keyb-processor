@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# Based on:
+# 1. https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+
+THIS_FILE_NAME=$(basename -- "$0")
+THIS_FILE_PATH="$(dirname "$(realpath "$0")")"
+LINK_TARGET="$THIS_FILE_PATH/$THIS_FILE_NAME"
+LINK_PATH="/usr/local/bin"
+
+#echo "THIS_FILE_NAME: $THIS_FILE_NAME"
+#echo "THIS_FILE_PATH: $THIS_FILE_PATH"
+
+case "$1" in
+    -i|--install)
+    echo "Install: we will make link to this script at \"$LINK_PATH\""
+    sudo ln -v -s "$LINK_TARGET" "$LINK_PATH"
+    exit
+    ;;
+esac
+
+
+#SCRIPT_NAME="keyb-receptor"
+#
+#SCRIPT_PATH=`pwd`
+#LINK_PATH="/usr/local/bin"
+#SCRIPT_FILENAME="$SCRIPT_PATH/$SCRIPT_NAME"
+#LINK_FROM="$LINK_PATH"
+#LINK_TO="$SCRIPT_PATH/$SCRIPT_NAME"
+#echo "Создаем ссылку из $LINK_FROM на файл $LINK_TO"
+#sudo ln -s "$LINK_TO" "$LINK_FROM"
+
+
+SCRIPT_NAME="keyb_processor.py"
+
+SCRIPT_HOME="$(dirname "$(realpath "$0")")"
+cd "$SCRIPT_HOME"
+#echo "Real path to script is $SCRIPT_HOME"
+SCRIPT_MAIN="$SCRIPT_HOME/$SCRIPT_NAME"
+sudo python3 "$SCRIPT_MAIN" "$@"
+
