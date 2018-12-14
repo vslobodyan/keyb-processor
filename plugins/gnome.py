@@ -18,3 +18,28 @@ Based on:
 
 # Close active window
 # ARGS = global.display.focus_window.delete(global.get_current_time());
+
+
+class active_window:
+    def get(self):
+        pass
+
+    def set(self):
+        pass
+
+    def close(self):
+        pass
+
+    def minimize(self):
+        pass
+
+
+class gnome:
+    name='gnome'
+
+    def raise_or_run(self, command):
+        pass
+
+    def process_command(self, command):
+        pass
+

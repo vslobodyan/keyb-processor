@@ -13,7 +13,8 @@ Logitech G413 keyboard:
     # run_command=ls -la
 
     KEY_KP6:
-        run_command: date
+        plugin: gnome
+        command: raise_or_run opera Opera
 
     KEY_KPPLUS:
         # In subsection - keys, must be handled
