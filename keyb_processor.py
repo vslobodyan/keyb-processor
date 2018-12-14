@@ -124,13 +124,13 @@ class _processed_events:
         pressed_keys = []
         retranslate = True
         inject_keys = []
-        run_command = []
+        command = []
 
         def __init__(self):
             self.pressed_keys = []
             self.retranslate = True
             self.inject_keys = []
-            self.run_command = []
+            self.command = []
 
     def keys_as_string(self, keys=[]):
         # Сортируем отслеживаемые ключи и делаем из них строчку, по типу уникального читаемого ключа
@@ -157,9 +157,9 @@ class _processed_events:
         self.listen_events = []
         self.processed_events_setup = []
 
-    def add(self, pressed_keys='', retranslate=False, inject_keys='', run_command=''):
+    def add(self, pressed_keys='', retranslate=False, inject_keys='', command=''):
         # print('Add pressed_keys:', pressed_keys, 'retranslate:', retranslate,
-        #       'inject_keys:', inject_keys, 'run_command:', run_command)
+        #       'inject_keys:', inject_keys, 'command:', command)
 
         # 1. Сортируем отслеживаемые ключи и делаем из них строчку, по типу уникального читаемого ключа
         pressed_keys_string = self.keys_as_string(pressed_keys.split())
@@ -178,8 +178,8 @@ class _processed_events:
         # print('ev.pressed_keys: %s' % ev.pressed_keys)
 
         ev.retranslate = retranslate
-        if run_command:
-            ev.run_command = run_command.split()
+        if command:
+            ev.command = command.split()
         self.processed_events_setup.append(ev)
         # print('self.processed_events_setup: %s' % self.processed_events_setup)
 
@@ -205,10 +205,10 @@ class _processed_events:
             # print('We will inject keys: %s' % event_setup.inject_keys)
             process.keyb_event_inject(event_setup.inject_keys, ui)
 
-        if event_setup.run_command:
-            # print('We will run command: %s' % event_setup.run_command)
+        if event_setup.command:
+            # print('We will run command: %s' % event_setup.command)
             # try:
-            process.send_command(event_setup.run_command)
+            process.send_command(event_setup.command)
             # except Exception as ex:
             #     print('Что-то пошло не так:', ex)
 
@@ -278,21 +278,21 @@ def load_config(filename):
                 # print('Found pressed_keys:', pressed_keys)
                 inject_keys = None
                 retranslate = False
-                run_command = None
+                command = None
                 if 'inject_keys' in value:
                     inject_keys = value['inject_keys']
                     # print('Found inject_keys:', inject_keys)
                 if 'retranslate' in value:
                     retranslate = value['retranslate']
                     # print('Found retranslate:', retranslate)
-                if 'run_command' in value:
-                    run_command = value['run_command']
-                    # print('Found run_command:', run_command)
+                if 'command' in value:
+                    command = value['command']
+                    # print('Found command:', command)
                 new_keyboard.processed_events.add(
                     pressed_keys=pressed_keys,
                     inject_keys=inject_keys,
                     retranslate=retranslate,
-                    run_command=run_command
+                    command=command
                 )
         keyboards.append(new_keyboard)
 
