@@ -389,10 +389,10 @@ def main():
 
     parser = argparse.ArgumentParser(description="Warning: most function need sudo! "
                                                  "Long decription about program.")
-    parser.add_argument("--install", action="store_true", help="Install parent script to system")
-    parser.add_argument("--config", type=str, help="Load config file")
-    parser.add_argument("--list", action="store_true", help="Show list of available devices.")
-    parser.add_argument("--grab", type=str,
+    parser.add_argument("-i", "--install", action="store_true", help="Install parent script to system")
+    parser.add_argument("-c", "--config", type=str, help="Load config file")
+    parser.add_argument("-l", "--list", action="store_true", help="Show list of available devices.")
+    parser.add_argument("-g", "--grab", type=str,
                         help="Grab all events by defining keyboard, and show input codes. "
                              "Except C and Q keys, preserved for quit action. "
                              "Example: --grab /dev/input/eventXX")
