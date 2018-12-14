@@ -11,6 +11,8 @@ import yaml
 import argparse
 import asyncio
 
+from keyb_settings import settings
+
 '''Based on:
  1. https://python-evdev.readthedocs.io/en/latest/tutorial.html
  2. https://stackoverflow.com/questions/19732978/how-can-i-get-a-string-from-hid-device-in-python-with-evdev
