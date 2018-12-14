@@ -1,6 +1,6 @@
 import asyncio
 import json
-import sys
+import subprocess
 
 from keyb_settings import settings
 
@@ -19,10 +19,19 @@ def process_command(message):
     print('message_dict: %s' % message_dict)
     # 2. Проверка на безопасность
     if "key" in message_dict and message_dict["key"]==settings.key:
-        # 3. Уточнение типа команды
         print('Прошли проверку безопасности.')
-
-    pass
+        type = "subprocess"
+        command = None
+        # Проверка наличия команды
+        if "command" in message_dict:
+            command = message_dict["command"]
+            # Уточнение типа команды
+            if "type" in message_dict:
+                type = message_dict["type"]
+            if type == "subprocess":
+                # Запускаем указанную команду
+                print('We will run next command: %s' % command)
+                subprocess.run(command)
 
 
 

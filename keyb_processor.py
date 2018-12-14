@@ -10,6 +10,7 @@ from evdev import InputDevice, categorize, ecodes, UInput
 import yaml
 import argparse
 import asyncio
+import json
 
 from keyb_settings import settings
 
@@ -19,9 +20,13 @@ from keyb_settings import settings
  3. https://martin-thoma.com/configuration-files-in-python/
  4. https://stackoverflow.com/questions/22368458/how-to-make-argparse-print-usage-when-no-option-is-given-to-the-code/22368785
  5. https://asyncio.readthedocs.io/en/latest/tcp_echo.html
+ 6. https://stackoverflow.com/questions/31623194/asyncio-two-loops-for-different-i-o-tasks
 '''
 
 keyboards = []
+
+class asyn:
+    loop = None
 
 class active_modifiers:
     # Класс текущих модификаторов со всех клавиатур
@@ -58,11 +63,24 @@ class active_modifiers:
             self.find_mods_and_change_state(cur_event_data.scancode, state=False)
 
 
+async def tcp_echo_client(message, loop):
+    """Функция передачи команды на приемник в клиентской части системы."""
+    reader, writer = await asyncio.open_connection(settings.host, settings.port,
+                                                   loop=loop)
+    print('Send to executioner: %r' % message)
+    writer.write(message.encode())
 
-class process:
+    data = await reader.read(100)
+    print('Received: %r' % data.decode())
+
+    print('Close the socket')
+    writer.close()
+
+
+class process():
     """Обвязка функций, выполняемых при обработке событий."""
 
-    def retranslate(self, ui, event_type, event_scancode, event_keystate):
+    def retranslate(ui, event_type, event_scancode, event_keystate):
     # If we decide to inject keyboard event:
         ui.write(event_type, event_scancode, event_keystate)
         # ui.syn()
@@ -82,7 +100,18 @@ class process:
             ui.write(evdev.ecodes.EV_KEY, key, 0)
         # ui.syn()
 
-
+    def send_command(command):
+        # command = ["ls", "-l"]
+        print('Prepare to send command: %s' % command)
+        message_dict = {'key': settings.key,
+                        'type': "subprocess",
+                        'command': command, }
+        # serialized_dict = json.dumps(a_dict)
+        message = json.dumps(message_dict)
+        # loop = asyncio.get_event_loop()
+        # loop.run_until_complete(tcp_echo_client(message, loop))
+        # loop.close()
+        asyn.loop.create_task(tcp_echo_client(message, asyn.loop))
 
 
 
@@ -177,7 +206,11 @@ class _processed_events:
             process.keyb_event_inject(event_setup.inject_keys, ui)
 
         if event_setup.run_command:
-            print('We will run command: %s' % event_setup.run_command)
+            # print('We will run command: %s' % event_setup.run_command)
+            # try:
+            process.send_command(event_setup.run_command)
+            # except Exception as ex:
+            #     print('Что-то пошло не так:', ex)
 
 
     def __init__(self):
@@ -366,8 +399,8 @@ def grab_and_process_keyboards(keyboards):
         keyboard.dev.grab()
         asyncio.ensure_future(proccess_events(keyboard))
 
-    loop = asyncio.get_event_loop()
-    loop.run_forever()
+    asyn.loop = asyncio.get_event_loop()
+    asyn.loop.run_forever()
 
     for keyboard in keyboards:
         # keyboard.dev.ungrab()
