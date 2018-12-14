@@ -1,4 +1,7 @@
 # Be careful with indent in beginning of line!
+#
+# One KEY defining block limited to 1024 bytes
+#
 
 Logitech G413 keyboard:
     # In section - any name of your device you like.

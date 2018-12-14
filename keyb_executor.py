@@ -16,6 +16,12 @@ Based on:
 2. https://stackoverflow.com/questions/15190362/sending-a-dictionary-using-sockets-in-python
 """
 
+# Received '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "plugin": "gnome", "command": ["raise_or_run", "opera", "Opera"' from ('127.0.0.1', 57448)
+
+# Send to executioner: '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "command": ["raise_or_run", "opera", "Opera"], "plugin": "gnome"}'
+#
+# Received '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "command": ["raise_or_run", "opera", "Opera"], "plugin": "gnome' from ('127.0.0.1', 57478)
+
 def process_command(message):
     # 1. Разбор строки как словаря
     message_dict = json.loads(message)
@@ -23,7 +29,6 @@ def process_command(message):
     # 2. Проверка на безопасность
     if "key" in message_dict and message_dict["key"]==settings.key:
         print('Прошли проверку безопасности.')
-        type = "subprocess"
         command = None
         # Проверка наличия команды
         if "command" in message_dict:
@@ -31,16 +36,18 @@ def process_command(message):
             # Уточнение типа команды
             if "plugin" in message_dict:
                 plugin = message_dict["plugin"]
-                print('Need plugin: %s' % plugin)
-            if type == "subprocess":
-                # Запускаем указанную команду
-                print('We will run next command: %s' % command)
-                # subprocess.run(command)
+                if plugin:
+                    print('Need plugin: %s' % plugin)
+            # Запускаем указанную команду
+            print('We will run next command: %s' % command)
+            # subprocess.run(command)
 
 
 
 async def handle_echo(reader, writer):
-    data = await reader.read(100)
+    # data = await reader.read(100)
+    data = await reader.read(1024)
+
     message = data.decode()
     addr = writer.get_extra_info('peername')
     print("Received %r from %r" % (message, addr))

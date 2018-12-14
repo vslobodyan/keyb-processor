@@ -102,17 +102,19 @@ class process():
 
     def send_command(command, plugin=None):
         # command = ["ls", "-l"]
-        print('Prepare to send command: %s' % command)
+        print('Prepare to send command: %s under plugin: %s' % (command, plugin))
         message_dict = {'key': settings.key,
-                        # 'type': "subprocess",
-                        'command': command, }
-        if plugin:
-            message_dict['plugin'] = plugin
-            # serialized_dict = json.dumps(a_dict)
+                        'plugin': plugin,
+                        'command': command,
+                        }
+        # if plugin:
+        #     message_dict['plugin'] = plugin
+        # serialized_dict = json.dumps(a_dict)
         message = json.dumps(message_dict)
         # loop = asyncio.get_event_loop()
         # loop.run_until_complete(tcp_echo_client(message, loop))
         # loop.close()
+        # print('message: %s' % message)
         asyn.loop.create_task(tcp_echo_client(message, asyn.loop))
 
 
@@ -163,7 +165,7 @@ class _processed_events:
 
     def add(self, pressed_keys='', retranslate=False, inject_keys='', plugin=None, command=''):
         # print('Add pressed_keys:', pressed_keys, 'retranslate:', retranslate,
-        #       'inject_keys:', inject_keys, 'command:', command)
+        #       'inject_keys:', inject_keys, 'plugin:', plugin, 'command:', command)
 
         # 1. Сортируем отслеживаемые ключи и делаем из них строчку, по типу уникального читаемого ключа
         pressed_keys_string = self.keys_as_string(pressed_keys.split())
@@ -213,7 +215,7 @@ class _processed_events:
         if event_setup.command:
             # print('We will run command: %s' % event_setup.command)
             # try:
-            process.send_command(event_setup.command)
+            process.send_command(event_setup.command, event_setup.plugin)
             # except Exception as ex:
             #     print('Что-то пошло не так:', ex)
 
