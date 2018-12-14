@@ -4,6 +4,9 @@ import subprocess
 
 from keyb_settings import settings
 
+import plugins
+
+
 """Исполнитель команд в пространстве клиента.
 Запускается из-под клиента и ожидает от обработчика событий всех клавиатур указаний на выполнение команд.
 Также возможны операции с окнами программ, запущенными у клиента.
@@ -26,12 +29,13 @@ def process_command(message):
         if "command" in message_dict:
             command = message_dict["command"]
             # Уточнение типа команды
-            if "type" in message_dict:
-                type = message_dict["type"]
+            if "plugin" in message_dict:
+                plugin = message_dict["plugin"]
+                print('Need plugin: %s' % plugin)
             if type == "subprocess":
                 # Запускаем указанную команду
                 print('We will run next command: %s' % command)
-                subprocess.run(command)
+                # subprocess.run(command)
 
 
 

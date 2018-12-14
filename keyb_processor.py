@@ -100,13 +100,15 @@ class process():
             ui.write(evdev.ecodes.EV_KEY, key, 0)
         # ui.syn()
 
-    def send_command(command):
+    def send_command(command, plugin=None):
         # command = ["ls", "-l"]
         print('Prepare to send command: %s' % command)
         message_dict = {'key': settings.key,
-                        'type': "subprocess",
+                        # 'type': "subprocess",
                         'command': command, }
-        # serialized_dict = json.dumps(a_dict)
+        if plugin:
+            message_dict['plugin'] = plugin
+            # serialized_dict = json.dumps(a_dict)
         message = json.dumps(message_dict)
         # loop = asyncio.get_event_loop()
         # loop.run_until_complete(tcp_echo_client(message, loop))
@@ -124,12 +126,14 @@ class _processed_events:
         pressed_keys = []
         retranslate = True
         inject_keys = []
+        plugin = None
         command = []
 
         def __init__(self):
             self.pressed_keys = []
             self.retranslate = True
             self.inject_keys = []
+            self.plugin = None
             self.command = []
 
     def keys_as_string(self, keys=[]):
@@ -157,7 +161,7 @@ class _processed_events:
         self.listen_events = []
         self.processed_events_setup = []
 
-    def add(self, pressed_keys='', retranslate=False, inject_keys='', command=''):
+    def add(self, pressed_keys='', retranslate=False, inject_keys='', plugin=None, command=''):
         # print('Add pressed_keys:', pressed_keys, 'retranslate:', retranslate,
         #       'inject_keys:', inject_keys, 'command:', command)
 
@@ -178,6 +182,7 @@ class _processed_events:
         # print('ev.pressed_keys: %s' % ev.pressed_keys)
 
         ev.retranslate = retranslate
+        ev.plugin = plugin
         if command:
             ev.command = command.split()
         self.processed_events_setup.append(ev)
@@ -285,6 +290,8 @@ def load_config(filename):
                 if 'retranslate' in value:
                     retranslate = value['retranslate']
                     # print('Found retranslate:', retranslate)
+                if 'plugin' in value:
+                    plugin = value['plugin']
                 if 'command' in value:
                     command = value['command']
                     # print('Found command:', command)
@@ -292,6 +299,7 @@ def load_config(filename):
                     pressed_keys=pressed_keys,
                     inject_keys=inject_keys,
                     retranslate=retranslate,
+                    plugin=plugin,
                     command=command
                 )
         keyboards.append(new_keyboard)
