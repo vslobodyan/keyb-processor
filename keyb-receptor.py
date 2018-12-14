@@ -27,7 +27,7 @@ class process:
     def retranslate(self, ui, event_type, event_scancode, event_keystate):
     # If we decide to inject keyboard event:
         ui.write(event_type, event_scancode, event_keystate)
-        ui.syn()
+        # ui.syn()
 
     def keyb_event_inject(keyb_inputs, ui):
         print('We will inject keyb codes now: %s' % keyb_inputs)
@@ -36,13 +36,13 @@ class process:
             # key = evdev.ecodes.ecodes['KEY_' + one_key_code.upper()]
             key = evdev.ecodes.ecodes[one_key_code]
             ui.write(evdev.ecodes.EV_KEY, key, 1)
-        ui.syn()
+        # ui.syn()
         # Release
         for one_key_code in keyb_inputs:
             # key = evdev.ecodes.ecodes['KEY_' + one_key_code.upper()]
             key = evdev.ecodes.ecodes[one_key_code]
             ui.write(evdev.ecodes.EV_KEY, key, 0)
-        ui.syn()
+        # ui.syn()
 
 
 
@@ -259,6 +259,48 @@ def grab_and_show_inputs(dev_addr):
     dev.ungrab()
 
 
+
+
+def proccess_one_event_and_exit(keyboard, ui, event):
+    event_handled = False
+    if event.type == ecodes.EV_KEY:
+        cur_event_data = categorize(event)
+        # cur_active_keys = dev.active_keys()
+        if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
+            print('You Pressed the %s key, and currently active keys is: %s' % (
+            cur_event_data.keycode, keyboard.dev.active_keys(verbose=True)))
+            if cur_event_data.scancode in [ecodes.KEY_Q, ecodes.KEY_C]:
+                print('You press Q or C, and we quit now.')
+                return True
+
+            strkey = keyboard.processed_events.find_strkey(
+                keyboard.dev.active_keys(verbose=True))
+            if strkey:
+                # print('Found!')
+                # return False
+
+                event_handled = True
+                keyboard.processed_events.proccess_event(strkey,
+                                                         ui,
+                                                         event.type,
+                                                         cur_event_data.scancode,
+                                                         cur_event_data.keystate)
+
+        # Here we decide - whether to skip the event further (whether to do inject)
+
+        # Если событие не было из списка отлавливаемых, то возможно надо
+        # ретранслировать это событие дальше, в зависимости от настроек
+        # клавиатуры.
+        if not event_handled:
+            if keyboard.retranslate_all:
+                # We decide to inject keyboard event:
+                ui.write(event.type,
+                         cur_event_data.scancode,
+                         cur_event_data.keystate)
+                # ui.syn()
+    return False
+
+
 def grab_and_process_keyboards(keyboards):
     """Основная функция захвата и обработки клавиатурных событий."""
     # print('Keyboards for grab and process:')
@@ -273,43 +315,17 @@ def grab_and_process_keyboards(keyboards):
 
             # print(keyboard.dev.path, evdev.categorize(event), sep=': ')
 
-            event_handled = False
-            if event.type == ecodes.EV_KEY:
-                cur_event_data = categorize(event)
-                # cur_active_keys = dev.active_keys()
-                if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
-                    print('You Pressed the %s key, and currently active keys is: %s' % (cur_event_data.keycode, home_keyb.dev.active_keys(verbose=True) ) )
-
-                    strkey = keyboard.processed_events.find_strkey(
-                        keyboard.dev.active_keys(verbose=True))
-                    if strkey:
-                        event_handled = True
-                        keyboard.processed_events.proccess_event(strkey,
-                                                                  ui,
-                                                                  event.type,
-                                                                  cur_event_data.scancode,
-                                                                  cur_event_data.keystate)
-                        # print('Found!')
-                # Here we decide - whether to skip the event further (whether to do inject)
-
-                # Если событие не было из списка отлавливаемых, то возможно надо
-                # ретранслировать это событие дальше, в зависимости от настроек
-                # клавиатуры.
-                if not event_handled:
-                    if keyboard.retranslate_all:
-                        # We decide to inject keyboard event:
-                        ui.write(event.type,
-                                 cur_event_data.scancode,
-                                 cur_event_data.keystate)
-                        ui.syn()
-
-
-
-
+            exit_now = proccess_one_event_and_exit(keyboard, ui, event)
+            # После обработки события происходит синхронизация ввода.
+            # Возможно, уже записаны новые коды ввода:
+            # новая комбинация или просто ретрансляция вводимого.
+            ui.syn()
+            if exit_now:
+                exit()
 
 
     for keyboard in keyboards:
-        # keyboard.dev.grab()
+        keyboard.dev.grab()
         asyncio.ensure_future(proccess_events(keyboard))
 
     loop = asyncio.get_event_loop()
