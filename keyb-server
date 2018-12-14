@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-SCRIPT_NAME="keyb-server.py"
-
-SCRIPT_HOME="$(dirname "$(realpath "$0")")"
-echo "Real path to script is $SCRIPT_HOME"
-SCRIPT_MAIN="$SCRIPT_HOME/$SCRIPT_NAME"
-sudo python3 "$SCRIPT_MAIN" "$@"
-

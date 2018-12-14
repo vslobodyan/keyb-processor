@@ -21,9 +21,14 @@ Logitech G413 keyboard:
 Logitech G602 mouse:
     device: /dev/input/event9
 
-    KEY_RIGHTSHIFT KEY_F6:
-        inject_keys: KEY_R
+    KEY_LEFTSHIFT KEY_F8:
+        inject_keys: KEY_RIGHTCTRL KEY_W
 
+    ALT KEY_PAGEUP:
+        inject_keys: KEY_LEFT
+
+    ALT KEY_PAGEDOWN:
+        inject_keys: KEY_RIGHT
 
 Razer Nostromo:
     device: /dev/input/event6
