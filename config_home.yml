@@ -26,7 +26,7 @@ Logitech G710 keyboard:
 
     KEY_KP6:
         plugin: gnome
-        command: raise opera Opera
+        command: raise gedit Gedit
 
     KEY_KPPLUS:
         # In subsection - keys, must be handled

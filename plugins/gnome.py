@@ -22,16 +22,35 @@ class LG_Command:
     def command(self, args):
         """Оборачиваем аргументы в кавычки и добавляем к массиву основной команды"""
         c = 'gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval'
-        args='\''+args+'\''
+        args='%s' % args
         res = c.split()
         res.append(args)
         return res
+
+    def window_is_present(self, name):
+        s = "global.get_window_actors().filter(w => w.get_meta_window().get_wm_class().toLowerCase().includes('%s'.toLowerCase()))[0];" % name
+        return self.command(s)
+
+    def activate_window(self, name):
+        s = """const Main = imports.ui.main;
+                const window = global.get_window_actors()
+                   .filter(w => w.get_meta_window()
+                   .get_wm_class().toLowerCase()
+                   .includes('%s'.toLowerCase()))[0];
+                if (window) {
+                    Main.activateWindow(window.get_meta_window());
+                }""" % name
+        return self.command(s)
 
     def minimize(self):
         return self.command('global.display.focus_window.minimize();')
 
     def close(self):
         return self.command('global.display.focus_window.delete(global.get_current_time());')
+
+    def list_all(self):
+        return self.command('global.get_window_actors().map(w => [w.toString(), w.get_meta_window().get_wm_class()]);')
+
 
 
 
@@ -68,6 +87,29 @@ class Plugin(plugin.Plugin):
 
     def raise_or_run(self,  *args):
         print('Raise or run: %s' % args)
+        # Разбираем аргументы
+        # print('len(locals()=%s' % len(locals()))
+        if len(locals())<2:
+            print('Not enough arguments for run or raise! (must be 2, get %s)' % len(locals()))
+        else:
+            prog_exec = args[0][0]
+            print('prog_exec=%s' % prog_exec)
+            window_name = args[0][1]
+            print('window_name=%s' % window_name)
+            # Проверяем, есть-ли уже такое окно
+            c = self.active_window.lg.window_is_present(window_name)
+            print('c=%s' % c)
+            stdoutdata = subprocess.check_output(c)
+            # Если есть - активируем его
+            if stdoutdata:
+                print('We have LG output on search "%s" window: %s' % (window_name,stdoutdata))
+                c = self.active_window.lg.activate_window(window_name)
+                subprocess.run(c)
+            else:
+                # Если нет - запускаем программу заново
+                print('Window not found. We will run program "%s" again.' % prog_exec)
+                subprocess.run(prog_exec)
+
 
     def __init__(self):
         # print('Initiate "gnome" plugin.')
