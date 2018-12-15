@@ -463,6 +463,7 @@ def main():
         show_dev_list()
     elif args.plugins:
         plugins = Plugins()
+        plugins.print()
     elif args.grab:
         print('Grab all events and show input keys for %s device.' % args.grab)
         print('You can exit anytime by pressing Q or C.')
@@ -471,6 +472,7 @@ def main():
     else:
         print(parser.print_help())
         plugins = Plugins()
+        plugins.print()
 
 
 if __name__ == '__main__':

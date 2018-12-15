@@ -27,14 +27,14 @@ class Active_window:
     def get(self):
         pass
 
-    def set(self):
+    def set(self, *args):
         pass
 
-    def close(self):
-        pass
+    def close(self, *args):
+        print('Close active window.')
 
-    def minimize(self):
-        pass
+    def minimize(self, *args):
+        print('Minimize active window.')
 
 
 class Plugin(plugin.Plugin):
@@ -42,8 +42,8 @@ class Plugin(plugin.Plugin):
     description = 'Useful commands for gnome windows and apps.'
     active_window = None
 
-    def raise_or_run(self, command):
-        pass
+    def raise_or_run(self,  *args):
+        print('Raise or run: %s' % args)
 
     def process_command(self, command):
         pass

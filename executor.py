@@ -17,31 +17,52 @@ from settings import settings
 from plugins import Plugins
 
 
+class Executor:
+    plugins = None
+
+    def process_command(self, message):
+        # 1. Разбор строки как словаря
+        message_dict = json.loads(message)
+        print('message_dict: %s' % message_dict)
+        # 2. Проверка на безопасность
+        if "key" in message_dict and message_dict["key"] == settings.key:
+            print('Прошли проверку безопасности.')
+            command = None
+            # Проверка наличия команды
+            if "command" in message_dict:
+                command = message_dict["command"]
+                # Уточнение типа команды
+                if "plugin" in message_dict:
+                    plugin = message_dict["plugin"]
+                    if plugin:
+                        print('Need plugin: %s' % plugin)
+                # Запускаем указанную команду
+                print('We will run next command: %s' % command)
+                if plugin:
+                    plugin_command = command[0]
+                    plugin_args = command[1:]
+                    if plugin in self.plugins.available:
+                        # Плагин есть в загруженных
+                        if plugin_command in self.plugins.available[plugin].functions.available:
+                            # Run function
+                            self.plugins.available[plugin].functions.available[plugin_command].func(plugin_args)
+
+                        else:
+                            print('Function "%s" not found in that plugin.' % plugin_command)
+                    else:
+                        print('Plugin "%s" not found.' % plugin)
+                # subprocess.run(command)
+
+    def __init__(self):
+        self.plugins = Plugins()
+        self.plugins.print()
+
 # Received '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "plugin": "gnome", "command": ["raise_or_run", "opera", "Opera"' from ('127.0.0.1', 57448)
 
 # Send to executioner: '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "command": ["raise_or_run", "opera", "Opera"], "plugin": "gnome"}'
 #
 # Received '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "command": ["raise_or_run", "opera", "Opera"], "plugin": "gnome' from ('127.0.0.1', 57478)
 
-def process_command(message):
-    # 1. Разбор строки как словаря
-    message_dict = json.loads(message)
-    print('message_dict: %s' % message_dict)
-    # 2. Проверка на безопасность
-    if "key" in message_dict and message_dict["key"]==settings.key:
-        print('Прошли проверку безопасности.')
-        command = None
-        # Проверка наличия команды
-        if "command" in message_dict:
-            command = message_dict["command"]
-            # Уточнение типа команды
-            if "plugin" in message_dict:
-                plugin = message_dict["plugin"]
-                if plugin:
-                    print('Need plugin: %s' % plugin)
-            # Запускаем указанную команду
-            print('We will run next command: %s' % command)
-            # subprocess.run(command)
 
 
 
@@ -52,7 +73,7 @@ async def handle_echo(reader, writer):
     message = data.decode()
     addr = writer.get_extra_info('peername')
     print("Received %r from %r" % (message, addr))
-    process_command(message)
+    executor.process_command(message)
     answer = 'Done'
     print("Send: %r" % answer)
     writer.write(answer.encode())
@@ -63,8 +84,6 @@ async def handle_echo(reader, writer):
 
 
 def Main():
-    plugins = Plugins()
-
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(handle_echo, settings.host, settings.port, loop=loop)
     server = loop.run_until_complete(coro)
@@ -83,4 +102,5 @@ def Main():
 
 
 if __name__ == '__main__':
+    executor = Executor()
     Main()

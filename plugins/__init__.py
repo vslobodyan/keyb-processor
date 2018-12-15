@@ -45,4 +45,4 @@ class Plugins:
                         # print('Найден новый класс плагина')
                         self.add(obj.name, obj())
 
-        self.print()
+        # self.print()
