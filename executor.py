@@ -51,19 +51,13 @@ class Executor:
                             print('Function "%s" not found in that plugin.' % plugin_command)
                     else:
                         print('Plugin "%s" not found.' % plugin)
-                # subprocess.run(command)
+                else:
+                    # Если команда не требует плагина - просто выполняем её.
+                    subprocess.run(command)
 
     def __init__(self):
         self.plugins = Plugins()
         self.plugins.print()
-
-# Received '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "plugin": "gnome", "command": ["raise_or_run", "opera", "Opera"' from ('127.0.0.1', 57448)
-
-# Send to executioner: '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "command": ["raise_or_run", "opera", "Opera"], "plugin": "gnome"}'
-#
-# Received '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "command": ["raise_or_run", "opera", "Opera"], "plugin": "gnome' from ('127.0.0.1', 57478)
-
-
 
 
 async def handle_echo(reader, writer):

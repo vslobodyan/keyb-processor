@@ -287,6 +287,7 @@ def load_config(filename):
                 # print('Found pressed_keys:', pressed_keys)
                 inject_keys = None
                 retranslate = False
+                plugin = None
                 command = None
                 if 'inject_keys' in value:
                     inject_keys = value['inject_keys']

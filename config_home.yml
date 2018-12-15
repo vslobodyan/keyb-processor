@@ -1,7 +1,5 @@
-Logitech G710 keyboard:
-    # In section - any name of your device you like.
-    device: /dev/input/event21
-
+#Any keyboard name:
+    # device: your device input
     ## EXAMPLE OF SUBSECTION
     ## This is CTRL+R for example
     #
@@ -9,6 +7,14 @@ Logitech G710 keyboard:
     # inject_keys=KEY_RIGHTCTRL KEY_W
     # retranslate=False
     # run_command=ls -la
+
+
+Logitech G710 keyboard:
+    # In section - any name of your device you like.
+    device: /dev/input/event21
+
+    KEY_KP5:
+        command: ls -la
 
     KEY_KP0:
         plugin: gnome

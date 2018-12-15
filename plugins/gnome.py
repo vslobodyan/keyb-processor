@@ -10,14 +10,6 @@ Based on:
 4. https://askubuntu.com/questions/91938/how-can-one-invoke-lg-looking-glass-from-a-command-line
 
 """
-# Gnome Looking Glass
-# gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval 'ARGS'
-
-# Minimize active window
-# ARGS = global.display.focus_window.minimize();
-
-# Close active window
-# ARGS = global.display.focus_window.delete(global.get_current_time());
 
 import subprocess
 
@@ -25,10 +17,10 @@ from plugins.base import plugin
 
 
 class LG_Command:
-    """
-    Обертка для команд Gnome Looking Glass
-    """
+    """Обертка для команд Gnome Looking Glass"""
+
     def command(self, args):
+        """Оборачиваем аргументы в кавычки и добавляем к массиву основной команды"""
         c = 'gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval'
         args='\''+args+'\''
         res = c.split()
@@ -44,6 +36,7 @@ class LG_Command:
 
 
 class Active_window:
+    """Класс операций с активным окном"""
     lg = None
 
     def get(self):
@@ -66,6 +59,7 @@ class Active_window:
 
     def __init__(self):
         self.lg = LG_Command()
+
 
 class Plugin(plugin.Plugin):
     name='gnome'
