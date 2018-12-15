@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-SCRIPT_NAME="keyb_client.py"
-
-SCRIPT_HOME="$(dirname "$(realpath "$0")")"
-echo "Real path to script is $SCRIPT_HOME"
-SCRIPT_MAIN="$SCRIPT_HOME/$SCRIPT_NAME"
-python3 "$SCRIPT_MAIN" "$@"
-
