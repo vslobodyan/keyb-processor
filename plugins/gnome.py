@@ -19,11 +19,33 @@ Based on:
 # Close active window
 # ARGS = global.display.focus_window.delete(global.get_current_time());
 
+import subprocess
+
 from plugins.base import plugin
 
-import plugins
+
+class LG_Command:
+    """
+    Обертка для команд Gnome Looking Glass
+    """
+    def command(self, args):
+        c = 'gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval'
+        args='\''+args+'\''
+        res = c.split()
+        res.append(args)
+        return res
+
+    def minimize(self):
+        return self.command('global.display.focus_window.minimize();')
+
+    def close(self):
+        return self.command('global.display.focus_window.delete(global.get_current_time());')
+
+
 
 class Active_window:
+    lg = None
+
     def get(self):
         pass
 
@@ -32,10 +54,18 @@ class Active_window:
 
     def close(self, *args):
         print('Close active window.')
+        c = self.lg.close()
+        print('LG %s' % c)
+        subprocess.run(c)
 
     def minimize(self, *args):
         print('Minimize active window.')
+        c = self.lg.minimize()
+        print('LG %s' % c)
+        subprocess.run(c)
 
+    def __init__(self):
+        self.lg = LG_Command()
 
 class Plugin(plugin.Plugin):
     name='gnome'
@@ -44,9 +74,6 @@ class Plugin(plugin.Plugin):
 
     def raise_or_run(self,  *args):
         print('Raise or run: %s' % args)
-
-    def process_command(self, command):
-        pass
 
     def __init__(self):
         # print('Initiate "gnome" plugin.')
@@ -57,7 +84,7 @@ class Plugin(plugin.Plugin):
 
         self.functions.add('raise', 'Raise window or run app', self.raise_or_run)
         self.functions.add('close', 'Close active window', self.active_window.close)
-        self.functions.add('minimize', 'Mnimize active window', self.active_window.minimize)
+        self.functions.add('minimize', 'Minimize active window', self.active_window.minimize)
 
         # self.functions.print()
 

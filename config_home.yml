@@ -14,6 +14,10 @@ Logitech G710 keyboard:
         plugin: gnome
         command: minimize
 
+    KEY_KPENTER:
+        plugin: gnome
+        command: close
+
     KEY_KP6:
         plugin: gnome
         command: raise opera Opera
