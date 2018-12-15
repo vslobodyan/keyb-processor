@@ -10,6 +10,10 @@ Logitech G710 keyboard:
     # retranslate=False
     # run_command=ls -la
 
+    KEY_KP6:
+        plugin: gnome
+        command: raise_or_run opera Opera
+
     KEY_KPPLUS:
         # In subsection - keys, must be handled
         # And what we must do with it below.
