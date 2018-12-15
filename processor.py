@@ -22,7 +22,7 @@ import asyncio
 import json
 
 from settings import settings
-
+from plugins import Plugins
 
 keyboards = []
 
@@ -432,6 +432,8 @@ def main():
     #     parser.exit()
     # args = parser.parse_args()
     #
+
+    plugins = Plugins()
 
     parser = argparse.ArgumentParser(description="Warning: most function need sudo! "
                                                  "Long decription about program.")

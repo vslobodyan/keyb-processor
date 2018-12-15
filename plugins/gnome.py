@@ -19,8 +19,9 @@ Based on:
 # Close active window
 # ARGS = global.display.focus_window.delete(global.get_current_time());
 
+from plugins import plugin
 
-class active_window:
+class Active_window:
     def get(self):
         pass
 
@@ -34,8 +35,9 @@ class active_window:
         pass
 
 
-class gnome:
-    name='gnome'
+class Gnome(plugin):
+    # name='gnome'
+    active_window = None
 
     def raise_or_run(self, command):
         pass
@@ -43,3 +45,18 @@ class gnome:
     def process_command(self, command):
         pass
 
+    def __init__(self,plugins):
+        # Выполняем оригинальный вызов инициации
+        super().__init__(name='gnome',
+                         description='Useful commands for gnome windows and apps.',
+                         plugins=plugins)
+        self.functions.add('raise', 'Raise window or run app', self.raise_or_run())
+        self.functions.add('close', 'Close active window', self.active_window.close())
+        self.functions.add('minimize', 'Mnimize active window', self.active_window.minimize())
+
+        active_window = Active_window()
+
+        self.functions.print()
+
+# Начальная инициализация класса, чтобы сработало при импорте
+gnome = Gnome()
