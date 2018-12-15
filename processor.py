@@ -22,7 +22,9 @@ import asyncio
 import json
 
 from settings import settings
-from plugins import Plugins
+# from plugins import Plugins
+
+from plugins import *
 
 keyboards = []
 

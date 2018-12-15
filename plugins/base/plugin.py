@@ -17,6 +17,7 @@ class Functions:
         print('Functions:')
         for key in self.available:
             print('key: %s, value: %s' % (key, self.available[key]))
+        print()
 
 
 class plugin:
