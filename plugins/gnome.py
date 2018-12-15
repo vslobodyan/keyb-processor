@@ -21,6 +21,7 @@ Based on:
 
 from plugins.base import plugin
 
+import plugins
 
 class Active_window:
     def get(self):
@@ -36,8 +37,9 @@ class Active_window:
         pass
 
 
-class Gnome(plugin):
-    # name='gnome'
+class Plugin(plugin.Plugin):
+    name='gnome'
+    description = 'Useful commands for gnome windows and apps.'
     active_window = None
 
     def raise_or_run(self, command):
@@ -46,19 +48,19 @@ class Gnome(plugin):
     def process_command(self, command):
         pass
 
-    def __init__(self,plugins):
-        print('Initiate "gnome" plugin.')
+    def __init__(self):
+        # print('Initiate "gnome" plugin.')
         # Выполняем оригинальный вызов инициации
-        super().__init__(name='gnome',
-                         description='Useful commands for gnome windows and apps.',
-                         plugins=plugins)
-        self.functions.add('raise', 'Raise window or run app', self.raise_or_run())
-        self.functions.add('close', 'Close active window', self.active_window.close())
-        self.functions.add('minimize', 'Mnimize active window', self.active_window.minimize())
+        super().__init__()
 
         self.active_window = Active_window()
 
-        self.functions.print()
+        self.functions.add('raise', 'Raise window or run app', self.raise_or_run)
+        self.functions.add('close', 'Close active window', self.active_window.close)
+        self.functions.add('minimize', 'Mnimize active window', self.active_window.minimize)
+
+        # self.functions.print()
 
 # Начальная инициализация класса, чтобы сработало при импорте
-gnome = Gnome()
+# gnome = Gnome()
+# plugin = Plugin()

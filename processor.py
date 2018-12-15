@@ -22,9 +22,8 @@ import asyncio
 import json
 
 from settings import settings
-# from plugins import Plugins
+from plugins import Plugins
 
-from plugins import *
 
 keyboards = []
 
@@ -435,14 +434,20 @@ def main():
     # args = parser.parse_args()
     #
 
-    plugins = Plugins()
-
     parser = argparse.ArgumentParser(description="Warning: most function need sudo! "
                                                  "Long decription about program.")
+
     parser.add_argument("-i", "--install", action="store_true", help="Install parent script to system")
+
     parser.add_argument("-c", "--config", type=str, help="Load config file")
+
     parser.add_argument("-l", "--list", action="store_true", help="Show list of available devices.")
+
+    parser.add_argument("-p", "--plugins", action="store_true", help="List of plugins and their available functions.")
+
+
     parser.add_argument("-e", "--exec", action="store_true", help="Run local executor service. Will execute commands from userspace.")
+
     parser.add_argument("-g", "--grab", type=str,
                         help="Grab all events by defining keyboard, and show input codes. "
                              "Except C and Q keys, preserved for quit action. "
@@ -456,6 +461,8 @@ def main():
     elif args.list:
         print('Show list of available devices.')
         show_dev_list()
+    elif args.plugins:
+        plugins = Plugins()
     elif args.grab:
         print('Grab all events and show input keys for %s device.' % args.grab)
         print('You can exit anytime by pressing Q or C.')
@@ -463,6 +470,7 @@ def main():
         grab_and_show_inputs(dev_addr)
     else:
         print(parser.print_help())
+        plugins = Plugins()
 
 
 if __name__ == '__main__':

@@ -14,8 +14,7 @@ import subprocess
 
 from settings import settings
 
-import plugins
-
+from plugins import Plugins
 
 
 # Received '{"key": "TET&#$%Ssdfsdfdhggfdhgf78", "plugin": "gnome", "command": ["raise_or_run", "opera", "Opera"' from ('127.0.0.1', 57448)
@@ -64,6 +63,8 @@ async def handle_echo(reader, writer):
 
 
 def Main():
+    plugins = Plugins()
+
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(handle_echo, settings.host, settings.port, loop=loop)
     server = loop.run_until_complete(coro)

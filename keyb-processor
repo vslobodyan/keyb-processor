@@ -23,6 +23,7 @@ case "$1" in
     sudo ln -v -s "$LINK_TARGET" "$LINK_PATH"
     exit
     ;;
+
     -e|--exec|--executor)
     echo "Run executor service"
     # Redefine script and sudo for another script name and
@@ -30,6 +31,13 @@ case "$1" in
     SCRIPT_NAME="executor.py"
     SUDO=""
     ;;
+    # Function that no need sudo
+
+    -p|--plugins)
+    # Args that don't need sudo to execute
+    SUDO=""
+    ;;
+
     "")
     # Empty string, no arguments was used
     SUDO=""

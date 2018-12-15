@@ -3,30 +3,43 @@
 Скелет для навешивания остальных функций.
 """
 
+class Function:
+    name = ''
+    description = ''
+    func = None
+
+    def __init__(self, name='', description='', func=None):
+        self.name = name
+        self.description = description
+        self.func = func
+
+
 class Functions:
-    available = {}
+    available = {} # {Function_Name: function,}
 
     def add(self, name, description, func):
         """Добавление функции в список доступных для пользователя."""
-        self.available['name']=[description, func]
+        func = Function(name, description, func)
+        self.available[name]=func
 
     def find(self):
         pass
 
     def print(self):
-        print('Functions:')
+        print('\tFunctions:')
         for key in self.available:
-            print('key: %s, value: %s' % (key, self.available[key]))
-        print()
+            # print('name: %s, desc: %s, func: %s' % (key, self.available[key].description, self.available[key].func))
+            # print(' name: %s, desc: %s' % (key, self.available[key].description))
+            print('\t%s - %s' % (key, self.available[key].description))
+
+        # print()
 
 
-class plugin:
-    functions = None
+class Plugin:
     name = ""
     description = ""
+    functions = None
 
-    def __init__(self, name="", description="", plugins=None):
-        self.name = name
-        self.description = description
+    def __init__(self):
         self.functions = Functions()
-        plugins.add(name, description, self)
+        # plugins.add(name, description, self)
