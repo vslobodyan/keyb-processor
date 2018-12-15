@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# Were helpful:
+# 1. https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+
+THIS_FILE_NAME=$(basename -- "$0")
+THIS_FILE_PATH="$(dirname "$(realpath "$0")")"
+LINK_TARGET="$THIS_FILE_PATH/$THIS_FILE_NAME"
+LINK_PATH="/usr/local/bin"
+
+#echo "THIS_FILE_NAME: $THIS_FILE_NAME"
+#echo "THIS_FILE_PATH: $THIS_FILE_PATH"
+SCRIPT_HOME="$(dirname "$(realpath "$0")")"
+
+
+PYTHON="python3"
+SUDO="sudo"
+SCRIPT_NAME="processor.py"
+
+case "$1" in
+    -i|--install)
+    echo "Install: we will make link to this script at \"$LINK_PATH\""
+    sudo ln -v -s "$LINK_TARGET" "$LINK_PATH"
+    exit
+    ;;
+    -e|--exec|--executor)
+    echo "Run executor service"
+    # Redefine script and sudo for another script name and
+    # user-space running environment.
+    SCRIPT_NAME="executor.py"
+    SUDO=""
+    ;;
+    "")
+    # Empty string, no arguments was used
+    SUDO=""
+    # Main script will show usage help.
+    ;;
+esac
+
+
+cd "$SCRIPT_HOME"
+#echo "Real path to script is $SCRIPT_HOME"
+SCRIPT_MAIN="$SCRIPT_HOME/$SCRIPT_NAME"
+
+
+case "$SUDO" in
+    "")
+    # Without sudo
+    "$PYTHON" "$SCRIPT_MAIN" "$@"
+    ;;
+    *)
+    "$SUDO" "$PYTHON" "$SCRIPT_MAIN" "$@"
+    ;;
+esac
