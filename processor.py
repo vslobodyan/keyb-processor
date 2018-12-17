@@ -66,6 +66,7 @@ class Active_modifiers:
         else:
             # Клавиша отпущена
             self.find_mods_and_change_state(cur_event_data.scancode, state=False)
+        print('modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
 
 
 async def tcp_echo_client(message, loop):
@@ -354,7 +355,7 @@ def process_one_event_and_exit(keyboard, ui, event):
         # Проверяем - не модификатор ли нажат
         if cur_event_data.scancode in active_modifiers._all:
             print('It\'s modifier key: %s' % cur_event_data.keycode)
-            active_modifiers.update()
+            active_modifiers.update(cur_event_data)
         # Дальше обрабатываем только нажатия основных клавиш (не модификаторов) и только если
         elif cur_event_data.keystate in [1, 2]:  # Down and Hold events only
             print('You Pressed the %s key, and currently active keys is: %s' % (
