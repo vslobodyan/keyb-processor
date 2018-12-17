@@ -82,10 +82,10 @@ async def tcp_echo_client(message, loop):
 class process():
     """Обвязка функций, выполняемых при обработке событий."""
 
-    def transmit(ui, event_type, event_scancode, event_keystate):
-    # If we decide to inject keyboard event:
-        ui.write(event_type, event_scancode, event_keystate)
-        # ui.syn()
+    # def transmit(ui, event_type, event_scancode, event_keystate):
+    # # If we decide to inject keyboard event:
+    #     ui.write(event_type, event_scancode, event_keystate)
+    #     # ui.syn()
 
     def keyb_event_inject(keyb_inputs, ui):
         print('We will inject keyb codes now: %s' % keyb_inputs)
@@ -128,14 +128,14 @@ class _processed_events:
 
     class _processed_keyb_event:
         pressed_keys = []
-        transmit = True
+        # transmit = False
         inject_keys = []
         plugin = None
         command = []
 
         def __init__(self):
             self.pressed_keys = []
-            self.transmit = True
+            # self.transmit = False
             self.inject_keys = []
             self.plugin = None
             self.command = []
@@ -165,7 +165,7 @@ class _processed_events:
         self.listen_events = []
         self.processed_events_setup = []
 
-    def add(self, pressed_keys='', transmit=False, inject_keys='', plugin=None, command=''):
+    def add(self, pressed_keys='', inject_keys='', plugin=None, command=''):
         # print('Add pressed_keys:', pressed_keys, 'transmit:', transmit,
         #       'inject_keys:', inject_keys, 'plugin:', plugin, 'command:', command)
 
@@ -185,7 +185,7 @@ class _processed_events:
         ev.pressed_keys = pressed_keys_string  # Тут добавляем отсортированную строку по ключам
         # print('ev.pressed_keys: %s' % ev.pressed_keys)
 
-        ev.transmit = transmit
+        # ev.transmit = transmit
         ev.plugin = plugin
         if command:
             ev.command = command.split()
@@ -208,8 +208,6 @@ class _processed_events:
             return
         # print(event_setup)
         # Получен конфиг обработки текущего события
-        if event_setup.transmit:
-            process.transmit(ui, event_type, event_scancode, event_keystate)
         if event_setup.inject_keys:
             # print('We will inject keys: %s' % event_setup.inject_keys)
             process.keyb_event_inject(event_setup.inject_keys, ui)
@@ -286,15 +284,11 @@ def load_config(filename):
                 pressed_keys = key
                 # print('Found pressed_keys:', pressed_keys)
                 inject_keys = None
-                transmit = False
                 plugin = None
                 command = None
                 if 'inject_keys' in value:
                     inject_keys = value['inject_keys']
                     # print('Found inject_keys:', inject_keys)
-                if 'transmit' in value:
-                    transmit = value['transmit']
-                    # print('Found transmit:', transmit)
                 if 'plugin' in value:
                     plugin = value['plugin']
                 if 'command' in value:
@@ -303,7 +297,6 @@ def load_config(filename):
                 new_keyboard.processed_events.add(
                     pressed_keys=pressed_keys,
                     inject_keys=inject_keys,
-                    transmit=transmit,
                     plugin=plugin,
                     command=command
                 )
