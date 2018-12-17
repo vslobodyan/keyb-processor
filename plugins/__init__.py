@@ -1,5 +1,6 @@
 
-from os.path import dirname, basename, isfile
+import os
+#from os.path import dirname, basename, isfile
 import glob
 import sys
 import inspect
@@ -26,10 +27,10 @@ class Plugins:
     def __init__(self):
         # print('Initiate plugins.')
         # Импортируем все модули в каталоге
-        plugins_path = dirname(__file__) + "/*.py"
+        plugins_path = os.path.dirname(__file__) + os.sep + "*.py"
         print('Path for plugins: %s' % plugins_path)
         modules = glob.glob(plugins_path)
-        founded_plugins = [basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')]
+        founded_plugins = [os.path.basename(f)[:-3] for f in modules if os.path.isfile(f) and not f.endswith('__init__.py')]
         print('Founded plugins: %s' % founded_plugins)
         # Импортируем найденные модули
         for one_plugin in founded_plugins:
