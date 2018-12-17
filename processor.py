@@ -163,6 +163,8 @@ class _processed_events:
             # print('key: %s ' % key)
             active_keys_str.append(key)
         strkey = self.keys_as_string(active_keys_str)
+        print('Получили строку для поиска ключей: %s' % strkey)
+        print('Массив слушаемых событий: %s' % self.listen_events)
         # print('We find %s in %s' % (active_keys_str, self.listen_events))
         if strkey in self.listen_events:
             return strkey
@@ -203,8 +205,9 @@ class _processed_events:
 
 
 
-    def proccess_event(self, strkey, ui, event_type, event_scancode, event_keystate):
+    def proccess_event(self, strkey, ui):
         'Обрабатываем событие, которое ранее было найдено в списке ключей'
+        # Раньше использовались дополнительные параметры: , event_type, event_scancode, event_keystate
         print('We proccess "%s" event' % strkey)
         # Получаем событие из настроек
         found = False
@@ -397,23 +400,23 @@ def process_one_event_and_exit(keyboard, ui, event):
             combinations_events_search = []
             combinations_events_search.append(verbose_active_keys)
             for also_mod in also_pressed_modifiers:
-                new_comb=[(also_mod)]+verbose_active_keys
+                new_comb=[(also_mod, 0)]+verbose_active_keys
                 print('new_comb: %s' % new_comb)
                 combinations_events_search.append(new_comb)
             print('combinations_events_search: %s' % combinations_events_search)
 
-            strkey = keyboard.processed_events.find_strkey(verbose_active_keys)
-            if strkey:
-                # print('Found!')
-                # return False
-
-                event_handled = True
-                keyboard.processed_events.proccess_event(strkey,
-                                                         ui,
-                                                         event.type,
-                                                         cur_event_data.scancode,
-                                                         cur_event_data.keystate)
-
+            for combination in combinations_events_search:
+                # Перебираем комбинации и ищем их в слушаемых событиях
+                strkey = keyboard.processed_events.find_strkey(combination)
+                if strkey:
+                    # print('Found!')
+                    # return False
+                    event_handled = True
+                    keyboard.processed_events.proccess_event(strkey, ui)
+                    # Раньше использовались дополнительные параметры:
+                    # event.type,
+                    # cur_event_data.scancode,
+                    # cur_event_data.keystate
         # Here we decide - whether to skip the event further (whether to do inject)
 
         # Если событие не было из списка отлавливаемых, то возможно надо

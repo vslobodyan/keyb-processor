@@ -42,7 +42,7 @@ Logitech G602 mouse:
         command: minimize
     # G7
     ALT KEY_LEFTMETA KEY_S:
-        command: notify-send Alt + Meta + S
+        command: notify-send Alt+Meta+S
 
 
     # G5
