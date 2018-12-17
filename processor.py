@@ -27,10 +27,12 @@ from plugins import Plugins
 
 keyboards = []
 
+
 class asyn:
     loop = None
 
-class active_modifiers:
+
+class Active_modifiers:
     # Класс текущих модификаторов со всех клавиатур
     # Нужен для использования кросс-девайсных комбинаций.
     # Например: Alt на клавиатуре и кнопка G10 на мышке
@@ -43,6 +45,7 @@ class active_modifiers:
     ctrls = [ecodes.KEY_LEFTCTRL, ecodes.KEY_RIGHTCTRL]
     metas = [ecodes.KEY_LEFTMETA, ecodes.KEY_RIGHTMETA]
     shifts = [ecodes.KEY_LEFTSHIFT, ecodes.KEY_RIGHTSHIFT]
+    _all = alts + ctrls + metas + shifts
 
     def get(self):
         # Получаем массив текущих модификаторов для добавления в массив
@@ -343,15 +346,24 @@ def process_one_event_and_exit(keyboard, ui, event):
     if event.type == ecodes.EV_KEY:
         cur_event_data = categorize(event)
         # cur_active_keys = dev.active_keys()
-        if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
+        # Переводим инфу о нажатых клавишах в понятный формат
+        verbose_active_keys = keyboard.dev.active_keys(verbose=True)
+
+        # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
+        # print('active_modifiers._all=%s' % active_modifiers._all)
+        # Проверяем - не модификатор ли нажат
+        if cur_event_data.scancode in active_modifiers._all:
+            print('It\'s modifier key: %s' % cur_event_data.keycode)
+            active_modifiers.update()
+        # Дальше обрабатываем только нажатия основных клавиш (не модификаторов) и только если
+        elif cur_event_data.keystate in [1, 2]:  # Down and Hold events only
             print('You Pressed the %s key, and currently active keys is: %s' % (
-            cur_event_data.keycode, keyboard.dev.active_keys(verbose=True)))
+            cur_event_data.keycode, verbose_active_keys))
             # if cur_event_data.scancode in [ecodes.KEY_Q, ecodes.KEY_C]:
             #     print('You press Q or C, and we quit now.')
             #     return True
 
-            strkey = keyboard.processed_events.find_strkey(
-                keyboard.dev.active_keys(verbose=True))
+            strkey = keyboard.processed_events.find_strkey(verbose_active_keys)
             if strkey:
                 # print('Found!')
                 # return False
@@ -470,6 +482,8 @@ def main():
 
 
 if __name__ == '__main__':
+    active_modifiers = Active_modifiers()
+
     main()
 
 
