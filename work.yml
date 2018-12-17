@@ -41,7 +41,8 @@ Logitech G602 mouse:
         plugin: gnome
         command: minimize
     # G7
-    # KEY_LEFTMETA KEY_S
+    ALT KEY_LEFTMETA KEY_S:
+        command: notify-send Alt + Meta + S
 
 
     # G5

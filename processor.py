@@ -50,7 +50,12 @@ class Active_modifiers:
     def get(self):
         # Получаем массив текущих модификаторов для добавления в массив
         # событий для сравнения с отслеживаемыми переменными.
-        pass
+        res = []
+        if self.alt: res.append('ALT')
+        if self.ctrl: res.append('CTRL')
+        if self.meta: res.append('META')
+        if self.shift: res.append('SHIFT')
+        return res
 
     def find_mods_and_change_state(self, scancode, state=True):
         if scancode in self.alts: self.alt = state
@@ -66,7 +71,7 @@ class Active_modifiers:
         else:
             # Клавиша отпущена
             self.find_mods_and_change_state(cur_event_data.scancode, state=False)
-        print('modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
+        # print('modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
 
 
 async def tcp_echo_client(message, loop):
@@ -348,21 +353,54 @@ def process_one_event_and_exit(keyboard, ui, event):
         cur_event_data = categorize(event)
         # cur_active_keys = dev.active_keys()
         # Переводим инфу о нажатых клавишах в понятный формат
+        active_keys = keyboard.dev.active_keys()
         verbose_active_keys = keyboard.dev.active_keys(verbose=True)
 
         # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
         # print('active_modifiers._all=%s' % active_modifiers._all)
         # Проверяем - не модификатор ли нажат
         if cur_event_data.scancode in active_modifiers._all:
-            print('It\'s modifier key: %s' % cur_event_data.keycode)
+            # print('It\'s modifier key: %s' % cur_event_data.keycode)
             active_modifiers.update(cur_event_data)
         # Дальше обрабатываем только нажатия основных клавиш (не модификаторов) и только если
         elif cur_event_data.keystate in [1, 2]:  # Down and Hold events only
-            print('You Pressed the %s key, and currently active keys is: %s' % (
-            cur_event_data.keycode, verbose_active_keys))
+            global_modifiers = active_modifiers.get()
+            print('You Pressed the %s key, active keys from this device is: %s, and global modifiers: %s' % (
+            cur_event_data.keycode, verbose_active_keys, global_modifiers))
             # if cur_event_data.scancode in [ecodes.KEY_Q, ecodes.KEY_C]:
             #     print('You press Q or C, and we quit now.')
             #     return True
+
+            # print('Check for global modifiers in active keys.')
+
+            # Собираем читабельный массив нажатых клавиш с клавиатуры
+            verb_keys = []
+            for a_key in active_keys:
+                verb_keys.append(ecodes.KEY[a_key])
+            # print('verb_keys=%s,' % verb_keys)
+            # print('global_modifiers=%s' % global_modifiers)
+            # Ищем глобальные модификаторы, которых нет в текущих событиях с клавиатуры
+            also_pressed_modifiers = {}
+            for modifier in global_modifiers:
+                # print(' global modifier: %s' % modifier)
+                new_mod = True
+                for verb_key in verb_keys:
+                    if modifier in verb_key:
+                        new_mod = False
+                if new_mod:
+                    # print('  Global modifier was also pressed: %s' % modifier)
+                    also_pressed_modifiers[modifier] = True
+
+            # print('-'*20)
+            print('also_pressed_modifiers: %s' % also_pressed_modifiers)
+
+            combinations_events_search = []
+            combinations_events_search.append(verbose_active_keys)
+            for also_mod in also_pressed_modifiers:
+                new_comb=[(also_mod)]+verbose_active_keys
+                print('new_comb: %s' % new_comb)
+                combinations_events_search.append(new_comb)
+            print('combinations_events_search: %s' % combinations_events_search)
 
             strkey = keyboard.processed_events.find_strkey(verbose_active_keys)
             if strkey:
