@@ -384,8 +384,10 @@ def process_one_event_and_exit(keyboard, ui, event):
         # Дальше обрабатываем только нажатия основных клавиш (не модификаторов)
         elif cur_event_data.keystate in [1, 2]:  # Down and Hold events only
             global_modifiers = active_modifiers.get()
-            print('You Pressed the %s key, active keys from this device is: %s, and global modifiers: %s' % (
-            cur_event_data.keycode, verbose_active_keys, global_modifiers))
+            # print('You Pressed the %s key, active keys from this device is: %s, and global modifiers: %s' % (
+            #                 cur_event_data.keycode,
+            #                 verbose_active_keys,
+            #                 global_modifiers))
             # Собираем читабельный массив нажатых клавиш с клавиатуры
             verb_keys = []
             for a_key in active_keys:

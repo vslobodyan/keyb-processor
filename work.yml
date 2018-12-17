@@ -2,17 +2,18 @@
 #
 # One KEY defining block limited to 1024 bytes
 #
-
-Logitech G413 keyboard:
-    # In section - any name of your device you like.
-    device: /dev/input/event3
-
+# In section - any name of your device you like.
     ## EXAMPLE OF SUBSECTION
     ## This is CTRL+R for example
     #
     # KEY_LEFTCTRL KEY_R:
     # inject_keys=KEY_RIGHTCTRL KEY_W
     # run_command=ls -la
+
+
+Logitech G413 keyboard:
+    device: /dev/input/event3
+
 
     KEY_KP6:
         plugin: gnome
@@ -66,12 +67,16 @@ Logitech G602 mouse:
 
     # G10
     ALT KEY_PAGEUP:
-        inject_keys: KEY_LEFT
+        inject_keys: KEY_RIGHTALT KEY_LEFT
     SHIFT KEY_PAGEUP:
-        command: notify-send Shift-PageUp
+        # command: notify-send Shift-PageUp
+        inject_keys: KEY_HOME
     # G11
     ALT KEY_PAGEDOWN:
-        inject_keys: KEY_RIGHT
+        inject_keys: KEY_RIGHTALT KEY_RIGHT
+    SHIFT KEY_PAGEDOWN:
+        # command: notify-send Shift-PageUp
+        inject_keys: KEY_END
 
 
 
