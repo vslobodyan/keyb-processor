@@ -17,25 +17,63 @@ Logitech G413 keyboard:
 
     KEY_KP6:
         plugin: gnome
-        command: raise_or_run opera Opera
+        command: raise opera Opera
 
     KEY_KPPLUS:
         # In subsection - keys, must be handled
         # And what we must do with it below.
         inject_keys: KEY_RIGHTCTRL KEY_W
 
+    KEY_KP0:
+        plugin: gnome
+        command: minimize
+
+    KEY_KPENTER:
+        plugin: gnome
+        command: close
+
+
 
 Logitech G602 mouse:
     device: /dev/input/event9
 
+    # G4
+    KEY_LEFTSHIFT KEY_F4:
+        plugin: gnome
+        command: minimize
+    # G7
+    # KEY_LEFTMETA KEY_S
+
+
+    # G5
+    KEY_LEFTSHIFT KEY_F5:
+        plugin: gnome
+        command: raise opera Opera
+    # G8
     KEY_LEFTSHIFT KEY_F8:
         inject_keys: KEY_RIGHTCTRL KEY_W
 
+
+    # G6
+    KEY_LEFTSHIFT KEY_F6:
+        plugin: gnome
+        command: raise telegram-desktop TelegramDesktop
+    # G9
+    KEY_LEFTSHIFT KEY_F9:
+        plugin: gnome
+        command: raise skypeforlinux Skype
+
+
+    # G10
     ALT KEY_PAGEUP:
         inject_keys: KEY_LEFT
-
+    SHIFT KEY_PAGEUP:
+        command: notify-send Shift-PageUp
+    # G11
     ALT KEY_PAGEDOWN:
         inject_keys: KEY_RIGHT
+
+
 
 Razer Nostromo:
     device: /dev/input/event6
