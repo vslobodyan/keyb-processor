@@ -82,7 +82,7 @@ async def tcp_echo_client(message, loop):
 class process():
     """Обвязка функций, выполняемых при обработке событий."""
 
-    def retranslate(ui, event_type, event_scancode, event_keystate):
+    def transmit(ui, event_type, event_scancode, event_keystate):
     # If we decide to inject keyboard event:
         ui.write(event_type, event_scancode, event_keystate)
         # ui.syn()
@@ -128,14 +128,14 @@ class _processed_events:
 
     class _processed_keyb_event:
         pressed_keys = []
-        retranslate = True
+        transmit = True
         inject_keys = []
         plugin = None
         command = []
 
         def __init__(self):
             self.pressed_keys = []
-            self.retranslate = True
+            self.transmit = True
             self.inject_keys = []
             self.plugin = None
             self.command = []
@@ -165,8 +165,8 @@ class _processed_events:
         self.listen_events = []
         self.processed_events_setup = []
 
-    def add(self, pressed_keys='', retranslate=False, inject_keys='', plugin=None, command=''):
-        # print('Add pressed_keys:', pressed_keys, 'retranslate:', retranslate,
+    def add(self, pressed_keys='', transmit=False, inject_keys='', plugin=None, command=''):
+        # print('Add pressed_keys:', pressed_keys, 'transmit:', transmit,
         #       'inject_keys:', inject_keys, 'plugin:', plugin, 'command:', command)
 
         # 1. Сортируем отслеживаемые ключи и делаем из них строчку, по типу уникального читаемого ключа
@@ -185,7 +185,7 @@ class _processed_events:
         ev.pressed_keys = pressed_keys_string  # Тут добавляем отсортированную строку по ключам
         # print('ev.pressed_keys: %s' % ev.pressed_keys)
 
-        ev.retranslate = retranslate
+        ev.transmit = transmit
         ev.plugin = plugin
         if command:
             ev.command = command.split()
@@ -208,8 +208,8 @@ class _processed_events:
             return
         # print(event_setup)
         # Получен конфиг обработки текущего события
-        if event_setup.retranslate:
-            process.retranslate(ui, event_type, event_scancode, event_keystate)
+        if event_setup.transmit:
+            process.transmit(ui, event_type, event_scancode, event_keystate)
         if event_setup.inject_keys:
             # print('We will inject keys: %s' % event_setup.inject_keys)
             process.keyb_event_inject(event_setup.inject_keys, ui)
@@ -231,7 +231,7 @@ class keyboard:
     """Одиночный класс клавиатуры с конфигом."""
     name = ''
     address = ''
-    retranslate_all = True
+    transmit_all = True
     dev = None
     processed_events = None
 
@@ -241,17 +241,17 @@ class keyboard:
         print('Config for "%s":' %
               self.name)
         print(' address: %s' % self.address)
-        print(' retranslate_all: %s' % self.retranslate_all)
+        print(' transmit_all: %s' % self.transmit_all)
         print(' dev: %s' % self.dev)
         print(' listen_events: %s' % self.processed_events.listen_events)
         # print('processed_events_setup: %s' %
         #       self.processed_events.processed_events_setup)
         print()
 
-    def __init__(self, name=name, address=address, retranslate_all=True):
+    def __init__(self, name=name, address=address, transmit_all=True):
         self.name = name
         self.address = address
-        self.retranslate_all = retranslate_all
+        self.transmit_all = transmit_all
         self.processed_events = _processed_events()
         self.dev = InputDevice(address)
 
@@ -286,15 +286,15 @@ def load_config(filename):
                 pressed_keys = key
                 # print('Found pressed_keys:', pressed_keys)
                 inject_keys = None
-                retranslate = False
+                transmit = False
                 plugin = None
                 command = None
                 if 'inject_keys' in value:
                     inject_keys = value['inject_keys']
                     # print('Found inject_keys:', inject_keys)
-                if 'retranslate' in value:
-                    retranslate = value['retranslate']
-                    # print('Found retranslate:', retranslate)
+                if 'transmit' in value:
+                    transmit = value['transmit']
+                    # print('Found transmit:', transmit)
                 if 'plugin' in value:
                     plugin = value['plugin']
                 if 'command' in value:
@@ -303,7 +303,7 @@ def load_config(filename):
                 new_keyboard.processed_events.add(
                     pressed_keys=pressed_keys,
                     inject_keys=inject_keys,
-                    retranslate=retranslate,
+                    transmit=transmit,
                     plugin=plugin,
                     command=command
                 )
@@ -376,7 +376,7 @@ def process_one_event_and_exit(keyboard, ui, event):
         # ретранслировать это событие дальше, в зависимости от настроек
         # клавиатуры.
         if not event_handled:
-            if keyboard.retranslate_all:
+            if keyboard.transmit_all:
                 # We decide to inject keyboard event:
                 ui.write(event.type,
                          cur_event_data.scancode,

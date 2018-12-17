@@ -5,7 +5,7 @@
     #
     # KEY_LEFTCTRL KEY_R:
     # inject_keys=KEY_RIGHTCTRL KEY_W
-    # retranslate=False
+    # transmit=False
     # run_command=ls -la
 
     # raise COMMAND WINDOW_NAME

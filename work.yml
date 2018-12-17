@@ -12,7 +12,6 @@ Logitech G413 keyboard:
     #
     # KEY_LEFTCTRL KEY_R:
     # inject_keys=KEY_RIGHTCTRL KEY_W
-    # retranslate=False
     # run_command=ls -la
 
     KEY_KP6:
