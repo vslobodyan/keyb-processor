@@ -67,13 +67,13 @@ class Active_window:
     def close(self, *args):
         print('Close active window.')
         c = self.lg.close()
-        print('LG %s' % c)
+        # print('LG %s' % c)
         subprocess.run(c)
 
     def minimize(self, *args):
         print('Minimize active window.')
         c = self.lg.minimize()
-        print('LG %s' % c)
+        # print('LG %s' % c)
         subprocess.run(c)
 
     def __init__(self):
@@ -98,11 +98,11 @@ class Plugin(plugin.Plugin):
             print('window_name=%s' % window_name)
             # Проверяем, есть-ли уже такое окно
             c = self.active_window.lg.window_is_present(window_name)
-            print('c=%s' % c)
+            # print('c=%s' % c)
             stdoutdata = subprocess.check_output(c)
             # Если есть - активируем его
             if stdoutdata:
-                print('We have LG output on search "%s" window: %s' % (window_name,stdoutdata))
+                # print('We have LG output on search "%s" window: %s' % (window_name,stdoutdata))
                 c = self.active_window.lg.activate_window(window_name)
                 subprocess.run(c)
             else:
@@ -118,7 +118,7 @@ class Plugin(plugin.Plugin):
 
         self.active_window = Active_window()
 
-        self.functions.add('raise', 'Raise window or run app', self.raise_or_run)
+        self.functions.add('raise', 'Raise window or run app. Parameters: COMMAND WINDOW_NAME (check name in "lg")', self.raise_or_run)
         self.functions.add('close', 'Close active window', self.active_window.close)
         self.functions.add('minimize', 'Minimize active window', self.active_window.minimize)
 

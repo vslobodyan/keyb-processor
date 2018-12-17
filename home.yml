@@ -8,6 +8,8 @@
     # retranslate=False
     # run_command=ls -la
 
+    # raise COMMAND WINDOW_NAME
+
 
 Logitech G710 keyboard:
     # In section - any name of your device you like.
