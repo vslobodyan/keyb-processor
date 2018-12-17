@@ -359,6 +359,9 @@ def process_one_event_and_exit(keyboard, ui, event):
         active_keys = keyboard.dev.active_keys()
         verbose_active_keys = keyboard.dev.active_keys(verbose=True)
 
+        # Надо обрабатывать случай, когда приходит модификатор, а в нажатых присутствует и модификатор и несущая клавиша.
+        # Эту комбинацию нажатых надо искать в списке слушаемых событий и откидывать (поглощать, не транслировать).
+
         # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
         # print('active_modifiers._all=%s' % active_modifiers._all)
         # Проверяем - не модификатор ли нажат
@@ -395,15 +398,15 @@ def process_one_event_and_exit(keyboard, ui, event):
                     also_pressed_modifiers[modifier] = True
 
             # print('-'*20)
-            print('also_pressed_modifiers: %s' % also_pressed_modifiers)
+            # print('also_pressed_modifiers: %s' % also_pressed_modifiers)
 
             combinations_events_search = []
             combinations_events_search.append(verbose_active_keys)
             for also_mod in also_pressed_modifiers:
                 new_comb=[(also_mod, 0)]+verbose_active_keys
-                print('new_comb: %s' % new_comb)
+                # print('new_comb: %s' % new_comb)
                 combinations_events_search.append(new_comb)
-            print('combinations_events_search: %s' % combinations_events_search)
+            # print('combinations_events_search: %s' % combinations_events_search)
 
             for combination in combinations_events_search:
                 # Перебираем комбинации и ищем их в слушаемых событиях
