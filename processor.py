@@ -40,6 +40,7 @@ class Active_modifiers:
     ctrl = False
     meta = False
     shift = False
+    pressed = {}
 
     alts = [ecodes.KEY_LEFTALT, ecodes.KEY_RIGHTALT]
     ctrls = [ecodes.KEY_LEFTCTRL, ecodes.KEY_RIGHTCTRL]
@@ -68,10 +69,13 @@ class Active_modifiers:
         if cur_event_data.keystate in [1, 2]:
             # Клавиша нажата или продолжает нажиматься
             self.find_mods_and_change_state(cur_event_data.scancode, state=True)
+            self.pressed[cur_event_data.scancode] = cur_event_data.keystate
         else:
             # Клавиша отпущена
             self.find_mods_and_change_state(cur_event_data.scancode, state=False)
+            self.pressed.pop(cur_event_data.scancode, None)
         # print('modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
+        # print('pressed: %s' % self.pressed)
 
 
 async def tcp_echo_client(message, loop):
@@ -98,6 +102,12 @@ class process():
 
     def keyb_event_inject(keyb_inputs, ui):
         print('We will inject keyb codes now: %s' % keyb_inputs)
+
+        print('Before this we need UP keys for global modifiers: %s' % active_modifiers.pressed)
+        for one_key_code in active_modifiers.pressed:
+            state = active_modifiers.pressed[one_key_code]
+            ui.write(evdev.ecodes.EV_KEY, one_key_code, 0)
+
         # Press
         for one_key_code in keyb_inputs:
             # key = evdev.ecodes.ecodes['KEY_' + one_key_code.upper()]
@@ -109,6 +119,12 @@ class process():
             # key = evdev.ecodes.ecodes['KEY_' + one_key_code.upper()]
             key = evdev.ecodes.ecodes[one_key_code]
             ui.write(evdev.ecodes.EV_KEY, key, 0)
+
+        print('Now we need DOWN keys for global modifiers: %s' % active_modifiers.pressed)
+        for one_key_code in active_modifiers.pressed:
+            state = active_modifiers.pressed[one_key_code]
+            ui.write(evdev.ecodes.EV_KEY, one_key_code, state)
+
         # ui.syn()
 
     def send_command(command, plugin=None):
@@ -163,8 +179,8 @@ class _processed_events:
             # print('key: %s ' % key)
             active_keys_str.append(key)
         strkey = self.keys_as_string(active_keys_str)
-        print('Получили строку для поиска ключей: %s' % strkey)
-        print('Массив слушаемых событий: %s' % self.listen_events)
+        # print('Получили строку для поиска ключей: %s' % strkey)
+        # print('Массив слушаемых событий: %s' % self.listen_events)
         # print('We find %s in %s' % (active_keys_str, self.listen_events))
         if strkey in self.listen_events:
             return strkey
@@ -359,32 +375,21 @@ def process_one_event_and_exit(keyboard, ui, event):
         active_keys = keyboard.dev.active_keys()
         verbose_active_keys = keyboard.dev.active_keys(verbose=True)
 
-        # Надо обрабатывать случай, когда приходит модификатор, а в нажатых присутствует и модификатор и несущая клавиша.
-        # Эту комбинацию нажатых надо искать в списке слушаемых событий и откидывать (поглощать, не транслировать).
-
         # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
         # print('active_modifiers._all=%s' % active_modifiers._all)
         # Проверяем - не модификатор ли нажат
         if cur_event_data.scancode in active_modifiers._all:
             # print('It\'s modifier key: %s' % cur_event_data.keycode)
             active_modifiers.update(cur_event_data)
-        # Дальше обрабатываем только нажатия основных клавиш (не модификаторов) и только если
+        # Дальше обрабатываем только нажатия основных клавиш (не модификаторов)
         elif cur_event_data.keystate in [1, 2]:  # Down and Hold events only
             global_modifiers = active_modifiers.get()
             print('You Pressed the %s key, active keys from this device is: %s, and global modifiers: %s' % (
             cur_event_data.keycode, verbose_active_keys, global_modifiers))
-            # if cur_event_data.scancode in [ecodes.KEY_Q, ecodes.KEY_C]:
-            #     print('You press Q or C, and we quit now.')
-            #     return True
-
-            # print('Check for global modifiers in active keys.')
-
             # Собираем читабельный массив нажатых клавиш с клавиатуры
             verb_keys = []
             for a_key in active_keys:
                 verb_keys.append(ecodes.KEY[a_key])
-            # print('verb_keys=%s,' % verb_keys)
-            # print('global_modifiers=%s' % global_modifiers)
             # Ищем глобальные модификаторы, которых нет в текущих событиях с клавиатуры
             also_pressed_modifiers = {}
             for modifier in global_modifiers:
