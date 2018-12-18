@@ -32,6 +32,9 @@ Logitech G413 keyboard:
         plugin: gnome
         command: close
 
+    KEY_KPMINUS:
+        inject_keys: KEY_RIGHTMETA KEY_S
+
 
 
 Logitech G602 mouse:
@@ -86,29 +89,73 @@ Razer Nostromo:
     KEY_RIGHTSHIFT KEY_F6:
         inject_keys: KEY_R
 
-    # KEY_TAB (01)
-    # KEY_Q (02)
-    # KEY_W (03)
-    # KEY_E (04)
-    # KEY_R (05)
+    # 01
+    KEY_TAB:
+        plugin: gnome
+        command: close
+    # 02
+    KEY_Q:
+        plugin: gnome
+        command: raise telegram-desktop TelegramDesktop
+    # 03
+    KEY_W:
+        plugin: gnome
+        command: raise opera Opera
+    # 04
+    KEY_E:
+        command: notify-send Button-04
+    # 05
+    KEY_R:
+        inject_keys: KEY_LEFTMETA KEY_S
 
-    # KEY_CAPSLOCK (06)
-    # KEY_A (07)
-    # KEY_S (08)
-    # KEY_D (09)
-    # KEY_F (10)
+    # 06
+    KEY_CAPSLOCK:
+        plugin: gnome
+        command: minimize
+    # 07
+    KEY_A:
+        plugin: gnome
+        command: raise skypeforlinux Skype
+    # 08
+    KEY_S:
+        command: notify-send Button-08
+    # 09
+    KEY_D:
+        command: notify-send Button-09
+    # 10
+    KEY_F:
+        inject_keys: KEY_RIGHTCTRL KEY_W
 
-    # KEY_LEFTSHIFT (11)
-    # KEY_Z (12)
-    # KEY_X (13)
-    # KEY_C (14)
+    # 11
+#    KEY_LEFTSHIFT:
 
-    # KEY_SPACE (15)
+    # 12
+    KEY_Z:
+        plugin: gnome
+        command: raise relanotes Relanotes
+    # 13
+    KEY_X:
+        plugin: gnome
+        command: raise gnome-terminal Gnome-terminal
+    # 14
+    KEY_C:
+        plugin: gnome
+        command: raise nautilus Nautilus
 
-    # KEY_LEFTALT (above joystick)
+    # 15
+    KEY_SPACE:
+        command: notify-send Button-15
+
+    # Round button (above joystick)
+    KEY_LEFTALT:
+        command: notify-send Round-Button
 
     # Joystick:
-    # KEY_DOWN
-    # KEY_RIGHT
-    # KEY_UP
-    # KEY_LEFT
+#    KEY_DOWN:
+#        command: notify-send Button-Down
+    KEY_RIGHT:
+        inject_keys: KEY_PAGEDOWN
+#    KEY_UP:
+#        command: notify-send Button-Up
+    KEY_LEFT:
+        inject_keys: KEY_PAGEUP
