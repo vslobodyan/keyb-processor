@@ -381,13 +381,31 @@ def process_one_event_and_exit(keyboard, ui, event):
         if cur_event_data.scancode in active_modifiers._all:
             # print('It\'s modifier key: %s' % cur_event_data.keycode)
             active_modifiers.update(cur_event_data)
-        # Дальше обрабатываем только нажатия основных клавиш (не модификаторов)
-        elif cur_event_data.keystate in [1, 2]:  # Down and Hold events only
+
+        # Check for double event modifier and sign key combination, like from self-programming Logitech devices: G602, G600 etc.
+        double_event_mod_and_sign_keys = False
+        if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
+            if cur_event_data.scancode in active_modifiers._all:
+                """ Если нажат модификатор, проверяем - не идет ли с ним 
+                в паре с того-же устройства сразу другое значимое событие, 
+                как это происходит с Logitech G602 """
+                double_event_mod_and_sign_keys = False
+                for one_key_rec in verbose_active_keys:
+                    if one_key_rec[1] not in active_modifiers._all:
+                        double_event_mod_and_sign_keys = True
+
+                if double_event_mod_and_sign_keys:
+                    print('Was pressed modifier, but in combination with sign key. Like double action from programming device. Ignore.')
+            # Если нажат модификатор и идет другое событие с утройства - игнорируем его
+
+            # Дальше обрабатываем только нажатия
+        if cur_event_data.keystate in [1, 2] and not double_event_mod_and_sign_keys:  # Down and Hold events only
+
             global_modifiers = active_modifiers.get()
-            # print('You Pressed the %s key, active keys from this device is: %s, and global modifiers: %s' % (
-            #                 cur_event_data.keycode,
-            #                 verbose_active_keys,
-            #                 global_modifiers))
+            print('You Pressed the %s key, active keys from this device is: %s, and global modifiers: %s' % (
+                            cur_event_data.keycode,
+                            verbose_active_keys,
+                            global_modifiers))
             # Собираем читабельный массив нажатых клавиш с клавиатуры
             verb_keys = []
             for a_key in active_keys:
@@ -473,8 +491,7 @@ def grab_and_process_keyboards(keyboards):
     asyn.loop.run_forever()
 
     for keyboard in keyboards:
-        # keyboard.dev.ungrab()
-        pass
+        keyboard.dev.ungrab()
 
     ui.close()
 

@@ -127,7 +127,9 @@ Razer Nostromo:
         inject_keys: KEY_RIGHTCTRL KEY_W
 
     # 11
-#    KEY_LEFTSHIFT:
+    KEY_LEFTSHIFT:
+        plugin: gnome
+        command: minimize
 
     # 12
     KEY_Z:
