@@ -15,6 +15,13 @@ Logitech G413 keyboard:
     device: /dev/input/event3
 
 
+    KEY_NUMLOCK:
+        plugin: gnome
+        command: lock
+    CTRL KEY_NUMLOCK:
+        plugin: gnome
+        command: suspend
+
     KEY_KP6:
         plugin: gnome
         command: raise opera Opera

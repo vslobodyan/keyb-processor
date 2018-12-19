@@ -110,6 +110,28 @@ class Plugin(plugin.Plugin):
                 print('Window not found. We will run program "%s" again.' % prog_exec)
                 subprocess.run(prog_exec)
 
+    def hibernate(self,  *args):
+        print('Hibernate')
+        c = '''dbus-send --system --print-reply \
+            --dest="org.freedesktop.UPower" \
+            /org/freedesktop/UPower \
+            org.freedesktop.UPower.Hibernate'''.split()
+        subprocess.run(c)
+
+    def suspend(self,  *args):
+        print('Suspend')
+        c = '''dbus-send --system --print-reply \
+            --dest="org.freedesktop.UPower" \
+            /org/freedesktop/UPower \
+            org.freedesktop.UPower.Suspend'''.split()
+        subprocess.run(c)
+
+    def lock(self,  *args):
+        print('Lock')
+        c = '''dbus-send --type=method_call --dest=org.gnome.ScreenSaver \
+                /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock'''.split()
+        subprocess.run(c)
+
 
     def __init__(self):
         # print('Initiate "gnome" plugin.')
@@ -121,6 +143,12 @@ class Plugin(plugin.Plugin):
         self.functions.add('raise', 'Raise window or run app. Parameters: COMMAND WINDOW_NAME (check name in "lg")', self.raise_or_run)
         self.functions.add('close', 'Close active window', self.active_window.close)
         self.functions.add('minimize', 'Minimize active window', self.active_window.minimize)
+
+        self.functions.add('lock', 'Lock screen', self.lock)
+        self.functions.add('suspend', 'Suspend PC Gnome-friendly way',
+                           self.suspend)
+        self.functions.add('hibernate', 'Hibernate PC Gnome-friendly way',
+                           self.hibernate)
 
         # self.functions.print()
 
