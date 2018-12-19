@@ -91,8 +91,7 @@ Razer Nostromo:
 
     # 01
     KEY_TAB:
-        plugin: gnome
-        command: close
+        inject_keys: KEY_RIGHTCTRL KEY_W
     # 02
     KEY_Q:
         plugin: gnome
@@ -111,7 +110,7 @@ Razer Nostromo:
     # 06
     KEY_CAPSLOCK:
         plugin: gnome
-        command: minimize
+        command: close
     # 07
     KEY_A:
         plugin: gnome
@@ -124,7 +123,7 @@ Razer Nostromo:
         command: notify-send Button-09
     # 10
     KEY_F:
-        inject_keys: KEY_RIGHTCTRL KEY_W
+        inject_keys: KEY_LEFTMETA KEY_S
 
     # 11
     KEY_LEFTSHIFT:
@@ -146,11 +145,11 @@ Razer Nostromo:
 
     # 15
     KEY_SPACE:
-        command: notify-send Button-15
+        inject_keys: KEY_LEFTMETA KEY_S
 
     # Round button (above joystick)
-    KEY_LEFTALT:
-        command: notify-send Round-Button
+#    KEY_LEFTALT:
+#        inject_keys: KEY_LEFTMETA KEY_S
 
     # Joystick:
 #    KEY_DOWN:
