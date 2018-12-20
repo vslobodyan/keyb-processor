@@ -113,7 +113,7 @@ Razer Nostromo:
         command: notify-send Button-04
     # 05
     KEY_R:
-        inject_keys: KEY_LEFTMETA KEY_S
+        inject_keys: KEY_ESC
 
     # 06
     KEY_CAPSLOCK:
@@ -162,9 +162,9 @@ Razer Nostromo:
     # Joystick:
 #    KEY_DOWN:
 #        command: notify-send Button-Down
-    KEY_RIGHT:
-        inject_keys: KEY_PAGEDOWN
+#    KEY_RIGHT:
+#        inject_keys: KEY_PAGEDOWN
 #    KEY_UP:
 #        command: notify-send Button-Up
-    KEY_LEFT:
-        inject_keys: KEY_PAGEUP
+#    KEY_LEFT:
+#        inject_keys: KEY_PAGEUP

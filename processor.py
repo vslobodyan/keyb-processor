@@ -352,6 +352,8 @@ def grab_and_show_inputs(dev_addr):
     """
     dev = InputDevice(dev_addr)
     print(dev)
+    capabilities = dev.capabilities(verbose=True)
+    print('capabilities: %s' % capabilities)
     dev.grab()
     for event in dev.read_loop():
         if event.type == ecodes.EV_KEY:
@@ -524,7 +526,7 @@ def main():
     parser.add_argument("-e", "--exec", action="store_true", help="Run local executor service. Will execute commands from userspace.")
 
     parser.add_argument("-g", "--grab", type=str,
-                        help="Grab all events by defining keyboard, and show input codes. "
+                        help="Grab all events by defining keyboard, and show input codes. Also show device capabilities."
                              "Except C and Q keys, preserved for quit action. "
                              "Example: --grab /dev/input/eventXX")
     args = parser.parse_args()
