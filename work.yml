@@ -18,9 +18,10 @@ Logitech G413 keyboard:
     KEY_NUMLOCK:
         plugin: gnome
         command: lock
-    CTRL KEY_NUMLOCK:
-        plugin: gnome
-        command: suspend
+    KEY_LEFTCTRL KEY_NUMLOCK:
+        command: systemctl suspend
+    KEY_RIGHTCTRL KEY_NUMLOCK:
+        command: systemctl suspend
 
     KEY_KP6:
         plugin: gnome
