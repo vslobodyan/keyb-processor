@@ -352,13 +352,21 @@ def grab_and_show_inputs(dev_addr):
     """
     dev = InputDevice(dev_addr)
     print(dev)
+    print('Getting LED states:')
+    print(dev.leds(verbose=True))
+    print('Listing device capabilities:')
     capabilities = dev.capabilities(verbose=True)
-    print('capabilities: %s' % capabilities)
+    print(capabilities)
+    print()
+    print('Now press any key to see its code or Ctrl+Q / Ctrl+C to quit programm:')
     dev.grab()
     for event in dev.read_loop():
+        cur_event_data = categorize(event)
+        print(cur_event_data)
+        # print(event)
         if event.type == ecodes.EV_KEY:
             cur_event_data = categorize(event)
-            print(cur_event_data)
+            # print('cur_event_data: %s' % cur_event_data)
             if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
                 if cur_event_data.scancode in [ecodes.KEY_Q, ecodes.KEY_C]:
                     print('You press Q or C, and we quit now.')
@@ -526,7 +534,7 @@ def main():
     parser.add_argument("-e", "--exec", action="store_true", help="Run local executor service. Will execute commands from userspace.")
 
     parser.add_argument("-g", "--grab", type=str,
-                        help="Grab all events by defining keyboard, and show input codes. Also show device capabilities."
+                        help="Listing device capabilities. Grab all its events and show information like input codes, mouse moves etc."
                              "Except C and Q keys, preserved for quit action. "
                              "Example: --grab /dev/input/eventXX")
     args = parser.parse_args()
