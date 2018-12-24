@@ -1,8 +1,13 @@
 """
 Базовый класс плагина.
 Скелет для навешивания остальных функций.
+
+Было полезно:
+1. https://stackoverflow.com/questions/1854/python-what-os-am-i-running-on
 """
+
 import subprocess
+from sys import platform as _platform
 
 
 class Function:
@@ -46,9 +51,15 @@ class Plugin:
 
     def exec_detached(self, prog_exec):
         # Запускаем как отдельный независимый процесс, и не ждем завершения выполнения.
-        c = prog_exec+' &'
-        print('Exec detached: "%s"' % c)
-        subprocess.Popen(c, shell=True)
+        # Получаем информацию - на какой системе работаем
+        c = prog_exec
+        if _platform in ['win64', 'win32', 'windows', 'Windows']:
+            print('Exec detached: "%s"' % c)
+            subprocess.Popen(c, creationflags=subprocess.DETACHED_PROCESS)
+        else:
+            c = prog_exec + ' &'
+            print('Exec detached: "%s"' % c)
+            subprocess.Popen(c, shell=True)
 
     def __init__(self):
         self.functions = Functions()
