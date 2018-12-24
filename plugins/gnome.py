@@ -108,7 +108,9 @@ class Plugin(plugin.Plugin):
             else:
                 # Если нет - запускаем программу заново
                 print('Window not found. We will run program "%s" again.' % prog_exec)
-                subprocess.run(prog_exec)
+                # subprocess.run(prog_exec)
+                # Запускаем как отдельный независимый процесс, и не ждем завершения выполнения.
+                self.exec_detached(prog_exec)
 
     # def hibernate(self,  *args):
     #     print('Hibernate')

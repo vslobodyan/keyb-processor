@@ -2,6 +2,8 @@
 Базовый класс плагина.
 Скелет для навешивания остальных функций.
 """
+import subprocess
+
 
 class Function:
     name = ''
@@ -41,6 +43,12 @@ class Plugin:
     name = ""
     description = ""
     functions = None
+
+    def exec_detached(self, prog_exec):
+        # Запускаем как отдельный независимый процесс, и не ждем завершения выполнения.
+        c = prog_exec+' &'
+        print('Exec detached: "%s"' % c)
+        subprocess.Popen(c, shell=True)
 
     def __init__(self):
         self.functions = Functions()

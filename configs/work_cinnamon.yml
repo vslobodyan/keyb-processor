@@ -33,7 +33,7 @@ Logitech G413 keyboard:
 
   KEY_KP5:
     plugin: wmctrl
-    command: raise opera Opera
+    command: raise cinnamon-settings cinnamon-settings
 
   KEY_KP6:
     plugin: wmctrl
