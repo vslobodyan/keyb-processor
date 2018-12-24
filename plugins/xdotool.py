@@ -41,8 +41,9 @@ class Plugin(plugin.Plugin):
     #             subprocess.run(prog_exec)
 
     # def close(self,  *args):
+    # Убивает весь процесс напрочь. Не надо использовать.
     #     print('Close active window')
-    #     c = '''wmctrl -c :ACTIVE:'''.split()
+    #     c = '''xdotool getactivewindow windowkill'''.split()
     #     subprocess.run(c)
 
     def minimize(self,  *args):
