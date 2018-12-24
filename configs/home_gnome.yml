@@ -1,0 +1,44 @@
+#Any keyboard name:
+    # device: your device input
+    ## EXAMPLE OF SUBSECTION
+    ## This is CTRL+R for example
+    #
+    # KEY_LEFTCTRL KEY_R:
+    # inject_keys=KEY_RIGHTCTRL KEY_W
+    # transmit=False
+    # run_command=ls -la
+
+    # raise COMMAND WINDOW_NAME
+
+
+Logitech G710 keyboard:
+    # In section - any name of your device you like.
+    device: /dev/input/event21
+
+    KEY_KP5:
+        command: ls -la
+
+    KEY_KP0:
+        plugin: gnome
+        command: minimize
+
+    KEY_KPENTER:
+        plugin: gnome
+        command: close
+
+    KEY_KP6:
+        plugin: gnome
+        command: raise gedit Gedit
+
+    KEY_KPPLUS:
+        # In subsection - keys, must be handled
+        # And what we must do with it below.
+        inject_keys: KEY_RIGHTCTRL KEY_W
+
+
+Logitech G600 mouse:
+    # This is second mouse device, as keyboard
+    device: /dev/input/event5
+
+    KEY_RIGHTSHIFT KEY_F6:
+        inject_keys: KEY_R
