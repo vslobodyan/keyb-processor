@@ -4,7 +4,7 @@ Based on:
 
 1. https://askubuntu.com/questions/4876/can-i-minimize-a-window-from-the-command-line
 2. https://ubuntuforums.org/showthread.php?t=2390045
-
+3. https://stackoverflow.com/questions/606191/convert-bytes-to-a-string
 """
 
 import subprocess
@@ -33,12 +33,13 @@ class Plugin(plugin.Plugin):
             # Получаем список всех открытых окон
             c = "wmctrl -lx"
             stdoutdata = subprocess.check_output(c.split())
+            str_outdata = stdoutdata.decode()
             # Если есть - активируем его
-            print('stdoutdata: %s' % stdoutdata)
+            print('str_outdata: %s' % str_outdata)
 
-            if window_name in stdoutdata:
+            if window_name in str_outdata:
                 # Окно уже запущено. Надо на него переключиться
-                print('We found win')
+                print('We found win "%s"' % window_name)
                 # print('We have LG output on search "%s" window: %s' % (window_name,stdoutdata))
                 c = "wmctrl -x -a "+window_name
                 subprocess.run(c.split())
