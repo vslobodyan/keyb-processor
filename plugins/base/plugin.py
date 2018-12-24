@@ -33,6 +33,8 @@ class Functions:
             print('\t%s - %s' % (key, self.available[key].description))
 
         # print()
+    def __init__(self):
+        self.available = {}
 
 
 class Plugin:

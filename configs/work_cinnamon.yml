@@ -12,7 +12,7 @@ Logitech G413 keyboard:
     command: systemctl suspend
 
   KEY_KP6:
-    plugin: gnome
+    plugin: wmctrl
     command: raise opera Opera
 
   KEY_KPPLUS:
@@ -21,11 +21,11 @@ Logitech G413 keyboard:
     inject_keys: KEY_RIGHTCTRL KEY_W
 
   KEY_KP0:
-    plugin: gnome
+    plugin: xdotool
     command: minimize
 
   KEY_KPENTER:
-    plugin: gnome
+    plugin: wmctrl
     command: close
 
   KEY_KPMINUS:
@@ -38,7 +38,7 @@ Logitech G602 mouse:
 
   # G4
   KEY_LEFTSHIFT KEY_F4:
-    plugin: gnome
+    plugin: xdotool
     command: minimize
   # G7
   ALT KEY_LEFTMETA KEY_S:
@@ -47,7 +47,7 @@ Logitech G602 mouse:
 
   # G5
   KEY_LEFTSHIFT KEY_F5:
-    plugin: gnome
+    plugin: wmctrl
     command: raise opera Opera
   # G8
   KEY_LEFTSHIFT KEY_F8:
@@ -56,11 +56,11 @@ Logitech G602 mouse:
 
   # G6
   KEY_LEFTSHIFT KEY_F6:
-    plugin: gnome
+    plugin: wmctrl
     command: raise telegram-desktop TelegramDesktop
   # G9
   KEY_LEFTSHIFT KEY_F9:
-    plugin: gnome
+    plugin: wmctrl
     command: raise skypeforlinux Skype
 
 
@@ -90,11 +90,11 @@ Razer Nostromo:
     inject_keys: KEY_RIGHTCTRL KEY_W
   # 02
   KEY_Q:
-    plugin: gnome
+    plugin: wmctrl
     command: raise telegram-desktop TelegramDesktop
   # 03
   KEY_W:
-    plugin: gnome
+    plugin: wmctrl
     command: raise opera Opera
   # 04
   KEY_E:
@@ -105,11 +105,11 @@ Razer Nostromo:
 
   # 06
   KEY_CAPSLOCK:
-    plugin: gnome
+    plugin: wmctrl
     command: close
   # 07
   KEY_A:
-    plugin: gnome
+    plugin: wmctrl
     command: raise skypeforlinux Skype
   # 08
   KEY_S:
@@ -123,20 +123,20 @@ Razer Nostromo:
 
   # 11
   KEY_LEFTSHIFT:
-    plugin: gnome
+    plugin: xdotool
     command: minimize
 
   # 12
   KEY_Z:
-    plugin: gnome
+    plugin: wmctrl
     command: raise relanotes Relanotes
   # 13
   KEY_X:
-    plugin: gnome
+    plugin: wmctrl
     command: raise gnome-terminal Gnome-terminal
   # 14
   KEY_C:
-    plugin: gnome
+    plugin: wmctrl
     command: raise nautilus Nautilus
 
   # 15
