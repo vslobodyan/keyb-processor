@@ -343,7 +343,8 @@ def show_dev_list():
     """Выводим список доступных устройств."""
     devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
     for device in devices:
-        print(device.path, device.name, device.phys)
+        print(' %s' % device)
+        # print(device.path, device.name, device.phys)
 
 
 def grab_and_show_inputs(dev_addr):
@@ -526,7 +527,7 @@ def main():
 
     parser.add_argument("-c", "--config", type=str, help="Load config file")
 
-    parser.add_argument("-l", "--list", action="store_true", help="Show list of available devices.")
+    parser.add_argument("-l", "--list", action="store_true", help="Show list of available devices:")
 
     parser.add_argument("-p", "--plugins", action="store_true", help="List of plugins and their available functions.")
 

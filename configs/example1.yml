@@ -1,0 +1,11 @@
+# Be careful with indent in beginning of line!
+#
+# One KEY defining block limited to 1024 bytes
+#
+# In section - any name of your device you like.
+## EXAMPLE OF SUBSECTION
+## This is CTRL+R for example
+#
+# KEY_LEFTCTRL KEY_R:
+# inject_keys=KEY_RIGHTCTRL KEY_W
+# run_command=ls -la
