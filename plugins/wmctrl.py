@@ -42,6 +42,7 @@ class Plugin(plugin.Plugin):
                 print('We found win "%s"' % window_name)
                 # print('We have LG output on search "%s" window: %s' % (window_name,stdoutdata))
                 c = "wmctrl -x -a "+window_name
+                print('wmctrl command: %s' % c)
                 subprocess.run(c.split())
             else:
                 # Если нет - запускаем программу заново

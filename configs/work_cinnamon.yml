@@ -1,6 +1,9 @@
 Logitech G413 keyboard:
   device: /dev/input/event4
 
+  KEY_SCROLLLOCK:
+    command: flameshot gui
+
   KEY_PAUSE:
     command: cinnamon-screensaver-command -l
     # to lock and disable moinitor:
@@ -21,12 +24,12 @@ Logitech G413 keyboard:
 
   KEY_KP9:
     plugin: wmctrl
-    command: raise pycharm Pycharm
+    command: raise pycharm jetbrains-pycharm
 
 
   KEY_KP4:
     plugin: wmctrl
-    command: raise telegram-desktop TelegramDesktop
+    command: raise skype Skype
 
   KEY_KP5:
     plugin: wmctrl
@@ -54,7 +57,7 @@ Logitech G413 keyboard:
 
   KEY_KP3:
     plugin: wmctrl
-    command: raise nemo Nemo
+    command: raise nemo nemo.Nemo
 
 
   KEY_KPDOT:
