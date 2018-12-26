@@ -9,9 +9,9 @@ Logitech G413 keyboard:
     # to lock and disable moinitor:
     # cinnamon-screensaver-command -l; xset dpms force off;
   KEY_LEFTCTRL KEY_PAUSE:
-    command: systemctl suspend
+    command: systemctl suspend -i
   KEY_RIGHTCTRL KEY_PAUSE:
-    command: systemctl suspend
+    command: systemctl suspend -i
 
 
   KEY_KP7:

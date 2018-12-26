@@ -3,6 +3,8 @@
 Based on:
 
 1. https://askubuntu.com/questions/4876/can-i-minimize-a-window-from-the-command-line
+2. https://unix.stackexchange.com/questions/254820/xdotool-how-to-search-for-window-by-title-and-class-with-different-patterns-si
+3. https://ubuntuincident.wordpress.com/2013/01/10/find-window-by-its-name-and-activate-it-bring-to-foreground/
 
 """
 
@@ -16,6 +18,11 @@ class Plugin(plugin.Plugin):
     description = 'Useful window management commands on Xorg using the xdotool.'
 
     # def raise_or_run(self,  *args):
+
+
+    # xdotool search --onlyvisible --class 'opera'
+    # xdotool windowactivate 37748739
+
     #     print('Raise or run: %s' % args)
     #     # Разбираем аргументы
     #     # print('len(locals()=%s' % len(locals()))
@@ -40,11 +47,11 @@ class Plugin(plugin.Plugin):
     #             print('Window not found. We will run program "%s" again.' % prog_exec)
     #             subprocess.run(prog_exec)
 
-    # def close(self,  *args):
+    def close(self,  *args):
     # Убивает весь процесс напрочь. Не надо использовать.
-    #     print('Close active window')
-    #     c = '''xdotool getactivewindow windowkill'''.split()
-    #     subprocess.run(c)
+        print('Close active window')
+        c = '''xdotool getactivewindow windowclose'''.split()
+        subprocess.run(c)
 
     def minimize(self,  *args):
         print('Minimize active window')
