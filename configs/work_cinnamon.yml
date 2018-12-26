@@ -20,7 +20,8 @@ Logitech G413 keyboard:
 
   KEY_KP8:
     plugin: wmctrl
-    command: raise opera Opera
+    command: raise firefox Navigator.Firefox
+    #command: raise opera Opera
 
   KEY_KP9:
     plugin: wmctrl
@@ -106,7 +107,8 @@ Logitech G602 mouse:
   # G5
   KEY_LEFTSHIFT KEY_F5:
     plugin: wmctrl
-    command: raise opera Opera
+    command: raise firefox Navigator.Firefox
+    #command: raise opera Opera
   # G8
   KEY_LEFTSHIFT KEY_F8:
     inject_keys: KEY_RIGHTCTRL KEY_W
@@ -153,7 +155,8 @@ Razer Nostromo:
   # 03
   KEY_W:
     plugin: wmctrl
-    command: raise opera Opera
+    command: raise firefox Navigator.Firefox
+    #command: raise opera Opera
   # 04
   KEY_E:
     command: notify-send Button-04
