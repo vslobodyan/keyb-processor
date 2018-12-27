@@ -20,7 +20,8 @@ Logitech G413 keyboard:
 
   KEY_KP8:
     plugin: wmctrl
-    command: raise firefox Navigator.Firefox
+    command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    #command: raise firefox Navigator.Firefox
     #command: raise opera Opera
 
   KEY_KP9:
@@ -107,7 +108,8 @@ Logitech G602 mouse:
   # G5
   KEY_LEFTSHIFT KEY_F5:
     plugin: wmctrl
-    command: raise firefox Navigator.Firefox
+    command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    #command: raise firefox Navigator.Firefox
     #command: raise opera Opera
   # G8
   KEY_LEFTSHIFT KEY_F8:
@@ -155,7 +157,8 @@ Razer Nostromo:
   # 03
   KEY_W:
     plugin: wmctrl
-    command: raise firefox Navigator.Firefox
+    command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    #command: raise firefox Navigator.Firefox
     #command: raise opera Opera
   # 04
   KEY_E:

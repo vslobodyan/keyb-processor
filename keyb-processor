@@ -17,6 +17,8 @@ PYTHON="python3"
 SUDO="sudo"
 SCRIPT_NAME="processor.py"
 
+echo "keyb-processor (keyboard and mouse events processor)"
+
 case "$1" in
     -i|--install)
     echo "Install: we will make link to this script at \"$LINK_PATH\""
