@@ -57,7 +57,7 @@ class Plugin:
             print('Exec detached: "%s"' % c)
             subprocess.Popen(c, creationflags=subprocess.DETACHED_PROCESS)
         else:
-            c = prog_exec + ' &'
+            c = 'nohup %s &' % prog_exec
             print('Exec detached: "%s"' % c)
             subprocess.Popen(c, shell=True)
 
