@@ -39,11 +39,20 @@ class Plugin(plugin.Plugin):
 
             if window_name in str_outdata:
                 # Окно уже запущено. Надо на него переключиться
-                print('We found win "%s"' % window_name)
+                print('We found win "%s and we raise all windows with same name now."' % window_name)
                 # print('We have LG output on search "%s" window: %s' % (window_name,stdoutdata))
-                c = "wmctrl -x -a "+window_name
-                print('wmctrl command: %s' % c)
-                subprocess.run(c.split())
+                for line in str_outdata.splitlines():
+                    if window_name in line:
+                        print('Line found: %s' % line)
+                        win_id = line.split()[0]
+                        print('win_id: %s' % win_id)
+                        c="wmctrl -ia %s" % win_id
+                        print('wmctrl command: %s' % c)
+                        subprocess.run(c.split())
+
+                # c = "wmctrl -x -a "+window_name
+                # print('wmctrl command: %s' % c)
+                # subprocess.run(c.split())
             else:
                 # Если нет - запускаем программу заново
                 print('Window not found. We will run program "%s" again.' % prog_exec)
