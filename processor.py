@@ -257,6 +257,8 @@ class keyboard:
     """Одиночный класс клавиатуры с конфигом."""
     name = ''
     address = ''
+    dev_name = ''
+    dev_type = ''
     transmit_all = True
     dev = None
     processed_events = None
@@ -274,9 +276,11 @@ class keyboard:
         #       self.processed_events.processed_events_setup)
         print()
 
-    def __init__(self, name=name, address=address, transmit_all=True):
+    def __init__(self, name=name, address=address, dev_name=dev_name, dev_type=dev_type,transmit_all=True):
         self.name = name
         self.address = address
+        self.dev_name = dev_name
+        self.dev_type = dev_type
         self.transmit_all = transmit_all
         self.processed_events = _processed_events()
         self.dev = InputDevice(address)
@@ -290,6 +294,24 @@ def load_config(filename):
     """Загрузка конфига и создание нужных классов для захватываемых
     устройств.
     """
+
+    def find_and_create_new_keyboard(keyboard_name, dev_name, dev_type):
+        # Поиск нужного устройства
+        device = ''
+
+        devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+        for dev in devices:
+            if keyboard_name == dev.name:
+                # Нашли устройство с нужным именем
+                capabilities = dev.capabilities(verbose=True)
+                if dev_type in get_dev_type(capabilities):
+                    # Нашли нужное устройство с именем и нужным типом
+                    device = dev.fn
+                    print('Device was found as %s' % device)
+                    break
+
+        return keyboard(keyboard_name, device, dev_name, dev_type)
+
     keyboards = [] # Начальная очистка списка клавиатур
     with open(filename, 'r') as ymlfile:
         cfg = yaml.load(ymlfile)
@@ -297,17 +319,32 @@ def load_config(filename):
     for section in cfg:
         # print(section)
         keyboard_name = section
+        dev_name = ''
+        dev_type = ''
+        keyboard_was_created = False
+
         for key in cfg[section]:
             value = cfg[section][key]
             # print('# key:', key, ', # value:',value)
 
             if key == 'device':
-                device = value
+                pass
+                # device = value
                 # We has name and device. Now initialize new
                 # keyboard class:
                 # new_keyboard.clear()
-                new_keyboard = keyboard(keyboard_name, device)
+                # new_keyboard = keyboard(keyboard_name, device)
+                pass
+            elif key == 'name':
+                dev_name = value
+            elif key == 'capabilities':
+                dev_type = value
             else:
+                if not keyboard_was_created:
+                    # Создаем новую клавиатуру после того, как загружены все необходимые параметры
+                    new_keyboard = find_and_create_new_keyboard(keyboard_name, dev_name, dev_type)
+                    keyboard_was_created = True
+
                 # Here is new keyboard event for handle
                 pressed_keys = key
                 # print('Found pressed_keys:', pressed_keys)
@@ -339,12 +376,60 @@ def load_config(filename):
     return keyboards
 
 
+def get_dev_type(capabilities):
+    """Определяем, к какому типу вероятно относится данное устройство"""
+
+    class res:
+        mouse = False
+        keyboard = False
+
+    ev_key=('EV_KEY', 1)
+    ev_rel=('EV_REL', 2)
+    key_esc=('KEY_ESC', 1)
+    res.mouse = False
+    res.keyboard = False
+
+    if ev_rel in capabilities:
+        # 'EV_REL' --> mouse
+        res.mouse = True
+        # print('  (mouse)')
+        # print('  capabilities look like MOUSE')
+    if ev_key in capabilities and key_esc in capabilities[ev_key]:
+        res.keyboard = True
+        # print('keys:', capabilities[ev_key])
+        # and 'KEY_ESC' in capabilities[('EV_KEY', 1)]
+        #   'BTN_MOUSE' / 'BTN_LEFT' --> mouse
+        #   'KEY_ESC' --> keyboard
+        # print('  (keyboard)')
+        # print('  capabilities look like KEYBOARD')
+    return res
+
+
 def show_dev_list():
     """Выводим список доступных устройств."""
     devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
     for device in devices:
-        print(' %s' % device)
+        # print(' %s' % device)
+        # Дальше получаем его capabilities
+        capabilities = device.capabilities(verbose=True)
+        # print('capabilities: %s' % capabilities)
+        # for key in capabilities:
+        #     print('  key', key)
+            # for subkey in capabilities[key]:
+            #     print('    subkey', subkey)
+        dev_type = get_dev_type(capabilities)
+        _type = []
+        if dev_type.keyboard:
+            _type.append('keyboard')
+        if dev_type.mouse:
+            _type.append('mouse')
+        if not _type:
+            str_type=''
+        else:
+            str_type='(%s)' % ', '.join(_type)
         # print(device.path, device.name, device.phys)
+        print(device.fn, '"%s" %s' % (device.name, str_type))
+
 
 
 def grab_and_show_inputs(dev_addr):

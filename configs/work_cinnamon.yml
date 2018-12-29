@@ -1,5 +1,7 @@
 Logitech G413 keyboard:
-  device: /dev/input/event4
+#  device: /dev/input/event4
+  name: Logitech G413 Carbon Mechanical Gaming Keyboard
+  capabilities: keyboard
 
   KEY_SCROLLLOCK:
     command: flameshot gui
@@ -97,7 +99,9 @@ Logitech G413 keyboard:
 
 
 Logitech G602 mouse:
-  device: /dev/input/event9
+#  device: /dev/input/event9
+  name: Logitech USB Receiver
+  capabilities: keyboard
 
   # G4
   KEY_LEFTSHIFT KEY_F4:
@@ -146,7 +150,9 @@ Logitech G602 mouse:
 
 
 Razer Nostromo:
-  device: /dev/input/event6
+#  device: /dev/input/event6
+  name: Razer Razer Nostromo
+  capabilities: keyboard
 
   KEY_RIGHTSHIFT KEY_F6:
     inject_keys: KEY_R
