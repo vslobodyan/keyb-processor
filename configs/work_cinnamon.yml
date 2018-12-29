@@ -115,7 +115,9 @@ Logitech G602 mouse:
   # G5
   KEY_LEFTSHIFT KEY_F5:
     plugin: wmctrl
-    command: raise chromium-browser chromium-browser.Chromium-browser
+    # Special, to raise all Chromium-browser window
+    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     #command: raise firefox Navigator.Firefox
     #command: raise opera Opera
@@ -167,7 +169,9 @@ Razer Nostromo:
   # 03
   KEY_W:
     plugin: wmctrl
-    command: raise chromium-browser chromium-browser.Chromium-browser
+    # Special, to raise all Chromium-browser window
+    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     #command: raise firefox Navigator.Firefox
     #command: raise opera Opera
