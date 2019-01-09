@@ -1,5 +1,7 @@
 Logitech G710 keyboard:
   device: /dev/input/event9
+  #name:
+  #capabilities:
 
   KEY_SCROLLLOCK:
     command: flameshot gui
@@ -20,7 +22,10 @@ Logitech G710 keyboard:
 
   KEY_KP8:
     plugin: wmctrl
-    command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    # Special, to raise all Chromium-browser window
+    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
+    #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     #command: raise firefox Navigator.Firefox
     #command: raise opera Opera
 
@@ -90,60 +95,158 @@ Logitech G710 keyboard:
     command: close
 
   KEY_KPMINUS:
-    inject_keys: KEY_RIGHTMETA KEY_S
-
+    #inject_keys: KEY_RIGHTMETA KEY_S
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
 
 
 Logitech G600 mouse:
   device: /dev/input/event8
 
+  # G15
+  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F5:
+    plugin: wmctrl
+    command: raise telegram-desktop TelegramDesktop
+
+  # G16
+  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F6:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    command: raise chromium-browser Chromium-browser
+
+  # G17
+  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F7:
+    plugin: wmctrl
+    command: raise pycharm jetbrains-pycharm
+
+
+
+  # G18
+  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F8:
+    plugin: wmctrl
+    command: raise skype Skype
+  KEY_F8 KEY_LEFTSHIFT:
+    plugin: wmctrl
+    command: raise relanotes Relanotes
+
+
+  # G19
+  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F9:
+    plugin: wmctrl
+    command: raise gnome-terminal Gnome-terminal
+
+  # G20
+  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F10:
+    plugin: wmctrl
+    command: raise nemo nemo.Nemo
+
+
+  KEY_LEFTMETA KEY_S:
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+
   KEY_LEFTMETA KEY_H:
     plugin: xdotool
     command: minimize
-
-  # G4
-  KEY_LEFTSHIFT KEY_F4:
-    plugin: xdotool
-    command: minimize
-  # G7
-  ALT KEY_LEFTMETA KEY_S:
-    command: notify-send Alt+Meta+S
+    
 
 
-  # G5
-  KEY_LEFTSHIFT KEY_F5:
+
+Notebook Keyboard:
+  device: /dev/input/event3
+  name: AT Translated Set 2 keyboard
+  capabilities: keyboard
+
+
+  KEY_SCROLLLOCK:
+    command: flameshot gui
+
+  KEY_PAUSE:
+    command: cinnamon-screensaver-command -l
+    # to lock and disable moinitor:
+    # cinnamon-screensaver-command -l; xset dpms force off;
+  KEY_LEFTCTRL KEY_PAUSE:
+    command: systemctl suspend -i
+  KEY_RIGHTCTRL KEY_PAUSE:
+    command: systemctl suspend -i
+
+
+  KEY_KP7:
     plugin: wmctrl
-    command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    command: raise telegram-desktop TelegramDesktop
+
+  KEY_KP8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
+    #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     #command: raise firefox Navigator.Firefox
     #command: raise opera Opera
-  # G8
-  KEY_LEFTSHIFT KEY_F8:
+
+  KEY_KP9:
+    plugin: wmctrl
+    command: raise pycharm jetbrains-pycharm
+
+
+  KEY_KP4:
+    plugin: wmctrl
+    command: raise skype Skype
+
+  KEY_KP5:
+    plugin: wmctrl
+    command: raise cinnamon-settings cinnamon-settings
+
+  KEY_KP6:
+    plugin: wmctrl
+    command: raise okular Okular
+
+
+
+  KEY_KP1:
+    plugin: wmctrl
+    command: raise relanotes Relanotes
+  KEY_LEFTCTRL KEY_KP1:
+    plugin: wmctrl
+    command: raise relacalc Relacalc
+  KEY_RIGHTCTRL KEY_KP1:
+    plugin: wmctrl
+    command: raise relacalc Relacalc
+
+  KEY_KP2:
+    plugin: wmctrl
+    command: raise gnome-terminal Gnome-terminal
+
+  KEY_KP3:
+    plugin: wmctrl
+    command: raise nemo nemo.Nemo
+
+
+  KEY_KPDOT:
+    plugin: wmctrl
+    command: raise xed Xed
+
+
+  KEY_KPSLASH:
+    command: amixer -c 1 sset Master 5%-
+
+  KEY_KPASTERISK:
+    command: amixer -c 1 sset Master 5%+
+
+
+
+  KEY_KPPLUS:
+    # In subsection - keys, must be handled
+    # And what we must do with it below.
     inject_keys: KEY_RIGHTCTRL KEY_W
 
 
-  # G6
-  KEY_LEFTSHIFT KEY_F6:
+  KEY_KP0:
+    plugin: xdotool
+    command: minimize
+
+  KEY_KPENTER:
     plugin: wmctrl
-    command: raise telegram-desktop TelegramDesktop
-  # G9
-  KEY_LEFTSHIFT KEY_F9:
-    plugin: wmctrl
-    command: raise skypeforlinux Skype
+    command: close
 
-
-  # G10
-  ALT KEY_PAGEUP:
-    inject_keys: KEY_RIGHTALT KEY_LEFT
-  SHIFT KEY_PAGEUP:
-    # command: notify-send Shift-PageUp
-    inject_keys: KEY_HOME
-  # G11
-  ALT KEY_PAGEDOWN:
-    inject_keys: KEY_RIGHTALT KEY_RIGHT
-  SHIFT KEY_PAGEDOWN:
-    # command: notify-send Shift-PageUp
-    inject_keys: KEY_END
-
-
-
-
+  KEY_KPMINUS:
+    #inject_keys: KEY_RIGHTMETA KEY_S
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN

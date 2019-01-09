@@ -23,11 +23,16 @@ Logitech G413 keyboard:
   KEY_KP8:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
-    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
-    #command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.Firefox
     #command: raise opera Opera
+  KEY_LEFTCTRL KEY_KP8:
+    plugin: wmctrl
+    # Raise only Firefox with youtube player
+    command: raise echo Navigator.Firefox https://www.youtube.com
+    # YouTube - Mozilla Firefox
 
   KEY_KP9:
     plugin: wmctrl
@@ -94,7 +99,8 @@ Logitech G413 keyboard:
     command: close
 
   KEY_KPMINUS:
-    inject_keys: KEY_RIGHTMETA KEY_S
+    #inject_keys: KEY_RIGHTMETA KEY_S
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
 
 
 
@@ -108,6 +114,8 @@ Logitech G602 mouse:
     plugin: xdotool
     command: minimize
   # G7
+  KEY_LEFTMETA KEY_S:
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
   ALT KEY_LEFTMETA KEY_S:
     command: notify-send Alt+Meta+S
 
@@ -116,10 +124,10 @@ Logitech G602 mouse:
   KEY_LEFTSHIFT KEY_F5:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
-    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
-    #command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.Firefox
     #command: raise opera Opera
   # G8
   KEY_LEFTSHIFT KEY_F8:
@@ -170,10 +178,10 @@ Razer Nostromo:
   KEY_W:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
-    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
-    #command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.Firefox
     #command: raise opera Opera
   # 04
   KEY_E:
