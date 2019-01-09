@@ -186,8 +186,7 @@ Razer Nostromo:
     inject_keys: KEY_RIGHTCTRL KEY_W
   # 02
   KEY_Q:
-    plugin: wmctrl
-    command: raise telegram-desktop TelegramDesktop
+    command: notify-send Button-02
   # 03
   KEY_W:
     plugin: wmctrl
@@ -199,7 +198,10 @@ Razer Nostromo:
     #command: raise opera Opera
   # 04
   KEY_E:
-    command: notify-send Button-04
+    #command: notify-send Button-04
+    plugin: wmctrl
+    command: raise telegram-desktop TelegramDesktop
+
   # 05
   KEY_R:
     inject_keys: KEY_PAGEUP
@@ -210,14 +212,18 @@ Razer Nostromo:
     command: close
   # 07
   KEY_A:
-    plugin: wmctrl
-    command: raise skypeforlinux Skype
+    #plugin: wmctrl
+    #command: raise skypeforlinux Skype
+    command: notify-send Button-07
   # 08
   KEY_S:
     command: notify-send Button-08
   # 09
   KEY_D:
-    command: notify-send Button-09
+    #command: notify-send Button-09
+    plugin: wmctrl
+    command: raise skypeforlinux Skype
+
   # 10
   KEY_F:
     inject_keys: KEY_PAGEDOWN
@@ -230,7 +236,7 @@ Razer Nostromo:
   # 12
   KEY_Z:
     plugin: wmctrl
-    command: raise relanotes Relanotes
+    command: raise nemo nemo.Nemo
   # 13
   KEY_X:
     plugin: wmctrl
@@ -238,7 +244,7 @@ Razer Nostromo:
   # 14
   KEY_C:
     plugin: wmctrl
-    command: raise nemo nemo.Nemo
+    command: raise relanotes Relanotes
 
   # 15
   KEY_SPACE:

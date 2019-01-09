@@ -519,6 +519,7 @@ def grab_and_show_inputs(dev_addr):
 
 def process_one_event_and_exit(keyboard, ui, event):
     event_handled = False
+    # single_meta_press = False
     if event.type == ecodes.EV_KEY:
         cur_event_data = categorize(event)
         # cur_active_keys = dev.active_keys()
@@ -529,7 +530,8 @@ def process_one_event_and_exit(keyboard, ui, event):
         print('Событие: %s (активные клавиши: %s)' % (cur_event_data.keycode, verbose_active_keys))
 
         # Глотаем нажатия META-клавиши до нажатия другой значащей клавиши
-        # if 'META' in cur_event_data.keycode and not verbose_active_keys:
+        # if 'META' in cur_event_data.keycode and not verbose_active_keys and cur_event_data.keystate in [1, 2]:
+        #     # single_meta_press = True
         #     print('Это просто нажатие META-клавиши. Его можно проглотить.')
 
         # Проверяем, не избыточное ли отжатие модификатора это
