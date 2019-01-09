@@ -28,7 +28,7 @@ class Plugin(plugin.Plugin):
             print('prog_exec=%s' % prog_exec)
             window_name = args[0][1]
             window_title = " ".join(args[0][2:])
-            print('window_name=%s, window_title=%s' % (window_name,window_title))
+            print('window_name=%s, window_title=%s' % (window_name, window_title))
             # Проверяем, есть-ли уже такое окно
 
             # Получаем список всех открытых окон
@@ -41,11 +41,23 @@ class Plugin(plugin.Plugin):
             if window_name in str_outdata:
                 # Окно уже запущено. Надо на него переключиться
                 if raise_all:
-                    print('We found win "%s and we raise all windows with same name now."' % window_name)
+                    print('We found win(s) "%s" and we raise all windows with same name now.' % window_name)
                     # print('We have LG output on search "%s" window: %s' % (window_name,stdoutdata))
                     for line in str_outdata.splitlines():
-                        if window_name in line:
+                        line_columns = line.split()
+                        # print('line_columns=%s' % line_columns)
+                        line_wmclass = line_columns[2]
+                        line_wmtitle = " ".join(line_columns[4:])
+                        # print('line_wmclass="%s", line_wmtitle="%s"' % (line_wmclass,line_wmtitle))
+                        if window_name in line_wmclass:
                             print('Line found: %s' % line)
+                            if window_title:
+                                print('Searching title "%s" in "%s"' % (window_title, line_wmtitle))
+                                if window_title in line_wmtitle:
+                                    print(' Title was found. Raise this window.')
+                                else:
+                                    print(' Win title not matching. Continue searching..')
+                                    continue
                             win_id = line.split()[0]
                             print('win_id: %s' % win_id)
                             c="wmctrl -ia %s" % win_id
@@ -57,7 +69,7 @@ class Plugin(plugin.Plugin):
                         # c = "wmctrl -x -a " + window_name
                         c = 'wmctrl -a %s -r %s' % (window_name, window_title)
                     else:
-                        print('We found win "%s and we raise first window with same name now."' % window_name)
+                        print('We found win "%s" and we raise first window with same name now.' % window_name)
                         c = "wmctrl -x -a "+window_name
                     print('wmctrl command: %s' % c)
                     subprocess.run(c.split())
