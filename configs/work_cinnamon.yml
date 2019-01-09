@@ -3,6 +3,10 @@ Logitech G413 keyboard:
   name: Logitech G413 Carbon Mechanical Gaming Keyboard
   capabilities: keyboard
 
+  KEY_LEFTMETA KEY_S:
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+
+
   KEY_SCROLLLOCK:
     command: flameshot gui
 
@@ -51,6 +55,13 @@ Logitech G413 keyboard:
   KEY_KP6:
     plugin: wmctrl
     command: raise okular Okular
+  KEY_LEFTCTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+  KEY_RIGHTCTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+
 
 
 
