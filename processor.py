@@ -526,7 +526,11 @@ def process_one_event_and_exit(keyboard, ui, event):
         active_keys = keyboard.dev.active_keys()
         verbose_active_keys = keyboard.dev.active_keys(verbose=True)
         print()
-        print('Событие: %s' % cur_event_data.keycode)
+        print('Событие: %s (активные клавиши: %s)' % (cur_event_data.keycode, verbose_active_keys))
+
+        # Глотаем нажатия META-клавиши до нажатия другой значащей клавиши
+        # if 'META' in cur_event_data.keycode and not verbose_active_keys:
+        #     print('Это просто нажатие META-клавиши. Его можно проглотить.')
 
         # Проверяем, не избыточное ли отжатие модификатора это
         if cur_event_data.scancode in active_modifiers._all and cur_event_data.keystate == 0:
