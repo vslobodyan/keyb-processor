@@ -4,8 +4,9 @@ Logitech G413 keyboard:
   capabilities: keyboard
 
   KEY_LEFTMETA KEY_S:
-    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
-
+    #inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+    plugin: wmctrl
+    command: raise nemo nemo.Nemo
 
   KEY_SCROLLLOCK:
     command: flameshot gui
@@ -236,7 +237,7 @@ Razer Nostromo:
   # 14
   KEY_C:
     plugin: wmctrl
-    command: raise nautilus Nautilus
+    command: raise nemo nemo.Nemo
 
   # 15
   KEY_SPACE:

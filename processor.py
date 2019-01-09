@@ -104,14 +104,14 @@ class process():
     def keyb_event_inject(grabbed_event_strkeys, keyb_inputs, ui):
         print('We will inject keyb codes now: %s' % keyb_inputs)
         # delay = 5/10000
-        print('Before this we need UP keys for this keyboard: %s' % grabbed_event_strkeys)
-        for one_key in grabbed_event_strkeys.split():
-            key = evdev.ecodes.ecodes[one_key]
-            ui.write(evdev.ecodes.EV_KEY, key, 0)
+        # print('Before this we need UP keys for this keyboard: %s' % grabbed_event_strkeys)
+        # for one_key in grabbed_event_strkeys.split():
+        #     key = evdev.ecodes.ecodes[one_key]
+        #     ui.write(evdev.ecodes.EV_KEY, key, 0)
             # time.sleep(delay)
 
         if active_modifiers.pressed:
-            print('.. and UP keys for global modifiers: %s' % active_modifiers.pressed)
+            print('Before this we need UP keys for global modifiers: %s' % active_modifiers.pressed)
             for one_key_code in active_modifiers.pressed:
                 # state = active_modifiers.pressed[one_key_code]
                 ui.write(evdev.ecodes.EV_KEY, one_key_code, 0)
