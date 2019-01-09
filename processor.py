@@ -115,6 +115,8 @@ class process():
             for one_key_code in active_modifiers.pressed:
                 # state = active_modifiers.pressed[one_key_code]
                 ui.write(evdev.ecodes.EV_KEY, one_key_code, 0)
+                # Обновляем в статусе глобальных модификаторов, что данный модификатор больше не нажат
+                active_modifiers.find_mods_and_change_state(one_key_code, False)
                 # time.sleep(delay)
 
         # Press
@@ -123,8 +125,8 @@ class process():
             key = evdev.ecodes.ecodes[one_key_code]
             ui.write(evdev.ecodes.EV_KEY, key, 1)
             # time.sleep(delay)
-
         # ui.syn()
+
         # Release
         for one_key_code in keyb_inputs:
             # key = evdev.ecodes.ecodes['KEY_' + one_key_code.upper()]
@@ -505,12 +507,28 @@ def process_one_event_and_exit(keyboard, ui, event):
         active_keys = keyboard.dev.active_keys()
         verbose_active_keys = keyboard.dev.active_keys(verbose=True)
 
-        # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
-        # print('active_modifiers._all=%s' % active_modifiers._all)
-        # Проверяем - не модификатор ли нажат
-        if cur_event_data.scancode in active_modifiers._all:
-            # print('It\'s modifier key: %s' % cur_event_data.keycode)
-            active_modifiers.update(cur_event_data)
+
+        # Проверяем, не избыточное ли отжатие модификатора это
+        if cur_event_data.scancode in active_modifiers._all and cur_event_data.keystate == 0:
+            unreleased_mod = False
+            all_active_mods = active_modifiers.get()
+            print('all_active_mods: %s' % all_active_mods)
+            print('cur_event_data.scancode: %s' % cur_event_data.scancode)
+            print('cur_event_data.keycode: %s' % cur_event_data.keycode)
+            for active_mod in all_active_mods:
+                if active_mod in cur_event_data.keycode:
+                    unreleased_mod = True
+            if not unreleased_mod:
+                print('Нашли избыточное отжатие модификатора.')
+                event_handled = True
+        else:
+
+            # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
+            # print('active_modifiers._all=%s' % active_modifiers._all)
+            # Проверяем - не модификатор ли нажат
+            if cur_event_data.scancode in active_modifiers._all:
+                # print('It\'s modifier key: %s' % cur_event_data.keycode)
+                active_modifiers.update(cur_event_data)
 
         # Check for double event modifier and sign key combination, like from self-programming Logitech devices: G602, G600 etc.
         double_event_mod_and_sign_keys = False
@@ -524,8 +542,11 @@ def process_one_event_and_exit(keyboard, ui, event):
                     if one_key_rec[1] not in active_modifiers._all:
                         double_event_mod_and_sign_keys = True
 
+
                 if double_event_mod_and_sign_keys:
-                    print('Was pressed modifier, but in combination with sign key. Like double action from programming device. Ignore.')
+                    print('Was pressed modifier, but in combination with sign key. Like double action from programming device. Drop it.')
+                    event_handled = True
+
             # Если нажат модификатор и идет другое событие с утройства - игнорируем его
 
             # Дальше обрабатываем только нажатия
