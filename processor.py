@@ -75,8 +75,8 @@ class Active_modifiers:
             # Клавиша отпущена
             self.find_mods_and_change_state(cur_event_data.scancode, state=False)
             self.pressed.pop(cur_event_data.scancode, None)
-        # print('modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
-        # print('pressed: %s' % self.pressed)
+        print('(after update) modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
+        print('(after update) pressed: %s' % self.pressed)
 
 
 async def tcp_echo_client(message, loop):
@@ -102,21 +102,40 @@ class process():
     #     # ui.syn()
 
     def keyb_event_inject(grabbed_event_strkeys, keyb_inputs, ui):
+
+        class My_event():
+            keystate = 0
+            scancode = 0
+
+            def __init__(self, keystate=0, scancode=0):
+                self.scancode = scancode
+                self.keystate = keystate
+
         print('We will inject keyb codes now: %s' % keyb_inputs)
         # delay = 5/10000
-        # print('Before this we need UP keys for this keyboard: %s' % grabbed_event_strkeys)
-        # for one_key in grabbed_event_strkeys.split():
-        #     key = evdev.ecodes.ecodes[one_key]
-        #     ui.write(evdev.ecodes.EV_KEY, key, 0)
+
+        print('Before this we need UP keys for this keyboard: %s' % grabbed_event_strkeys)
+        for one_key in grabbed_event_strkeys.split():
+            key = evdev.ecodes.ecodes[one_key]
+
+            print(' Force release %s' % key)
+            ui.write(evdev.ecodes.EV_KEY, key, 0)
+            if key in active_modifiers.pressed:
+                my_event = My_event(keystate=0,scancode=key)
+                active_modifiers.update(my_event)
+                # active_modifiers.find_mods_and_change_state(key, False)
             # time.sleep(delay)
 
         if active_modifiers.pressed:
             print('Before this we need UP keys for global modifiers: %s' % active_modifiers.pressed)
             for one_key_code in active_modifiers.pressed:
+                print(' Force release %s' % one_key_code)
                 # state = active_modifiers.pressed[one_key_code]
                 ui.write(evdev.ecodes.EV_KEY, one_key_code, 0)
                 # Обновляем в статусе глобальных модификаторов, что данный модификатор больше не нажат
-                active_modifiers.find_mods_and_change_state(one_key_code, False)
+                my_event = My_event(keystate=0,scancode=one_key_code)
+                active_modifiers.update(my_event)
+                # active_modifiers.find_mods_and_change_state(one_key_code, False)
                 # time.sleep(delay)
 
         # Press
@@ -506,7 +525,8 @@ def process_one_event_and_exit(keyboard, ui, event):
         # Переводим инфу о нажатых клавишах в понятный формат
         active_keys = keyboard.dev.active_keys()
         verbose_active_keys = keyboard.dev.active_keys(verbose=True)
-
+        print()
+        print('Событие: %s' % cur_event_data.keycode)
 
         # Проверяем, не избыточное ли отжатие модификатора это
         if cur_event_data.scancode in active_modifiers._all and cur_event_data.keystate == 0:
@@ -519,16 +539,15 @@ def process_one_event_and_exit(keyboard, ui, event):
                 if active_mod in cur_event_data.keycode:
                     unreleased_mod = True
             if not unreleased_mod:
-                print('Нашли избыточное отжатие модификатора.')
+                print('Нашли избыточное отжатие модификатора. Отбрасываем его.')
                 event_handled = True
-        else:
 
-            # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
-            # print('active_modifiers._all=%s' % active_modifiers._all)
-            # Проверяем - не модификатор ли нажат
-            if cur_event_data.scancode in active_modifiers._all:
-                # print('It\'s modifier key: %s' % cur_event_data.keycode)
-                active_modifiers.update(cur_event_data)
+        # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
+        # print('active_modifiers._all=%s' % active_modifiers._all)
+        # Проверяем - не модификатор ли нажат
+        if cur_event_data.scancode in active_modifiers._all and not event_handled:
+            # print('It\'s modifier key: %s' % cur_event_data.keycode)
+            active_modifiers.update(cur_event_data)
 
         # Check for double event modifier and sign key combination, like from self-programming Logitech devices: G602, G600 etc.
         double_event_mod_and_sign_keys = False
@@ -604,6 +623,7 @@ def process_one_event_and_exit(keyboard, ui, event):
         if not event_handled:
             if keyboard.transmit_all:
                 # We decide to inject keyboard event:
+                print('Transmit %s, %s' % (cur_event_data.keycode, cur_event_data.keystate))
                 ui.write(event.type,
                          cur_event_data.scancode,
                          cur_event_data.keystate)
