@@ -1,7 +1,7 @@
 Logitech G710 keyboard:
-  device: /dev/input/event9
-  #name:
-  #capabilities:
+  #device: /dev/input/event9
+  name: Logitech Logitech G710 Keyboard
+  capabilities: keyboard
 
   KEY_SCROLLLOCK:
     command: flameshot gui
@@ -23,10 +23,10 @@ Logitech G710 keyboard:
   KEY_KP8:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
-    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
-    #command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.Firefox
     #command: raise opera Opera
 
   KEY_KP9:
@@ -45,6 +45,12 @@ Logitech G710 keyboard:
   KEY_KP6:
     plugin: wmctrl
     command: raise okular Okular
+  KEY_LEFTCTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+  KEY_RIGHTCTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
 
 
 
@@ -100,7 +106,9 @@ Logitech G710 keyboard:
 
 
 Logitech G600 mouse:
-  device: /dev/input/event8
+  #device: /dev/input/event8
+  name: Logitech Gaming Mouse G600
+  capabilities: keyboard
 
   # G15
   KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F5:
@@ -111,7 +119,9 @@ Logitech G600 mouse:
   KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F6:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
-    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser Chromium-browser
+    command: raise firefox Navigator.Firefox
+
 
   # G17
   KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F7:
@@ -140,6 +150,9 @@ Logitech G600 mouse:
     command: raise nemo nemo.Nemo
 
 
+  KEY_LEFTCTRL KEY_W:
+    inject_keys: KEY_LEFTCTRL KEY_W
+
   KEY_LEFTMETA KEY_S:
     inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
 
@@ -151,7 +164,7 @@ Logitech G600 mouse:
 
 
 Notebook Keyboard:
-  device: /dev/input/event3
+  #device: /dev/input/event3
   name: AT Translated Set 2 keyboard
   capabilities: keyboard
 
@@ -176,10 +189,10 @@ Notebook Keyboard:
   KEY_KP8:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
-    command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
-    #command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.Firefox
     #command: raise opera Opera
 
   KEY_KP9:
@@ -198,6 +211,12 @@ Notebook Keyboard:
   KEY_KP6:
     plugin: wmctrl
     command: raise okular Okular
+  KEY_LEFTCTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+  KEY_RIGHTCTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
 
 
 

@@ -634,6 +634,10 @@ def process_one_event_and_exit(keyboard, ui, event):
                          cur_event_data.scancode,
                          cur_event_data.keystate)
                 # ui.syn()
+    else:
+        #All non-key events
+        ui.write_event(event)
+
     return False
 
 
