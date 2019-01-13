@@ -114,17 +114,24 @@ class process():
         print('We will inject keyb codes now: %s' % keyb_inputs)
         # delay = 5/10000
 
-        print('Before this we need UP keys for this keyboard: %s' % grabbed_event_strkeys)
-        for one_key in grabbed_event_strkeys.split():
-            key = evdev.ecodes.ecodes[one_key]
+        if grabbed_event_strkeys:
+            print('grabbed_event_strkeys[]: %s' % grabbed_event_strkeys.split())
+            grabbed_keys = grabbed_event_strkeys.split()
+            # Use reverse hack from https://stackoverflow.com/questions/5846004/unable-to-reverse-lists-in-python-getting-nonetype-as-list
+            # instead of .reverse()
+            grabbed_keys = grabbed_keys[::-1]
+            # print('grabbed_keys after reverse(): %s' % grabbed_keys)
+            print('Before this we need UP keys for this keyboard (reversed): %s' % grabbed_keys)
+            for one_key in grabbed_keys:
+                key = evdev.ecodes.ecodes[one_key]
 
-            print(' Force release %s' % key)
-            ui.write(evdev.ecodes.EV_KEY, key, 0)
-            if key in active_modifiers.pressed:
-                my_event = My_event(keystate=0,scancode=key)
-                active_modifiers.update(my_event)
-                # active_modifiers.find_mods_and_change_state(key, False)
-            # time.sleep(delay)
+                print(' Force release %s' % key)
+                ui.write(evdev.ecodes.EV_KEY, key, 0)
+                if key in active_modifiers.pressed:
+                    my_event = My_event(keystate=0,scancode=key)
+                    active_modifiers.update(my_event)
+                    # active_modifiers.find_mods_and_change_state(key, False)
+                # time.sleep(delay)
 
         if active_modifiers.pressed:
             print('Before this we need UP keys for global modifiers: %s' % active_modifiers.pressed)
