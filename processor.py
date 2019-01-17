@@ -987,7 +987,6 @@ def check_plugged_keyboards_and_set_devices(keyboards):
     print('Check plugged keyboards and set devices:')
     for keyboard in keyboards:
         check_plugged_keyboard_and_set_device(keyboard, plugged_devices)
-
     print()
 
 
