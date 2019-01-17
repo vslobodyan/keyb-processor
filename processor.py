@@ -338,7 +338,14 @@ class keyboard:
         self.dev_type = dev_type
         self.transmit_all = transmit_all
         self.processed_events = _processed_events()
-        self.dev = InputDevice(address)
+        if address:
+            # Устройство уже подключено
+            self.dev = InputDevice(address)
+            self.enabled = True
+        else:
+            # Устройство возможно будет подключено позднее
+            self.dev = None
+            self.enabled = False
 
     # def set_processed_events(self, events):
     #     pass
@@ -364,6 +371,7 @@ def load_config(filename):
         devices = reversed(raw_devices)
         # devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
         # print(devices)
+        device = None
         for dev in devices:
             # print('dev: %s' % dev)
             # print('compare "%s" and "%s"' % (dev_name, dev.name))
@@ -386,6 +394,9 @@ def load_config(filename):
         else:
             # print('We cant find whese device!')
             print('   device not found!')
+        if not device:
+            print('  Устройство не было найдено. Но конфиг загружен на будущее, и будет ждать подключения этого устройства.')
+        new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
 
         return new_keyboard
 
@@ -421,9 +432,9 @@ def load_config(filename):
                     # Создаем новую клавиатуру после того, как загружены все необходимые параметры
                     new_keyboard = find_and_create_new_keyboard(keyboard_name, dev_name, dev_type)
                     keyboard_was_created = True
-                    if not new_keyboard:
-                        # Клавиатуры не нашли. Выходим из обработки данной секции
-                        break
+                    # if not new_keyboard:
+                    #     # Клавиатуры не нашли. Выходим из обработки данной секции
+                    #     break
 
                 # Here is new keyboard event for handle
                 pressed_keys = key
@@ -688,8 +699,14 @@ async def proccess_events(keyboard):
 
 def grab_and_process_keyboard(keyboard, create_task=False):
     """Функция захвата и обработки событий одной клавиатуры"""
-    keyboard.dev.grab()
-    asyncio.ensure_future(proccess_events(keyboard))
+    if keyboard.enabled:
+        # Если клавиатура включена, то у неё должен быть адрес и прикрепленное устройство
+        keyboard.dev.grab()
+        asyncio.ensure_future(proccess_events(keyboard))
+    else:
+        # А иначе это конфиг на будущее, ожидающий подключения устройства позднее.
+        pass
+
     # if not create_task:
     #     asyncio.ensure_future(proccess_events(keyboard))
     # else:
