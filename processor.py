@@ -32,10 +32,10 @@ from plugins import Plugins
 class app:
     ui = None
     keyboards = []
+    devs_need_grab = []
 
-
-class asyn:
-    loop = None
+# class asyn:
+#     loop = None
 
 
 class Active_modifiers:
@@ -194,8 +194,9 @@ class process():
         # loop.run_until_complete(tcp_echo_client(message, loop))
         # loop.close()
         # print('message: %s' % message)
-        asyn.loop.create_task(tcp_echo_client(message, asyn.loop))
-
+        # asyn.loop.create_task(tcp_echo_client(message, asyn.loop))
+        loop = asyncio.get_event_loop()
+        loop.create_task(tcp_echo_client(message, loop))
 
 
 class _processed_events:
@@ -685,104 +686,151 @@ async def proccess_events(keyboard):
         keyboard.enabled = False
 
 
-def grab_and_process_keyboard(keyboard):
+def grab_and_process_keyboard(keyboard, create_task=False):
     """Функция захвата и обработки событий одной клавиатуры"""
     keyboard.dev.grab()
     asyncio.ensure_future(proccess_events(keyboard))
+    # if not create_task:
+    #     asyncio.ensure_future(proccess_events(keyboard))
+    # else:
+    #     loop = asyncio.get_event_loop()
+    #     loop.create_task(proccess_events(keyboard))
 
 
 # def grab_plugged_keyboard():
 #     pass
 
 
-async def monitor_devices():
+
+
+def get_configured_keyboard(keyb_address=None, keyb_name=None, keyb_type=None):
+    print('Look up for configured device like %s "%s", %s' %
+          (keyb_address,
+           keyb_name,
+           keyb_type))
+    found_keyboard = None
+    for keyboard in app.keyboards:
+        # Сравниваем имя и тип устройства
+        # print('  Compare with config for %s "%s", %s, enabled: %s' %
+        #       (keyboard.address,
+        #        keyboard.dev_name,
+        #        keyboard.dev_type,
+        #        keyboard.enabled))
+        if keyb_address:
+            # Сравниваем по одному адресу
+            if keyb_address == keyboard.address:
+                found_keyboard = keyboard
+                break
+        elif keyb_name == keyboard.dev_name and keyboard.dev_type in keyb_type:
+            # Нашли нужное устройство с именем и нужным типом
+            found_keyboard = keyboard
+            # print(' Found')
+            break
+    return found_keyboard
+
+
+
+def devices_observer_event(action, device):
     """
-    1. Мониторим отключаемые-подключаемые устройства.
+    1. Получили событие с подключением-отключением устройства.
     2. Опознаем устройства - входят ли в конфиг.
     3. Включаем захват для сконфигурированных.
     """
+    # print('Событие %s с устройством %s' % (action, device))
 
-    def get_configured_keyboard(keyb_address=None, keyb_name=None, keyb_type=None):
-        print('Look up for configured device like %s "%s", %s' %
-              (keyb_address,
-               keyb_name,
-               keyb_type))
-        found_keyboard = None
-        for keyboard in app.keyboards:
-            # Сравниваем имя и тип устройства
-            print('  Compare with config for %s "%s", %s, enabled: %s' %
-                  (keyboard.address,
-                   keyboard.dev_name,
-                   keyboard.dev_type,
-                   keyboard.enabled))
-            if keyb_address:
-                # Сравниваем по одному адресу
-                if keyb_address == keyboard.address:
-                    found_keyboard = keyboard
-                    break
-            elif keyb_name == keyboard.dev_name and keyboard.dev_type in keyb_type:
-                # Нашли нужное устройство с именем и нужным типом
-                found_keyboard = keyboard
-                # print(' Found')
-                break
-        return found_keyboard
+    if 'DEVNAME' in device:
+        dev_name = device['DEVNAME']
+        print('Monitor devices: {0} input device {1}'.format(action, dev_name))
 
-    context = pyudev.Context()
-    monitor = pyudev.Monitor.from_netlink(context)
-    monitor.filter_by('input')
-    for device in iter(monitor.poll, None):
-        # print('Событие с утройством %s' % device)
-        if 'DEVNAME' in device:
-            dev_name = device['DEVNAME']
-            print('Monitor devices: {0} input device {1}'.format(device.action, dev_name))
-
-            if format(device.action) == 'add':
+        if format(action) == 'add':
+            conf_keyboard = None
+            ev_device = None
+            try:
                 ev_device = evdev.InputDevice(dev_name)
                 keyb_name = ev_device.name
+            except:
+                print('Устройство не является evdev.InputDevice')
+
+            if ev_device:
                 capabilities = ev_device.capabilities(verbose=True)
                 keyb_type = get_dev_type(capabilities)
                 conf_keyboard = get_configured_keyboard(keyb_name=keyb_name,
                                                         keyb_type=keyb_type)
 
-                if conf_keyboard and not conf_keyboard.enabled:
-                    print('For this device events will be grabbed again.')
-                    # Обновляем параметры сконфигурированной клавиатуры
-                    conf_keyboard.enabled = True
-                    conf_keyboard.address = dev_name
-                    conf_keyboard.dev = ev_device
-                    # Запускаем захват событий клавиатуры
-                    grab_and_process_keyboard(conf_keyboard)
+            if conf_keyboard and not conf_keyboard.enabled:
+                print('  For this device events will be grabbed again.')
+                # Обновляем параметры сконфигурированной клавиатуры
+                conf_keyboard.enabled = True
+                conf_keyboard.address = dev_name
+                conf_keyboard.dev = ev_device
+                # Запускаем захват событий клавиатуры
+                # grab_and_process_keyboard(conf_keyboard)
+                # keyboard.dev.grab()
+                # asyncio.ensure_future(proccess_events(keyboard))
+                # loop = asyncio.get_event_loop()
+                # app.loop_forever.create_task(proccess_events(conf_keyboard))
+                # asyn.loop.create_task(proccess_events(keyboard))
+                # asyncio.set_event_loop(loop)
+                # loop.create_task(proccess_events(conf_keyboard))
 
-            if format(device.action) == 'remove':
-                conf_keyboard = get_configured_keyboard(keyb_address=dev_name)
-                if conf_keyboard:
-                    print('  Выключаем конфиг отключенного устройства.')
-                    conf_keyboard.enabled = False
+                app.devs_need_grab.append(conf_keyboard)
+                print('Добавили в массив устройств к захвату')
+
+                # new_loop = False
+                # try:
+                #     loop = asyncio.get_event_loop()
+                #     grab_and_process_keyboard(conf_keyboard)
+                #     print('Подключили к существующей петле Asyncio')
+                # except RuntimeError:
+                #     print('Создаем новую петлю Asyncio')
+                #     loop = asyncio.new_event_loop()
+                #     asyncio.set_event_loop(loop)
+                #     new_loop = True
+                # if new_loop:
+                #     # future = loop.create_task(proccess_events(keyboard))
+                #     print('Запускаем в новой петле')
+                #     # grab_and_process_keyboard(conf_keyboard)
+                #     loop.run_forever()
+                #     # keyboard.dev.grab()
+                #     # asyncio.ensure_future(proccess_events(keyboard))
+                #     loop.run_until_complete(proccess_events(keyboard))
+                #     print('Петля запущена')
+
+                # grab_and_process_keyboard(conf_keyboard)
+                # loop.run_forever()
+                # loop.run_until_complete()
+
+                # try:
+                #     loop = asyncio.get_event_loop()
+                #     grab_and_process_keyboard(conf_keyboard)
+                #     print('Подключили к существующей петле Asyncio')
+                # except RuntimeError:
+                #     print('Создаем новую петлю Asyncio')
+                #     loop = asyncio.new_event_loop()
+                #     asyncio.set_event_loop(loop)
+                #     grab_and_process_keyboard(conf_keyboard)
+                #     print('Запустили в новой петле')
+                #     loop.run_forever()
+
+        if format(action) == 'remove':
+            conf_keyboard = get_configured_keyboard(keyb_address=dev_name)
+            if conf_keyboard:
+                print('  Выключаем конфиг отключенного устройства.')
+                conf_keyboard.enabled = False
 
 
-            # if dev_name in plugged_devices:
-            #     suffix = ' (found in settings as %s)' % plugged_devices[dev_name]
-            # print('{0} input device {1}{2}'.format(device.action, dev_name, suffix))
-            # if format(device.action) == 'remove':
-            #     '''
-            #     ungrab_keyaboard()
-            #     keyboard.enabled = false
-            #     keyboard.dev = None
-            #     keyboard.address = None
-            #
-            #     '''
-            #     pass
-            # if format(device.action) == 'add':
-            #     ev_device = evdev.InputDevice(dev_name)
-            #     print('  ev_device.name: %s' % ev_device.name)
-            #     '''
-            #     get capabilities
-            #     get_type
-            #     if name==name and type==type:
-            #         grab_keyaboard()
-            #
-            #
-            #     '''
+async def wait_for_new_devices():
+    while True:
+        if app.devs_need_grab:
+            print('Есть устройства для захвата')
+            keyboard = app.devs_need_grab.pop()
+            print('Grab keyboard: %s' % keyboard.name)
+            grab_and_process_keyboard(keyboard, create_task=True)
+        await asyncio.sleep(0.2)
+
+
+# loop = asyncio.get_event_loop()
+# app.loop_forever.create_task(proccess_events(conf_keyboard))
 
 
 def grab_and_process_keyboards(keyboards):
@@ -792,16 +840,30 @@ def grab_and_process_keyboards(keyboards):
     #     print(' - %s' % keyb.name)
     app.ui = UInput()
 
+    print('Run monitor')
+    # asyncio.ensure_future(monitor_devices())
+    context = pyudev.Context()
+    monitor = pyudev.Monitor.from_netlink(context)
+    monitor.filter_by('input')
+    observer = pyudev.MonitorObserver(monitor, devices_observer_event)
+    observer.start()
+
+    print('Grab keyboards')
     for keyboard in keyboards:
         # keyboard.dev.grab()
         # asyncio.ensure_future(proccess_events(keyboard))
         grab_and_process_keyboard(keyboard)
 
-    # Начинаем мониторить подключаемы-отключаемые устройства
-    asyncio.ensure_future(monitor_devices())
+    # Функция в этом потоке, которая будет подключать граббинг с утройств
+    asyncio.ensure_future(wait_for_new_devices())
 
-    asyn.loop = asyncio.get_event_loop()
-    asyn.loop.run_forever()
+    # Начинаем мониторить подключаемые-отключаемые устройства
+    # asyncio.ensure_future(monitor_devices())
+    # asyncio.create_task(monitor_devices())
+
+    loop = asyncio.get_event_loop()
+    # asyn.loop.create_task(monitor_devices())
+    loop.run_forever()
 
     for keyboard in keyboards:
         keyboard.dev.ungrab()
