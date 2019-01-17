@@ -702,17 +702,28 @@ async def monitor_devices():
     3. Включаем захват для сконфигурированных.
     """
 
-    def get_configured_keyboard(keyb_name, keyb_type):
-        print('Look up for configured device like "%s", %s' % (keyb_name, keyb_type))
+    def get_configured_keyboard(keyb_address=None, keyb_name=None, keyb_type=None):
+        print('Look up for configured device like %s "%s", %s' %
+              (keyb_address,
+               keyb_name,
+               keyb_type))
         found_keyboard = None
         for keyboard in app.keyboards:
             # Сравниваем имя и тип устройства
-            print('  Compare with config for "%s", %s' % (keyboard.dev_name,
-                                                          keyboard.dev_type))
-            if keyb_name == keyboard.dev_name and keyboard.dev_type in keyb_type:
+            print('  Compare with config for %s "%s", %s, enabled: %s' %
+                  (keyboard.address,
+                   keyboard.dev_name,
+                   keyboard.dev_type,
+                   keyboard.enabled))
+            if keyb_address:
+                # Сравниваем по одному адресу
+                if keyb_address == keyboard.address:
+                    found_keyboard = keyboard
+                    break
+            elif keyb_name == keyboard.dev_name and keyboard.dev_type in keyb_type:
                 # Нашли нужное устройство с именем и нужным типом
                 found_keyboard = keyboard
-                print(' Found')
+                # print(' Found')
                 break
         return found_keyboard
 
@@ -721,25 +732,33 @@ async def monitor_devices():
     monitor.filter_by('input')
     for device in iter(monitor.poll, None):
         # print('Событие с утройством %s' % device)
-        print('Monitor devices: {0} input device {1}'.format(device.action, dev_name))
-        suffix = ''
         if 'DEVNAME' in device:
             dev_name = device['DEVNAME']
+            print('Monitor devices: {0} input device {1}'.format(device.action, dev_name))
+
             if format(device.action) == 'add':
                 ev_device = evdev.InputDevice(dev_name)
                 keyb_name = ev_device.name
                 capabilities = ev_device.capabilities(verbose=True)
                 keyb_type = get_dev_type(capabilities)
-                conf_keyboard = get_configured_keyboard(keyb_name, keyb_type)
+                conf_keyboard = get_configured_keyboard(keyb_name=keyb_name,
+                                                        keyb_type=keyb_type)
 
-                if conf_keyboard:
+                if conf_keyboard and not conf_keyboard.enabled:
                     print('For this device events will be grabbed again.')
                     # Обновляем параметры сконфигурированной клавиатуры
+                    conf_keyboard.enabled = True
                     conf_keyboard.address = dev_name
                     conf_keyboard.dev = ev_device
-                    conf_keyboard.enabled = True
                     # Запускаем захват событий клавиатуры
                     grab_and_process_keyboard(conf_keyboard)
+
+            if format(device.action) == 'remove':
+                conf_keyboard = get_configured_keyboard(keyb_address=dev_name)
+                if conf_keyboard:
+                    print('  Выключаем конфиг отключенного устройства.')
+                    conf_keyboard.enabled = False
+
 
             # if dev_name in plugged_devices:
             #     suffix = ' (found in settings as %s)' % plugged_devices[dev_name]
