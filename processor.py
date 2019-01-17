@@ -322,7 +322,7 @@ class keyboard:
     transmit_all = True
     dev = None
     processed_events = None
-    enabled = True
+    enabled = False
 
     def print_setup(self):
         # Печать текущих настроек в отладочных целях
@@ -958,7 +958,7 @@ def grab_and_process_keyboards(keyboards):
 
 def check_plugged_keyboard_and_set_device(keyboard, plugged_devices):
     # Проверяем, подключена ли такая клавиатура
-    print('Для клавиатуры %s, %s ищем соответствующее подключенное устройство' % (keyboard.dev_name, keyboard.dev_type))
+    print('  Для клавиатуры %s, %s ищем соответствующее подключенное устройство' % (keyboard.dev_name, keyboard.dev_type))
     # Если подключена - прикрепляем к ней соответствующее устройство
 
 
@@ -983,8 +983,8 @@ def check_plugged_keyboards_and_set_devices(keyboards):
         dev_name, dev_type, address, dev = plug_dev
         print('%s %s %s' % (dev_name, dev_type, address))
     print()
-    print('Check plugged keyboards and set devices')
 
+    print('Check plugged keyboards and set devices:')
     for keyboard in keyboards:
         check_plugged_keyboard_and_set_device(keyboard, plugged_devices)
 
