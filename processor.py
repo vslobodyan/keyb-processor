@@ -15,18 +15,23 @@ Were helpful:
 """
 
 import evdev
+import pyudev
 from evdev import InputDevice, categorize, ecodes, UInput
 import yaml
 import argparse
 import asyncio
 import json
-import time
+# import time
 
 from settings import settings
 from plugins import Plugins
 
 
-keyboards = []
+
+
+class app:
+    ui = None
+    keyboards = []
 
 
 class asyn:
@@ -114,24 +119,25 @@ class process():
         print('We will inject keyb codes now: %s' % keyb_inputs)
         # delay = 5/10000
 
-        if grabbed_event_strkeys:
-            print('grabbed_event_strkeys[]: %s' % grabbed_event_strkeys.split())
-            grabbed_keys = grabbed_event_strkeys.split()
-            # Use reverse hack from https://stackoverflow.com/questions/5846004/unable-to-reverse-lists-in-python-getting-nonetype-as-list
-            # instead of .reverse()
-            grabbed_keys = grabbed_keys[::-1]
-            # print('grabbed_keys after reverse(): %s' % grabbed_keys)
-            print('Before this we need UP keys for this keyboard (reversed): %s' % grabbed_keys)
-            for one_key in grabbed_keys:
-                key = evdev.ecodes.ecodes[one_key]
-
-                print(' Force release %s' % key)
-                ui.write(evdev.ecodes.EV_KEY, key, 0)
-                if key in active_modifiers.pressed:
-                    my_event = My_event(keystate=0,scancode=key)
-                    active_modifiers.update(my_event)
-                    # active_modifiers.find_mods_and_change_state(key, False)
-                # time.sleep(delay)
+        # if grabbed_event_strkeys:
+        #     print('grabbed_event_strkeys[]: %s' % grabbed_event_strkeys.split())
+        #     grabbed_keys = grabbed_event_strkeys.split()
+        #     # Use reverse hack from https://stackoverflow.com/questions/5846004/unable-to-reverse-lists-in-python-getting-nonetype-as-list
+        #     # instead of .reverse()
+        #     grabbed_keys = grabbed_keys[::-1]
+        #     # print('grabbed_keys after reverse(): %s' % grabbed_keys)
+        #     print('Before this we need UP keys for this keyboard (reversed): %s' % grabbed_keys)
+        #     for one_key in grabbed_keys:
+        #         key = evdev.ecodes.ecodes[one_key]
+        #
+        #         print(' Force release %s' % key)
+        #         ui.write(evdev.ecodes.EV_KEY, key, 0)
+        #         if key in active_modifiers.pressed:
+        #             my_event = My_event(keystate=0,scancode=key)
+        #             active_modifiers.update(my_event)
+        #             # active_modifiers.find_mods_and_change_state(key, False)
+        #         # time.sleep(delay)
+        #           await asyncio.sleep(1.0)
 
         if active_modifiers.pressed:
             print('Before this we need UP keys for global modifiers: %s' % active_modifiers.pressed)
@@ -141,9 +147,13 @@ class process():
                 ui.write(evdev.ecodes.EV_KEY, one_key_code, 0)
                 # Обновляем в статусе глобальных модификаторов, что данный модификатор больше не нажат
                 my_event = My_event(keystate=0,scancode=one_key_code)
-                active_modifiers.update(my_event)
                 # active_modifiers.find_mods_and_change_state(one_key_code, False)
                 # time.sleep(delay)
+                # await asyncio.sleep(1.0)
+            # Обновляем статусы отжатых модификаторов
+            for one_key_code in active_modifiers.pressed.copy():
+                my_event = My_event(keystate=0, scancode=one_key_code)
+                active_modifiers.update(my_event)
 
         # Press
         for one_key_code in keyb_inputs:
@@ -151,6 +161,7 @@ class process():
             key = evdev.ecodes.ecodes[one_key_code]
             ui.write(evdev.ecodes.EV_KEY, key, 1)
             # time.sleep(delay)
+            # await asyncio.sleep(1.0)
         # ui.syn()
 
         # Release
@@ -159,6 +170,7 @@ class process():
             key = evdev.ecodes.ecodes[one_key_code]
             ui.write(evdev.ecodes.EV_KEY, key, 0)
             # time.sleep(delay)
+            # await asyncio.sleep(1.0)
 
         # print('Now we need DOWN keys for global modifiers: %s' % active_modifiers.pressed)
         # for one_key_code in active_modifiers.pressed:
@@ -303,6 +315,7 @@ class keyboard:
     transmit_all = True
     dev = None
     processed_events = None
+    enabled = True
 
     def print_setup(self):
         # Печать текущих настроек в отладочных целях
@@ -541,19 +554,19 @@ def process_one_event_and_exit(keyboard, ui, event):
         #     # single_meta_press = True
         #     print('Это просто нажатие META-клавиши. Его можно проглотить.')
 
-        # Проверяем, не избыточное ли отжатие модификатора это
-        if cur_event_data.scancode in active_modifiers._all and cur_event_data.keystate == 0:
-            unreleased_mod = False
-            all_active_mods = active_modifiers.get()
-            print('all_active_mods: %s' % all_active_mods)
-            print('cur_event_data.scancode: %s' % cur_event_data.scancode)
-            print('cur_event_data.keycode: %s' % cur_event_data.keycode)
-            for active_mod in all_active_mods:
-                if active_mod in cur_event_data.keycode:
-                    unreleased_mod = True
-            if not unreleased_mod:
-                print('Нашли избыточное отжатие модификатора. Отбрасываем его.')
-                event_handled = True
+        # # Проверяем, не избыточное ли отжатие модификатора это
+        # if cur_event_data.scancode in active_modifiers._all and cur_event_data.keystate == 0:
+        #     unreleased_mod = False
+        #     all_active_mods = active_modifiers.get()
+        #     print('all_active_mods: %s' % all_active_mods)
+        #     print('cur_event_data.scancode: %s' % cur_event_data.scancode)
+        #     print('cur_event_data.keycode: %s' % cur_event_data.keycode)
+        #     for active_mod in all_active_mods:
+        #         if active_mod in cur_event_data.keycode:
+        #             unreleased_mod = True
+        #     if not unreleased_mod:
+        #         print('Нашли избыточное отжатие модификатора. Отбрасываем его.')
+        #         event_handled = True
 
         # print('cur_event_data.keycode="%s"' % cur_event_data.keycode)
         # print('active_modifiers._all=%s' % active_modifiers._all)
@@ -564,22 +577,22 @@ def process_one_event_and_exit(keyboard, ui, event):
 
         # Check for double event modifier and sign key combination, like from self-programming Logitech devices: G602, G600 etc.
         double_event_mod_and_sign_keys = False
-        if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
-            if cur_event_data.scancode in active_modifiers._all:
-                """ Если нажат модификатор, проверяем - не идет ли с ним 
-                в паре с того-же устройства сразу другое значимое событие, 
-                как это происходит с Logitech G602 """
-                double_event_mod_and_sign_keys = False
-                for one_key_rec in verbose_active_keys:
-                    if one_key_rec[1] not in active_modifiers._all:
-                        double_event_mod_and_sign_keys = True
-
-
-                if double_event_mod_and_sign_keys:
-                    print('Was pressed modifier, but in combination with sign key. Like double action from programming device. Drop it.')
-                    event_handled = True
-
-            # Если нажат модификатор и идет другое событие с утройства - игнорируем его
+        # if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
+        #     if cur_event_data.scancode in active_modifiers._all:
+        #         """ Если нажат модификатор, проверяем - не идет ли с ним
+        #         в паре с того-же устройства сразу другое значимое событие,
+        #         как это происходит с Logitech G602 """
+        #         double_event_mod_and_sign_keys = False
+        #         for one_key_rec in verbose_active_keys:
+        #             if one_key_rec[1] not in active_modifiers._all:
+        #                 double_event_mod_and_sign_keys = True
+        #
+        #
+        #         if double_event_mod_and_sign_keys:
+        #             print('Was pressed modifier, but in combination with sign key. Like double action from programming device. Drop it.')
+        #             event_handled = True
+        #
+        #     # Если нажат модификатор и идет другое событие с утройства - игнорируем его
 
             # Дальше обрабатываем только нажатия
         if cur_event_data.keystate in [1, 2] and not double_event_mod_and_sign_keys:  # Down and Hold events only
@@ -648,32 +661,125 @@ def process_one_event_and_exit(keyboard, ui, event):
     return False
 
 
+
+
+async def proccess_events(keyboard):
+    # Асинхронная функция обработки событий
+    try:
+        async for event in keyboard.dev.async_read_loop():
+
+            # print(keyboard.dev.path, evdev.categorize(event), sep=': ')
+
+            exit_now = process_one_event_and_exit(keyboard, app.ui, event)
+            # После обработки события происходит синхронизация ввода.
+            # Возможно, уже записаны новые коды ввода:
+            # новая комбинация или просто ретрансляция вводимого.
+            app.ui.syn()
+            if exit_now:
+                exit()
+    except OSError:
+        print('Проблемы с обработкой сигналов с утройства %s (%s, %s).'% (keyboard.address,
+                                                                          keyboard.dev_name,
+                                                                          keyboard.dev_type))
+        print('Останавливаем цикл их обработки' )
+        keyboard.enabled = False
+
+
+def grab_and_process_keyboard(keyboard):
+    """Функция захвата и обработки событий одной клавиатуры"""
+    keyboard.dev.grab()
+    asyncio.ensure_future(proccess_events(keyboard))
+
+
+# def grab_plugged_keyboard():
+#     pass
+
+
+async def monitor_devices():
+    """
+    1. Мониторим отключаемые-подключаемые устройства.
+    2. Опознаем устройства - входят ли в конфиг.
+    3. Включаем захват для сконфигурированных.
+    """
+
+    def get_configured_keyboard(keyb_name, keyb_type):
+        print('Look up for configured device like "%s", %s' % (keyb_name, keyb_type))
+        found_keyboard = None
+        for keyboard in app.keyboards:
+            # Сравниваем имя и тип устройства
+            print('  Compare with config for "%s", %s' % (keyboard.dev_name,
+                                                          keyboard.dev_type))
+            if keyb_name == keyboard.dev_name and keyboard.dev_type in keyb_type:
+                # Нашли нужное устройство с именем и нужным типом
+                found_keyboard = keyboard
+                print(' Found')
+                break
+        return found_keyboard
+
+    context = pyudev.Context()
+    monitor = pyudev.Monitor.from_netlink(context)
+    monitor.filter_by('input')
+    for device in iter(monitor.poll, None):
+        # print('Событие с утройством %s' % device)
+        print('Monitor devices: {0} input device {1}'.format(device.action, dev_name))
+        suffix = ''
+        if 'DEVNAME' in device:
+            dev_name = device['DEVNAME']
+            if format(device.action) == 'add':
+                ev_device = evdev.InputDevice(dev_name)
+                keyb_name = ev_device.name
+                capabilities = ev_device.capabilities(verbose=True)
+                keyb_type = get_dev_type(capabilities)
+                conf_keyboard = get_configured_keyboard(keyb_name, keyb_type)
+
+                if conf_keyboard:
+                    print('For this device events will be grabbed again.')
+                    # Обновляем параметры сконфигурированной клавиатуры
+                    conf_keyboard.address = dev_name
+                    conf_keyboard.dev = ev_device
+                    conf_keyboard.enabled = True
+                    # Запускаем захват событий клавиатуры
+                    grab_and_process_keyboard(conf_keyboard)
+
+            # if dev_name in plugged_devices:
+            #     suffix = ' (found in settings as %s)' % plugged_devices[dev_name]
+            # print('{0} input device {1}{2}'.format(device.action, dev_name, suffix))
+            # if format(device.action) == 'remove':
+            #     '''
+            #     ungrab_keyaboard()
+            #     keyboard.enabled = false
+            #     keyboard.dev = None
+            #     keyboard.address = None
+            #
+            #     '''
+            #     pass
+            # if format(device.action) == 'add':
+            #     ev_device = evdev.InputDevice(dev_name)
+            #     print('  ev_device.name: %s' % ev_device.name)
+            #     '''
+            #     get capabilities
+            #     get_type
+            #     if name==name and type==type:
+            #         grab_keyaboard()
+            #
+            #
+            #     '''
+
+
 def grab_and_process_keyboards(keyboards):
     """Основная функция захвата и обработки клавиатурных событий."""
     # print('Keyboards for grab and process:')
     # for keyb in keyboards:
     #     print(' - %s' % keyb.name)
-
-    ui = UInput()
-
-    async def proccess_events(keyboard):
-        # Асинхронная функция обработки событий
-        async for event in keyboard.dev.async_read_loop():
-
-            # print(keyboard.dev.path, evdev.categorize(event), sep=': ')
-
-            exit_now = process_one_event_and_exit(keyboard, ui, event)
-            # После обработки события происходит синхронизация ввода.
-            # Возможно, уже записаны новые коды ввода:
-            # новая комбинация или просто ретрансляция вводимого.
-            ui.syn()
-            if exit_now:
-                exit()
-
+    app.ui = UInput()
 
     for keyboard in keyboards:
-        keyboard.dev.grab()
-        asyncio.ensure_future(proccess_events(keyboard))
+        # keyboard.dev.grab()
+        # asyncio.ensure_future(proccess_events(keyboard))
+        grab_and_process_keyboard(keyboard)
+
+    # Начинаем мониторить подключаемы-отключаемые устройства
+    asyncio.ensure_future(monitor_devices())
 
     asyn.loop = asyncio.get_event_loop()
     asyn.loop.run_forever()
@@ -681,7 +787,7 @@ def grab_and_process_keyboards(keyboards):
     for keyboard in keyboards:
         keyboard.dev.ungrab()
 
-    ui.close()
+    app.ui.close()
 
 
 def main():
@@ -718,9 +824,9 @@ def main():
     args = parser.parse_args()
     if args.config:
         print('Load config: %s' % args.config)
-        keyboards = load_config(args.config)
+        app.keyboards = load_config(args.config)
         # print('keyboards: %s' % keyboards)
-        grab_and_process_keyboards(keyboards)
+        grab_and_process_keyboards(app.keyboards)
     elif args.list:
         print('Show list of available devices.')
         show_dev_list()

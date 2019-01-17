@@ -124,18 +124,18 @@ Logitech G602 mouse:
   capabilities: keyboard
 
   # G4
-  KEY_LEFTSHIFT KEY_F4:
+  KEY_4:
     plugin: xdotool
     command: minimize
   # G7
-  KEY_LEFTMETA KEY_S:
+  KEY_7:
     inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
-  ALT KEY_LEFTMETA KEY_S:
+  ALT KEY_7:
     command: notify-send Alt+Meta+S
 
 
   # G5
-  KEY_LEFTSHIFT KEY_F5:
+  KEY_5:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
     #command: raise chromium-browser Chromium-browser
@@ -144,16 +144,16 @@ Logitech G602 mouse:
     command: raise firefox Navigator.Firefox
     #command: raise opera Opera
   # G8
-  KEY_LEFTSHIFT KEY_F8:
+  KEY_8:
     inject_keys: KEY_RIGHTCTRL KEY_W
 
 
   # G6
-  KEY_LEFTSHIFT KEY_F6:
+  KEY_6:
     plugin: wmctrl
     command: raise telegram-desktop TelegramDesktop
   # G9
-  KEY_LEFTSHIFT KEY_F9:
+  KEY_9:
     plugin: wmctrl
     command: raise skypeforlinux Skype
 
