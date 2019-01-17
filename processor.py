@@ -962,17 +962,33 @@ def check_plugged_keyboard_and_set_device(keyboard, plugged_devices):
     # Если подключена - прикрепляем к ней соответствующее устройство
 
 
+def get_plugged_devices_array():
+    plugged_devices = []
+    raw_devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+    devices = reversed(raw_devices)
+    for dev in devices:
+        # print('dev: %s' % dev)
+        capabilities = dev.capabilities(verbose=True)
+        _dev_type = get_dev_type(capabilities)
+        plugged_devices.append((dev.name, _dev_type, dev.fn, dev))
+    return plugged_devices
+
+
 
 def check_plugged_keyboards_and_set_devices(keyboards):
     """Проверяем подключенные клавиатуры и прикрепляем к классам соответствующие устройства"""
-    plugged_devices = None
-    print('plugged_devices: %s' % plugged_devices)
+    plugged_devices = get_plugged_devices_array()
+    print('plugged_devices:')
+    for plug_dev in plugged_devices:
+        dev_name, dev_type, address, dev = plug_dev
+        print('%s %s %s' % (dev_name, dev_type, address))
+    print()
     print('Check plugged keyboards and set devices')
 
     for keyboard in keyboards:
         check_plugged_keyboard_and_set_device(keyboard, plugged_devices)
 
-
+    print()
 
 
 def main():
