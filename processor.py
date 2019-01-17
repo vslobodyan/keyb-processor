@@ -22,6 +22,10 @@ import argparse
 import asyncio
 import json
 # import time
+import os
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
+
 
 from settings import settings
 from plugins import Plugins
@@ -33,6 +37,8 @@ class app:
     ui = None
     keyboards = []
     devs_need_grab = []
+    need_reload_config = False
+    config_filename = None
 
 # class asyn:
 #     loop = None
@@ -352,55 +358,114 @@ class keyboard:
 
 
 
-def load_config(filename):
+class MyEventHandler(PatternMatchingEventHandler):
+    def on_moved(self, event):
+        super(MyEventHandler, self).on_moved(event)
+        print("File %s was just moved" % event.src_path)
+        app.need_reload_config = True
+
+    def on_created(self, event):
+        super(MyEventHandler, self).on_created(event)
+        print("File %s was just created" % event.src_path)
+        app.need_reload_config = True
+
+    def on_deleted(self, event):
+        super(MyEventHandler, self).on_deleted(event)
+        print("File %s was just deleted" % event.src_path)
+        app.need_reload_config = True
+
+    def on_modified(self, event):
+        super(MyEventHandler, self).on_modified(event)
+        print("File %s was just modified" % event.src_path)
+        app.need_reload_config = True
+
+
+def start_config_change_observer(file_path):
+    print('Start config change observer')
+    watched_dir = os.path.split(file_path)[0]
+    print('watched_dir = {watched_dir}'.format(watched_dir=watched_dir))
+    patterns = [file_path]
+    print('patterns = {patterns}'.format(patterns=', '.join(patterns)))
+    event_handler = MyEventHandler(patterns=patterns)
+    observer = Observer()
+    observer.schedule(event_handler, watched_dir, recursive=True)
+    observer.start()
+    # try:
+    #     while True:
+    #         time.sleep(1)
+    # except KeyboardInterrupt:
+    #     observer.stop()
+    # observer.join()
+
+
+
+async def wait_for_reload_config():
+    while True:
+        if app.need_reload_config:
+            print('Нужно перезагрузить конфиг')
+            app.need_reload_config = False
+            # load_config(app.config_filename, reload=True)
+        await asyncio.sleep(0.3)
+
+
+
+def find_and_create_new_keyboard(keyboard_name, dev_name, dev_type):
+    # Поиск нужного устройства
+    device = ''
+    # print('Look for device:')
+    # print(' keyboard_name="%s"' % keyboard_name)
+    # print(' dev_name="%s"' % dev_name)
+    # print(' dev_type="%s"' % dev_type)
+
+    print('  Looking for device "%s" / %s' % (dev_name, dev_type))
+
+    raw_devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+    devices = reversed(raw_devices)
+    # devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+    # print(devices)
+    device = None
+    for dev in devices:
+        # print('dev: %s' % dev)
+        # print('compare "%s" and "%s"' % (dev_name, dev.name))
+        if dev_name == dev.name:
+            # print('Found name')
+            # Нашли устройство с нужным именем
+            capabilities = dev.capabilities(verbose=True)
+            _dev_type = get_dev_type(capabilities)
+            # print('_dev_type: %s' % _dev_type)
+            if dev_type in _dev_type:
+                # Нашли нужное устройство с именем и нужным типом
+                # print('Device was found: %s' % dev)
+                device = dev.fn
+                # print('Device was found as %s' % device)
+                print('   found at %s' % device)
+                break
+    new_keyboard = None
+    if device:
+        new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
+    else:
+        # print('We cant find whese device!')
+        print('   device not found!')
+    if not device:
+        print('  Устройство не было найдено. Но конфиг загружен на будущее, и будет ждать подключения этого устройства.')
+    new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
+
+    return new_keyboard
+
+
+
+
+
+def load_config(filename, reload=False):
     """Загрузка конфига и создание нужных классов для захватываемых
     устройств.
     """
 
-    def find_and_create_new_keyboard(keyboard_name, dev_name, dev_type):
-        # Поиск нужного устройства
-        device = ''
-        # print('Look for device:')
-        # print(' keyboard_name="%s"' % keyboard_name)
-        # print(' dev_name="%s"' % dev_name)
-        # print(' dev_type="%s"' % dev_type)
+    if not reload:
+        # У нас первый запуск загрузки конфига. Запускаем отслеживание изменений файла
+        start_config_change_observer(filename)
 
-        print('  Looking for device "%s" / %s' % (dev_name, dev_type))
-
-        raw_devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
-        devices = reversed(raw_devices)
-        # devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
-        # print(devices)
-        device = None
-        for dev in devices:
-            # print('dev: %s' % dev)
-            # print('compare "%s" and "%s"' % (dev_name, dev.name))
-            if dev_name == dev.name:
-                # print('Found name')
-                # Нашли устройство с нужным именем
-                capabilities = dev.capabilities(verbose=True)
-                _dev_type = get_dev_type(capabilities)
-                # print('_dev_type: %s' % _dev_type)
-                if dev_type in _dev_type:
-                    # Нашли нужное устройство с именем и нужным типом
-                    # print('Device was found: %s' % dev)
-                    device = dev.fn
-                    # print('Device was found as %s' % device)
-                    print('   found at %s' % device)
-                    break
-        new_keyboard = None
-        if device:
-            new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
-        else:
-            # print('We cant find whese device!')
-            print('   device not found!')
-        if not device:
-            print('  Устройство не было найдено. Но конфиг загружен на будущее, и будет ждать подключения этого устройства.')
-        new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
-
-        return new_keyboard
-
-    keyboards = [] # Начальная очистка списка клавиатур
+    cfg_keyboards = [] # Начальная очистка списка клавиатур из конфига
     with open(filename, 'r') as ymlfile:
         cfg = yaml.load(ymlfile)
 
@@ -457,15 +522,15 @@ def load_config(filename):
                     command=command
                 )
         if new_keyboard:
-            keyboards.append(new_keyboard)
+            cfg_keyboards.append(new_keyboard)
 
 
     print('Config load successfully.')
 
-    for keyb in keyboards:
+    for keyb in cfg_keyboards:
         keyb.print_setup()
 
-    return keyboards
+    return cfg_keyboards
 
 
 def get_dev_type(capabilities):
@@ -873,6 +938,8 @@ def grab_and_process_keyboards(keyboards):
 
     # Функция в этом потоке, которая будет подключать граббинг с утройств
     asyncio.ensure_future(wait_for_new_devices())
+    # Отслеживаем сообщение о необходимости обновить конфиг
+    asyncio.ensure_future(wait_for_reload_config())
 
     # Начинаем мониторить подключаемые-отключаемые устройства
     # asyncio.ensure_future(monitor_devices())
@@ -922,8 +989,10 @@ def main():
     args = parser.parse_args()
     if args.config:
         print('Load config: %s' % args.config)
+        app.config_filename = args.config
         app.keyboards = load_config(args.config)
         # print('keyboards: %s' % keyboards)
+
         grab_and_process_keyboards(app.keyboards)
     elif args.list:
         print('Show list of available devices.')
