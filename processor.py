@@ -774,7 +774,7 @@ def devices_observer_event(action, device):
                 # loop.create_task(proccess_events(conf_keyboard))
 
                 app.devs_need_grab.append(conf_keyboard)
-                print('Добавили в массив устройств к захвату')
+                print('  Добавили в массив устройств к захвату')
 
                 # new_loop = False
                 # try:
