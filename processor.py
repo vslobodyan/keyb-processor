@@ -955,6 +955,26 @@ def grab_and_process_keyboards(keyboards):
     app.ui.close()
 
 
+
+def check_plugged_keyboard_and_set_device(keyboard, plugged_devices):
+    # Проверяем, подключена ли такая клавиатура
+    print('Для клавиатуры %s, %s ищем соответствующее подключенное устройство' % (keyboard.dev_name, keyboard.dev_type))
+    # Если подключена - прикрепляем к ней соответствующее устройство
+
+
+
+def check_plugged_keyboards_and_set_devices(keyboards):
+    """Проверяем подключенные клавиатуры и прикрепляем к классам соответствующие устройства"""
+    plugged_devices = None
+    print('plugged_devices: %s' % plugged_devices)
+    print('Check plugged keyboards and set devices')
+
+    for keyboard in keyboards:
+        check_plugged_keyboard_and_set_device(keyboard, plugged_devices)
+
+
+
+
 def main():
 
     # Another way:
@@ -992,7 +1012,7 @@ def main():
         app.config_filename = args.config
         app.keyboards = load_config(args.config)
         # print('keyboards: %s' % keyboards)
-
+        check_plugged_keyboards_and_set_devices(app.keyboards)
         grab_and_process_keyboards(app.keyboards)
     elif args.list:
         print('Show list of available devices.')
