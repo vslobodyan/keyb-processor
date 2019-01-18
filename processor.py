@@ -461,6 +461,7 @@ def load_config(filename, reload=False):
     """Загрузка конфига и создание нужных классов для захватываемых
     устройств.
     """
+    # app.keyboards
 
     if not reload:
         # У нас первый запуск загрузки конфига. Запускаем отслеживание изменений файла
@@ -532,7 +533,8 @@ def load_config(filename, reload=False):
     for keyb in cfg_keyboards:
         keyb.print_setup()
 
-    return cfg_keyboards
+    app.keyboards = cfg_keyboards
+
 
 
 def get_dev_type(capabilities):
@@ -1036,7 +1038,7 @@ def main():
     if args.config:
         print('Load config: %s' % args.config)
         app.config_filename = args.config
-        app.keyboards = load_config(args.config)
+        load_config(args.config)
         # print('keyboards: %s' % keyboards)
         check_plugged_keyboards_and_set_devices(app.keyboards)
         grab_and_process_keyboards(app.keyboards)
