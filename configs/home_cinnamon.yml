@@ -111,12 +111,12 @@ Logitech G600 mouse:
   capabilities: keyboard
 
   # G15
-  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F5:
+  KEY_7:
     plugin: wmctrl
     command: raise telegram-desktop TelegramDesktop
 
   # G16
-  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F6:
+  KEY_8:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
     #command: raise chromium-browser Chromium-browser
@@ -124,39 +124,39 @@ Logitech G600 mouse:
 
 
   # G17
-  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F7:
+  KEY_9:
     plugin: wmctrl
     command: raise pycharm jetbrains-pycharm
 
 
 
   # G18
-  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F8:
+  KEY_0:
     plugin: wmctrl
     command: raise skype Skype
-  KEY_F8 KEY_LEFTSHIFT:
+  KEY_P:
     plugin: wmctrl
     command: raise relanotes Relanotes
 
 
   # G19
-  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F9:
+  KEY_MINUS:
     plugin: wmctrl
     command: raise gnome-terminal Gnome-terminal
 
   # G20
-  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F10:
+  KEY_EQUAL:
     plugin: wmctrl
     command: raise nemo nemo.Nemo
 
 
-  KEY_LEFTCTRL KEY_W:
-    inject_keys: KEY_LEFTCTRL KEY_W
+#  KEY_LEFTCTRL KEY_W:
+#    inject_keys: KEY_LEFTCTRL KEY_W
 
-  KEY_LEFTMETA KEY_S:
+  KEY_2:
     inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
 
-  KEY_LEFTMETA KEY_H:
+  KEY_5:
     plugin: xdotool
     command: minimize
     

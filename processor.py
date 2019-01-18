@@ -1019,7 +1019,7 @@ async def wait_for_new_devices():
             print('Есть устройства для захвата')
             keyboard = app.devs_need_grab.pop()
             print('Grab keyboard: %s' % keyboard.name)
-            grab_and_process_keyboard(keyboard, create_task=True)
+            grab_and_process_keyboard(keyboard)
         await asyncio.sleep(0.2)
 
 
