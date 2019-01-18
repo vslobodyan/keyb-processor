@@ -455,6 +455,36 @@ async def wait_for_reload_config():
 
 
 
+def get_configured_keyboard(name=None, address=None, dev_name=None, dev_type=None):
+    print('Look up for configured device like %s "%s", %s' %
+          (address,
+           dev_name,
+           dev_type))
+    found_keyboard = None
+    for keyboard in app.keyboards:
+        # Сравниваем имя и тип устройства
+        # print('  Compare with config for %s "%s", %s, enabled: %s' %
+        #       (keyboard.address,
+        #        keyboard.dev_name,
+        #        keyboard.dev_type,
+        #        keyboard.enabled))
+        if name:
+            # Сравниваем по одному названию класса клавиатуры/её секции в конфиге
+            if name == keyboard.name:
+                found_keyboard = keyboard
+                break
+        if address:
+            # Сравниваем по одному адресу
+            if address == keyboard.address:
+                found_keyboard = keyboard
+                break
+        elif dev_name == keyboard.dev_name and keyboard.dev_type in dev_type:
+            # Нашли нужное устройство с именем и нужным типом
+            found_keyboard = keyboard
+            # print(' Found')
+            break
+    return found_keyboard
+
 
 
 def load_config(filename, reload=False):
@@ -478,6 +508,15 @@ def load_config(filename, reload=False):
         dev_type = ''
         keyboard_was_created = False
 
+        exist_keyboard = None
+
+        if reload:
+            exist_keyboard = get_configured_keyboard(name=keyboard_name)
+            if exist_keyboard:
+                print('Клавиатура "%s" уже есть в памяти програмы.' % keyboard_name)
+            else:
+                print('В конфиге обнаружена новая клавиатура "%s". Её надо добавить к имеющимся.' % keyboard_name)
+
         for key in cfg[section]:
             value = cfg[section][key]
             # print('# key:', key, ', # value:',value)
@@ -492,8 +531,14 @@ def load_config(filename, reload=False):
                 pass
             elif key == 'name':
                 dev_name = value
+                if reload and exist_keyboard:
+                    if not exist_keyboard.dev_name == dev_name:
+                        print(' Изменилось значение dev_name: %s -> %s' % (exist_keyboard.dev_name,dev_name) )
             elif key == 'capabilities':
                 dev_type = value
+                if reload and exist_keyboard:
+                    if not exist_keyboard.dev_type == dev_type:
+                        print(' Изменилось значение dev_type: %s -> %s' % (exist_keyboard.dev_type,dev_type) )
             else:
                 if not keyboard_was_created:
                     # Создаем новую клавиатуру после того, как загружены все необходимые параметры
@@ -524,16 +569,18 @@ def load_config(filename, reload=False):
                     plugin=plugin,
                     command=command
                 )
-        if new_keyboard:
-            cfg_keyboards.append(new_keyboard)
+        # if new_keyboard:
+        #     cfg_keyboards.append(new_keyboard)
+        if not exist_keyboard and new_keyboard:
+            app.keyboards.append(new_keyboard)
 
 
     print('Config load successfully.')
 
-    for keyb in cfg_keyboards:
-        keyb.print_setup()
-
-    app.keyboards = cfg_keyboards
+    # for keyb in app.keyboards:
+    # for keyb in cfg_keyboards:
+    #     keyb.print_setup()
+    # app.keyboards = cfg_keyboards
 
 
 
@@ -789,30 +836,6 @@ def grab_and_process_keyboard(keyboard, create_task=False):
 
 
 
-def get_configured_keyboard(keyb_address=None, keyb_name=None, keyb_type=None):
-    print('Look up for configured device like %s "%s", %s' %
-          (keyb_address,
-           keyb_name,
-           keyb_type))
-    found_keyboard = None
-    for keyboard in app.keyboards:
-        # Сравниваем имя и тип устройства
-        # print('  Compare with config for %s "%s", %s, enabled: %s' %
-        #       (keyboard.address,
-        #        keyboard.dev_name,
-        #        keyboard.dev_type,
-        #        keyboard.enabled))
-        if keyb_address:
-            # Сравниваем по одному адресу
-            if keyb_address == keyboard.address:
-                found_keyboard = keyboard
-                break
-        elif keyb_name == keyboard.dev_name and keyboard.dev_type in keyb_type:
-            # Нашли нужное устройство с именем и нужным типом
-            found_keyboard = keyboard
-            # print(' Found')
-            break
-    return found_keyboard
 
 
 
@@ -840,8 +863,8 @@ def devices_observer_event(action, device):
             if ev_device:
                 capabilities = ev_device.capabilities(verbose=True)
                 keyb_type = get_dev_type(capabilities)
-                conf_keyboard = get_configured_keyboard(keyb_name=keyb_name,
-                                                        keyb_type=keyb_type)
+                conf_keyboard = get_configured_keyboard(dev_name=keyb_name,
+                                                        dev_type=keyb_type)
 
             if conf_keyboard and not conf_keyboard.enabled:
                 print('  For this device events will be grabbed again.')
@@ -899,7 +922,7 @@ def devices_observer_event(action, device):
                 #     loop.run_forever()
 
         if format(action) == 'remove':
-            conf_keyboard = get_configured_keyboard(keyb_address=dev_name)
+            conf_keyboard = get_configured_keyboard(address=dev_name)
             if conf_keyboard:
                 print('  Выключаем конфиг отключенного устройства.')
                 conf_keyboard.enabled = False
