@@ -405,7 +405,8 @@ async def wait_for_reload_config():
         if app.need_reload_config:
             print('Нужно перезагрузить конфиг')
             app.need_reload_config = False
-            # load_config(app.config_filename, reload=True)
+            new_keyboards = load_config(app.config_filename)
+            compare_loaded_and_new_keyboards(new_keyboards)
         await asyncio.sleep(0.3)
 
 
@@ -454,12 +455,12 @@ async def wait_for_reload_config():
 #     return new_keyboard
 
 
-
 def get_configured_keyboard(name=None, address=None, dev_name=None, dev_type=None):
-    print('Look up for configured device like %s "%s", %s' %
-          (address,
-           dev_name,
-           dev_type))
+    # print('Look up for configured device like "%s" %s "%s", %s' %
+    #       (name,
+    #        address,
+    #        dev_name,
+    #        dev_type))
     found_keyboard = None
     for keyboard in app.keyboards:
         # Сравниваем имя и тип устройства
@@ -486,17 +487,30 @@ def get_configured_keyboard(name=None, address=None, dev_name=None, dev_type=Non
     return found_keyboard
 
 
+def compare_loaded_and_new_keyboards(new_keyboards):
+    print('Анализируем изменения между работающим конфигом клавиатур и новым:')
+    for new_keyboard in new_keyboards:
+        exist_keyboard = get_configured_keyboard(name=new_keyboard.name)
+        if exist_keyboard:
+            print('Клавиатура "%s" уже есть в памяти програмы.' % new_keyboard.name)
+        else:
+            print('В конфиге обнаружена новая клавиатура "%s". Её надо добавить к имеющимся.' % new_keyboard.name)
 
-def load_config(filename, reload=False):
+        if exist_keyboard:
+            if not exist_keyboard.dev_name == new_keyboard.dev_name:
+                print(' Изменилось значение dev_name: %s -> %s' % (exist_keyboard.dev_name, new_keyboard.dev_name) )
+            if not exist_keyboard.dev_type == new_keyboard.dev_type:
+                print(' Изменилось значение dev_type: %s -> %s' % (exist_keyboard.dev_type, new_keyboard.dev_type))
+
+            print(' Сравниванием конфиги отлавливаемых событий и действий между загруженным и новым:')
+
+    print('Поиск клавиатур в памяти, которых нет в новом конфиге, и которые надо стереть.')
+
+
+def load_config(filename):
     """Загрузка конфига и создание нужных классов для захватываемых
     устройств.
     """
-    # app.keyboards
-
-    if not reload:
-        # У нас первый запуск загрузки конфига. Запускаем отслеживание изменений файла
-        start_config_change_observer(filename)
-
     cfg_keyboards = [] # Начальная очистка списка клавиатур из конфига
     with open(filename, 'r') as ymlfile:
         cfg = yaml.load(ymlfile)
@@ -507,15 +521,6 @@ def load_config(filename, reload=False):
         dev_name = ''
         dev_type = ''
         keyboard_was_created = False
-
-        exist_keyboard = None
-
-        if reload:
-            exist_keyboard = get_configured_keyboard(name=keyboard_name)
-            if exist_keyboard:
-                print('Клавиатура "%s" уже есть в памяти програмы.' % keyboard_name)
-            else:
-                print('В конфиге обнаружена новая клавиатура "%s". Её надо добавить к имеющимся.' % keyboard_name)
 
         for key in cfg[section]:
             value = cfg[section][key]
@@ -531,14 +536,8 @@ def load_config(filename, reload=False):
                 pass
             elif key == 'name':
                 dev_name = value
-                if reload and exist_keyboard:
-                    if not exist_keyboard.dev_name == dev_name:
-                        print(' Изменилось значение dev_name: %s -> %s' % (exist_keyboard.dev_name,dev_name) )
             elif key == 'capabilities':
                 dev_type = value
-                if reload and exist_keyboard:
-                    if not exist_keyboard.dev_type == dev_type:
-                        print(' Изменилось значение dev_type: %s -> %s' % (exist_keyboard.dev_type,dev_type) )
             else:
                 if not keyboard_was_created:
                     # Создаем новую клавиатуру после того, как загружены все необходимые параметры
@@ -569,19 +568,13 @@ def load_config(filename, reload=False):
                     plugin=plugin,
                     command=command
                 )
-        # if new_keyboard:
-        #     cfg_keyboards.append(new_keyboard)
-        if not exist_keyboard and new_keyboard:
-            app.keyboards.append(new_keyboard)
+        if new_keyboard:
+            cfg_keyboards.append(new_keyboard)
 
-
-    print('Config load successfully.')
-
-    # for keyb in app.keyboards:
+    print('Configuration file "%s" successfully read' % filename)
     # for keyb in cfg_keyboards:
     #     keyb.print_setup()
-    # app.keyboards = cfg_keyboards
-
+    return cfg_keyboards
 
 
 def get_dev_type(capabilities):
@@ -1061,7 +1054,9 @@ def main():
     if args.config:
         print('Load config: %s' % args.config)
         app.config_filename = args.config
-        load_config(args.config)
+        # Запускаем отслеживание изменений файла конфига
+        start_config_change_observer(args.config)
+        app.keyboards = load_config(args.config)
         # print('keyboards: %s' % keyboards)
         check_plugged_keyboards_and_set_devices(app.keyboards)
         grab_and_process_keyboards(app.keyboards)
