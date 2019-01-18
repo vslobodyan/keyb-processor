@@ -321,6 +321,7 @@ class keyboard:
     dev_type = ''
     transmit_all = True
     dev = None
+    task = None
     processed_events = None
     enabled = False
 
@@ -489,22 +490,44 @@ def get_configured_keyboard(keyboards, name=None, address=None, dev_name=None, d
 
 def compare_loaded_and_new_keyboards(new_keyboards):
     print('Анализируем изменения между работающим конфигом клавиатур и новым:')
+
+    need_delete_keyboards = []
+
+    # Поиск клавиатур в памяти, которых нет в новом конфиге, и которые надо стереть.
+    for i in range(0, len(app.keyboards)):
+        exist_keyboard = app.keyboards[i]
+        new_keyboard = get_configured_keyboard(new_keyboards, name=exist_keyboard.name)
+        if not new_keyboard:
+            print('- В конфиге отсутствует клавиатура "%s". Её надо освободить и удалить в памяти программы.' % exist_keyboard.name)
+            ungrab_and_release_keyboard(exist_keyboard)
+            app.keyboards[i] = None
+            need_delete_keyboards.append(i)
+    # Удаление пустых ячеек в массиве загруженных клавиатур
+    for i in need_delete_keyboards:
+        del app.keyboards[i]
+
+
+    # Поиск новыйх клавиатур и изменений в имеющихся
     for new_keyboard in new_keyboards:
         keyboard_was_changed = False
+        need_regrab = False
         exist_keyboard = get_configured_keyboard(app.keyboards, name=new_keyboard.name)
         if exist_keyboard:
             print('- Клавиатура "%s" уже есть в памяти програмы.' % new_keyboard.name)
-        else:
-            print('- В конфиге обнаружена новая клавиатура "%s". Её надо добавить к имеющимся.' % new_keyboard.name)
 
-        if exist_keyboard:
-            if not exist_keyboard.dev_name == new_keyboard.dev_name:
-                print('   Изменилось значение dev_name: %s -> %s' % (exist_keyboard.dev_name, new_keyboard.dev_name) )
-                keyboard_was_changed = True
-            if not exist_keyboard.dev_type == new_keyboard.dev_type:
-                print('   Изменилось значение dev_type: %s -> %s' % (exist_keyboard.dev_type, new_keyboard.dev_type))
+            if not exist_keyboard.dev_name == new_keyboard.dev_name or not exist_keyboard.dev_type == new_keyboard.dev_type:
+                print('   Изменилось имя/тип клавиатуры с %s/%s' % (exist_keyboard.dev_name, exist_keyboard.dev_type))
+                print('   на %s/%s' % (new_keyboard.dev_name, new_keyboard.dev_type))
                 keyboard_was_changed = True
 
+                print('  Выполняем освобождение устройства и цикла перехвата событий и ищем новое устройство для захвата.')
+                ungrab_and_release_keyboard(exist_keyboard)
+
+                exist_keyboard.dev_name = new_keyboard.dev_name
+                exist_keyboard.dev_type = new_keyboard.dev_type
+
+                check_plugged_keyboards_and_set_devices([exist_keyboard])
+                grab_and_process_keyboard(exist_keyboard)
 
             # Сравниванием конфиги отлавливаемых событий и действий между загруженным и новым
             exist_events = exist_keyboard.processed_events.listen_events.copy()
@@ -512,12 +535,12 @@ def compare_loaded_and_new_keyboards(new_keyboards):
 
             events_was_changed = False
             actions_was_changed = False
-            
+
             if not exist_events == new_events:
                 events_was_changed = True
                 keyboard_was_changed = True
                 print('   Был изменен массив событий, обрабатываемых этой клавиатурой.')
-            
+
             if not events_was_changed:
                 # События не были изменены, но могли быть изменены действия, связанные с ними
                 # Сравниваем массивы классов в обработчиках событий этих клавиатур
@@ -537,23 +560,25 @@ def compare_loaded_and_new_keyboards(new_keyboards):
                         keyboard_was_changed = True
                         print('   Был изменен массив действий, который вызываются событиями с этой клавиатуры.')
                         break
-                
+
             if events_was_changed or actions_was_changed:
                 exist_keyboard.processed_events.listen_events = new_keyboard.processed_events.listen_events.copy()
                 # Перезагружаем классы обработчиков клавиатуры
                 exist_keyboard.processed_events.processed_events_setup = new_keyboard.processed_events.processed_events_setup.copy()
                 print('   --> Обновляем кэш событий и класс событий и действий для этой клавиатуры.')
 
-                #exist_keyboard.print_setup()
-                
+                # exist_keyboard.print_setup()
+
             if not keyboard_was_changed:
                 print('   В обновленном конфиге клавиатура осталась без изменений.')
 
-    # Поиск клавиатур в памяти, которых нет в новом конфиге, и которые надо стереть.
-    for exist_keyboard in app.keyboards:
-        new_keyboard = get_configured_keyboard(new_keyboards, name=exist_keyboard.name)
-        if not new_keyboard:
-            print('- В конфиге отсутствует клавиатура "%s". Её надо удалить.' % exist_keyboard.name)
+        else:
+            # not exist_keyboard
+            print('- В конфиге обнаружена новая клавиатура "%s". Её надо добавить к имеющимся.' % new_keyboard.name)
+            app.keyboards.append(new_keyboard)
+            check_plugged_keyboards_and_set_devices([new_keyboard])
+            grab_and_process_keyboard(new_keyboard)
+
 
 
 def load_config(filename):
@@ -855,12 +880,29 @@ async def proccess_events(keyboard):
         keyboard.enabled = False
 
 
-def grab_and_process_keyboard(keyboard, create_task=False):
+
+def ungrab_and_release_keyboard(keyboard):
+    """Освобождаем захват устройства, выключаем класс и заканчиваем цикл ожидания сигналов."""
+    print('  Освобождаем захват устройства, выключаем класс и заканчиваем цикл ожидания сигналов.')
+    keyboard.enabled = False
+    if keyboard.dev:
+        keyboard.dev.ungrab()
+        keyboard.dev = None
+    print('  Надо убить процесс отлова событий в loop')
+    if keyboard.task and not keyboard.task.cancelled():
+        keyboard.task.cancel()
+        keyboard.task = None
+
+
+
+def grab_and_process_keyboard(keyboard):
     """Функция захвата и обработки событий одной клавиатуры"""
     if keyboard.enabled:
         # Если клавиатура включена, то у неё должен быть адрес и прикрепленное устройство
         keyboard.dev.grab()
-        asyncio.ensure_future(proccess_events(keyboard))
+        # asyncio.ensure_future(proccess_events(keyboard))
+        keyb_task = asyncio.ensure_future(proccess_events(keyboard))
+        keyboard.task = keyb_task
     else:
         # А иначе это конфиг на будущее, ожидающий подключения устройства позднее.
         pass
@@ -1054,6 +1096,7 @@ def get_plugged_devices_array():
     return plugged_devices # (dev_name, dev_type, address, dev)
 
 
+
 def check_plugged_keyboards_and_set_devices(keyboards):
     """Проверяем подключенные клавиатуры и прикрепляем к классам соответствующие устройства"""
     plugged_devices = get_plugged_devices_array()
@@ -1105,9 +1148,9 @@ def main():
         print('Load config: %s' % args.config)
         app.config_filename = args.config
         # Запускаем отслеживание изменений файла конфига
-        start_config_change_observer(args.config)
         app.keyboards = load_config(args.config)
         # print('keyboards: %s' % keyboards)
+        start_config_change_observer(args.config)
         check_plugged_keyboards_and_set_devices(app.keyboards)
         grab_and_process_keyboards(app.keyboards)
     elif args.list:
