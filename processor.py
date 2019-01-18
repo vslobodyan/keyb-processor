@@ -455,14 +455,14 @@ async def wait_for_reload_config():
 #     return new_keyboard
 
 
-def get_configured_keyboard(name=None, address=None, dev_name=None, dev_type=None):
+def get_configured_keyboard(keyboards, name=None, address=None, dev_name=None, dev_type=None):
     # print('Look up for configured device like "%s" %s "%s", %s' %
     #       (name,
     #        address,
     #        dev_name,
     #        dev_type))
     found_keyboard = None
-    for keyboard in app.keyboards:
+    for keyboard in keyboards:
         # Сравниваем имя и тип устройства
         # print('  Compare with config for %s "%s", %s, enabled: %s' %
         #       (keyboard.address,
@@ -490,21 +490,70 @@ def get_configured_keyboard(name=None, address=None, dev_name=None, dev_type=Non
 def compare_loaded_and_new_keyboards(new_keyboards):
     print('Анализируем изменения между работающим конфигом клавиатур и новым:')
     for new_keyboard in new_keyboards:
-        exist_keyboard = get_configured_keyboard(name=new_keyboard.name)
+        keyboard_was_changed = False
+        exist_keyboard = get_configured_keyboard(app.keyboards, name=new_keyboard.name)
         if exist_keyboard:
-            print('Клавиатура "%s" уже есть в памяти програмы.' % new_keyboard.name)
+            print('- Клавиатура "%s" уже есть в памяти програмы.' % new_keyboard.name)
         else:
-            print('В конфиге обнаружена новая клавиатура "%s". Её надо добавить к имеющимся.' % new_keyboard.name)
+            print('- В конфиге обнаружена новая клавиатура "%s". Её надо добавить к имеющимся.' % new_keyboard.name)
 
         if exist_keyboard:
             if not exist_keyboard.dev_name == new_keyboard.dev_name:
-                print(' Изменилось значение dev_name: %s -> %s' % (exist_keyboard.dev_name, new_keyboard.dev_name) )
+                print('   Изменилось значение dev_name: %s -> %s' % (exist_keyboard.dev_name, new_keyboard.dev_name) )
+                keyboard_was_changed = True
             if not exist_keyboard.dev_type == new_keyboard.dev_type:
-                print(' Изменилось значение dev_type: %s -> %s' % (exist_keyboard.dev_type, new_keyboard.dev_type))
+                print('   Изменилось значение dev_type: %s -> %s' % (exist_keyboard.dev_type, new_keyboard.dev_type))
+                keyboard_was_changed = True
 
-            print(' Сравниванием конфиги отлавливаемых событий и действий между загруженным и новым:')
 
-    print('Поиск клавиатур в памяти, которых нет в новом конфиге, и которые надо стереть.')
+            # Сравниванием конфиги отлавливаемых событий и действий между загруженным и новым
+            exist_events = exist_keyboard.processed_events.listen_events.copy()
+            new_events = new_keyboard.processed_events.listen_events.copy()
+
+            events_was_changed = False
+            actions_was_changed = False
+            
+            if not exist_events == new_events:
+                events_was_changed = True
+                keyboard_was_changed = True
+                print('   Был изменен массив событий, обрабатываемых этой клавиатурой.')
+            
+            if not events_was_changed:
+                # События не были изменены, но могли быть изменены действия, связанные с ними
+                # Сравниваем массивы классов в обработчиках событий этих клавиатур
+                for i in range(0, len(exist_keyboard.processed_events.processed_events_setup)):
+                    exist_processed_event = exist_keyboard.processed_events.processed_events_setup[i]
+                    new_processed_event = new_keyboard.processed_events.processed_events_setup[i]
+                    if not exist_processed_event.pressed_keys == new_processed_event.pressed_keys:
+                        actions_was_changed = True
+                    if not exist_processed_event.inject_keys == new_processed_event.inject_keys:
+                        actions_was_changed = True
+                    if not exist_processed_event.plugin == new_processed_event.plugin:
+                        actions_was_changed = True
+                    if not exist_processed_event.command == new_processed_event.command:
+                        actions_was_changed = True
+
+                    if actions_was_changed:
+                        keyboard_was_changed = True
+                        print('   Был изменен массив действий, который вызываются событиями с этой клавиатуры.')
+                        break
+                
+            if events_was_changed or actions_was_changed:
+                exist_keyboard.processed_events.listen_events = new_keyboard.processed_events.listen_events.copy()
+                # Перезагружаем классы обработчиков клавиатуры
+                exist_keyboard.processed_events.processed_events_setup = new_keyboard.processed_events.processed_events_setup.copy()
+                print('   --> Обновляем кэш событий и класс событий и действий для этой клавиатуры.')
+
+                #exist_keyboard.print_setup()
+                
+            if not keyboard_was_changed:
+                print('   В обновленном конфиге клавиатура осталась без изменений.')
+
+    # Поиск клавиатур в памяти, которых нет в новом конфиге, и которые надо стереть.
+    for exist_keyboard in app.keyboards:
+        new_keyboard = get_configured_keyboard(new_keyboards, name=exist_keyboard.name)
+        if not new_keyboard:
+            print('- В конфиге отсутствует клавиатура "%s". Её надо удалить.' % exist_keyboard.name)
 
 
 def load_config(filename):
@@ -856,7 +905,8 @@ def devices_observer_event(action, device):
             if ev_device:
                 capabilities = ev_device.capabilities(verbose=True)
                 keyb_type = get_dev_type(capabilities)
-                conf_keyboard = get_configured_keyboard(dev_name=keyb_name,
+                conf_keyboard = get_configured_keyboard(app.keyboards, 
+                                                        dev_name=keyb_name,
                                                         dev_type=keyb_type)
 
             if conf_keyboard and not conf_keyboard.enabled:
@@ -915,7 +965,7 @@ def devices_observer_event(action, device):
                 #     loop.run_forever()
 
         if format(action) == 'remove':
-            conf_keyboard = get_configured_keyboard(address=dev_name)
+            conf_keyboard = get_configured_keyboard(app.keyboards, address=dev_name)
             if conf_keyboard:
                 print('  Выключаем конфиг отключенного устройства.')
                 conf_keyboard.enabled = False
