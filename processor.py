@@ -337,21 +337,22 @@ class keyboard:
         #       self.processed_events.processed_events_setup)
         print()
 
-    def __init__(self, name=name, address=address, dev_name=dev_name, dev_type=dev_type,transmit_all=True):
+    def __init__(self, name=name, dev_name=dev_name, dev_type=dev_type,transmit_all=True):
+        #address=address,
         self.name = name
-        self.address = address
+        # self.address = address
         self.dev_name = dev_name
         self.dev_type = dev_type
         self.transmit_all = transmit_all
         self.processed_events = _processed_events()
-        if address:
-            # Устройство уже подключено
-            self.dev = InputDevice(address)
-            self.enabled = True
-        else:
-            # Устройство возможно будет подключено позднее
-            self.dev = None
-            self.enabled = False
+        # if address:
+        #     # Устройство уже подключено
+        #     self.dev = InputDevice(address)
+        #     self.enabled = True
+        # else:
+        #     # Устройство возможно будет подключено позднее
+        #     self.dev = None
+        #     self.enabled = False
 
     # def set_processed_events(self, events):
     #     pass
@@ -409,48 +410,48 @@ async def wait_for_reload_config():
 
 
 
-def find_and_create_new_keyboard(keyboard_name, dev_name, dev_type):
-    # Поиск нужного устройства
-    device = ''
-    # print('Look for device:')
-    # print(' keyboard_name="%s"' % keyboard_name)
-    # print(' dev_name="%s"' % dev_name)
-    # print(' dev_type="%s"' % dev_type)
-
-    print('  Looking for device "%s" / %s' % (dev_name, dev_type))
-
-    raw_devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
-    devices = reversed(raw_devices)
-    # devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
-    # print(devices)
-    device = None
-    for dev in devices:
-        # print('dev: %s' % dev)
-        # print('compare "%s" and "%s"' % (dev_name, dev.name))
-        if dev_name == dev.name:
-            # print('Found name')
-            # Нашли устройство с нужным именем
-            capabilities = dev.capabilities(verbose=True)
-            _dev_type = get_dev_type(capabilities)
-            # print('_dev_type: %s' % _dev_type)
-            if dev_type in _dev_type:
-                # Нашли нужное устройство с именем и нужным типом
-                # print('Device was found: %s' % dev)
-                device = dev.fn
-                # print('Device was found as %s' % device)
-                print('   found at %s' % device)
-                break
-    new_keyboard = None
-    if device:
-        new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
-    else:
-        # print('We cant find whese device!')
-        print('   device not found!')
-    if not device:
-        print('  Устройство не было найдено. Но конфиг загружен на будущее, и будет ждать подключения этого устройства.')
-    new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
-
-    return new_keyboard
+# def find_and_create_new_keyboard(keyboard_name, dev_name, dev_type):
+#     # Поиск нужного устройства
+#     device = ''
+#     # print('Look for device:')
+#     # print(' keyboard_name="%s"' % keyboard_name)
+#     # print(' dev_name="%s"' % dev_name)
+#     # print(' dev_type="%s"' % dev_type)
+#
+#     print('  Looking for device "%s" / %s' % (dev_name, dev_type))
+#
+#     raw_devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+#     devices = reversed(raw_devices)
+#     # devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+#     # print(devices)
+#     device = None
+#     for dev in devices:
+#         # print('dev: %s' % dev)
+#         # print('compare "%s" and "%s"' % (dev_name, dev.name))
+#         if dev_name == dev.name:
+#             # print('Found name')
+#             # Нашли устройство с нужным именем
+#             capabilities = dev.capabilities(verbose=True)
+#             _dev_type = get_dev_type(capabilities)
+#             # print('_dev_type: %s' % _dev_type)
+#             if dev_type in _dev_type:
+#                 # Нашли нужное устройство с именем и нужным типом
+#                 # print('Device was found: %s' % dev)
+#                 device = dev.fn
+#                 # print('Device was found as %s' % device)
+#                 print('   found at %s' % device)
+#                 break
+#     new_keyboard = None
+#     if device:
+#         new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
+#     else:
+#         # print('We cant find whese device!')
+#         print('   device not found!')
+#     if not device:
+#         print('  Устройство не было найдено. Но конфиг загружен на будущее, и будет ждать подключения этого устройства.')
+#     new_keyboard = keyboard(keyboard_name, device, dev_name, dev_type)
+#
+#     return new_keyboard
 
 
 
@@ -495,7 +496,8 @@ def load_config(filename, reload=False):
             else:
                 if not keyboard_was_created:
                     # Создаем новую клавиатуру после того, как загружены все необходимые параметры
-                    new_keyboard = find_and_create_new_keyboard(keyboard_name, dev_name, dev_type)
+                    # new_keyboard = find_and_create_new_keyboard(keyboard_name, dev_name, dev_type)
+                    new_keyboard = keyboard(keyboard_name, dev_name, dev_type)
                     keyboard_was_created = True
                     # if not new_keyboard:
                     #     # Клавиатуры не нашли. Выходим из обработки данной секции
@@ -955,11 +957,21 @@ def grab_and_process_keyboards(keyboards):
     app.ui.close()
 
 
-
-def check_plugged_keyboard_and_set_device(keyboard, plugged_devices):
+def check_plugged_keyboard_and_set_device(keyboard, plugged_devices, set_enabled=True):
     # Проверяем, подключена ли такая клавиатура
     print('  Для клавиатуры %s, %s ищем соответствующее подключенное устройство' % (keyboard.dev_name, keyboard.dev_type))
-    # Если подключена - прикрепляем к ней соответствующее устройство
+    # Если подключена - прикрепляем к ней соответствующее устройство и включаем её
+    for plug_dev in plugged_devices:
+        dev_name, dev_type, address, dev = plug_dev
+        if keyboard.dev_name == dev_name and keyboard.dev_type in dev_type:
+            # print('    Нашли соответствующее устройство %s %s %s' % (dev_name, dev_type, address))
+            print('  Нашли соответствующее устройство на %s и включаем её.' % address)
+            keyboard.dev = dev
+            keyboard.address = address
+            keyboard.enabled = True
+            break
+    if not keyboard.enabled:
+        print('  Соответствующего устройства не нашли но будем ждать его подключения позднее.')
 
 
 def get_plugged_devices_array():
@@ -971,8 +983,7 @@ def get_plugged_devices_array():
         capabilities = dev.capabilities(verbose=True)
         _dev_type = get_dev_type(capabilities)
         plugged_devices.append((dev.name, _dev_type, dev.fn, dev))
-    return plugged_devices
-
+    return plugged_devices # (dev_name, dev_type, address, dev)
 
 
 def check_plugged_keyboards_and_set_devices(keyboards):
@@ -981,7 +992,7 @@ def check_plugged_keyboards_and_set_devices(keyboards):
     print('plugged_devices:')
     for plug_dev in plugged_devices:
         dev_name, dev_type, address, dev = plug_dev
-        print('%s %s %s' % (dev_name, dev_type, address))
+        print('  %s %s %s' % (dev_name, dev_type, address))
     print()
 
     print('Check plugged keyboards and set devices:')
