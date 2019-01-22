@@ -10,10 +10,10 @@ Logitech G710 keyboard:
     command: cinnamon-screensaver-command -l
     # to lock and disable moinitor:
     # cinnamon-screensaver-command -l; xset dpms force off;
-  KEY_LEFTCTRL KEY_PAUSE:
+  CTRL KEY_PAUSE:
     command: systemctl suspend -i
-  KEY_RIGHTCTRL KEY_PAUSE:
-    command: systemctl suspend -i
+#  KEY_RIGHTCTRL KEY_PAUSE:
+#    command: systemctl suspend -i
 
 
   KEY_KP7:
@@ -45,24 +45,24 @@ Logitech G710 keyboard:
   KEY_KP6:
     plugin: wmctrl
     command: raise okular Okular
-  KEY_LEFTCTRL KEY_KP6:
+  CTRL KEY_KP6:
     plugin: wmctrl
     command: raise goldendict goldendict.GoldenDict
-  KEY_RIGHTCTRL KEY_KP6:
-    plugin: wmctrl
-    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
 
 
 
   KEY_KP1:
     plugin: wmctrl
     command: raise relanotes Relanotes
-  KEY_LEFTCTRL KEY_KP1:
+  CTRL KEY_KP1:
     plugin: wmctrl
     command: raise relacalc Relacalc
-  KEY_RIGHTCTRL KEY_KP1:
-    plugin: wmctrl
-    command: raise relacalc Relacalc
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
 
   KEY_KP2:
     plugin: wmctrl
@@ -178,10 +178,10 @@ Notebook Keyboard:
     command: cinnamon-screensaver-command -l
     # to lock and disable moinitor:
     # cinnamon-screensaver-command -l; xset dpms force off;
-  KEY_LEFTCTRL KEY_PAUSE:
+  CTRL KEY_PAUSE:
     command: systemctl suspend -i
-  KEY_RIGHTCTRL KEY_PAUSE:
-    command: systemctl suspend -i
+#  KEY_RIGHTCTRL KEY_PAUSE:
+#    command: systemctl suspend -i
 
 
   KEY_KP7:
@@ -213,24 +213,24 @@ Notebook Keyboard:
   KEY_KP6:
     plugin: wmctrl
     command: raise okular Okular
-  KEY_LEFTCTRL KEY_KP6:
+  CTRL KEY_KP6:
     plugin: wmctrl
     command: raise goldendict goldendict.GoldenDict
-  KEY_RIGHTCTRL KEY_KP6:
-    plugin: wmctrl
-    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
 
 
 
   KEY_KP1:
     plugin: wmctrl
     command: raise relanotes Relanotes
-  KEY_LEFTCTRL KEY_KP1:
+  CTRL KEY_KP1:
     plugin: wmctrl
     command: raise relacalc Relacalc
-  KEY_RIGHTCTRL KEY_KP1:
-    plugin: wmctrl
-    command: raise relacalc Relacalc
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
 
   KEY_KP2:
     plugin: wmctrl

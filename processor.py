@@ -818,7 +818,7 @@ def process_one_event_and_exit(keyboard, ui, event):
                     also_pressed_modifiers[modifier] = True
 
             # print('-'*20)
-            print('also_pressed_modifiers: %s' % also_pressed_modifiers)
+            # print('also_pressed_modifiers: %s' % also_pressed_modifiers)
 
             # Для случая одной нажатой клавиши или нескольких нажатых клавиш с одного устройства- просто обрабатываем их, собрав в массив
 
@@ -844,7 +844,7 @@ def process_one_event_and_exit(keyboard, ui, event):
             variations_pressed_combination.append(pressed_combination)
 
             # print('combinations_events_search: %s' % combinations_events_search)
-            print('pressed_combination: %s' % pressed_combination)
+            # print('pressed_combination: %s' % pressed_combination)
 
             # Дальше надо добавить измененную комбинацию с утройства на абстрактные ALT / SHIFT / META / CTRL
             abstract_pressed_combination = []
@@ -877,17 +877,17 @@ def process_one_event_and_exit(keyboard, ui, event):
                 abstract_pressed_combination[i] = (abstract_pressed_combination[i], 0)
 
             if get_abstract_pressed_combination:
-                print('abstract_pressed_combination: %s' % abstract_pressed_combination)
+                # print('abstract_pressed_combination: %s' % abstract_pressed_combination)
                 variations_pressed_combination.append(abstract_pressed_combination)
 
-            print('variations_pressed_combination: %s' % variations_pressed_combination)
+            # print('variations_pressed_combination: %s' % variations_pressed_combination)
 
             for combination in variations_pressed_combination:
                 # Перебираем комбинации и ищем их в слушаемых событиях
-                print('Для комбинации "%s" ищем ...' % combination)
+                # print('Для комбинации "%s" ищем ...' % combination)
                 strkey = keyboard.processed_events.find_strkey(combination)
                 if strkey:
-                    print('Нашли: %s' % strkey)
+                    # print('Нашли: %s' % strkey)
                     # return False
                     event_handled = True
                     keyboard.processed_events.proccess_event(strkey, ui)
