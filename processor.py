@@ -86,8 +86,8 @@ class Active_modifiers:
             # Клавиша отпущена
             self.find_mods_and_change_state(cur_event_data.scancode, state=False)
             self.pressed.pop(cur_event_data.scancode, None)
-        print('(after update) modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
-        print('(after update) pressed: %s' % self.pressed)
+        # print('(after update) modifiers: alt %s, ctrl %s, meta %s, shift %s' % (self.alt, self.ctrl, self.meta, self.shift))
+        # print('(after update) pressed: %s' % self.pressed)
 
 
 async def tcp_echo_client(message, loop):
@@ -98,9 +98,9 @@ async def tcp_echo_client(message, loop):
     writer.write(message.encode())
 
     data = await reader.read(100)
-    print('Received: %r' % data.decode())
+    # print('Received: %r' % data.decode())
 
-    print('Close the socket')
+    # print('Close the socket')
     writer.close()
 
 
@@ -741,8 +741,8 @@ def process_one_event_and_exit(keyboard, ui, event):
         # Переводим инфу о нажатых клавишах в понятный формат
         active_keys = keyboard.dev.active_keys()
         verbose_active_keys = keyboard.dev.active_keys(verbose=True)
-        print()
-        print('Событие: %s (активные клавиши: %s)' % (cur_event_data.keycode, verbose_active_keys))
+        # print()
+        # print('Событие: %s (активные клавиши: %s)' % (cur_event_data.keycode, verbose_active_keys))
 
         # Глотаем нажатия META-клавиши до нажатия другой значащей клавиши
         # if 'META' in cur_event_data.keycode and not verbose_active_keys and cur_event_data.keystate in [1, 2]:
@@ -771,7 +771,7 @@ def process_one_event_and_exit(keyboard, ui, event):
             active_modifiers.update(cur_event_data)
 
         # Check for double event modifier and sign key combination, like from self-programming Logitech devices: G602, G600 etc.
-        double_event_mod_and_sign_keys = False
+        # double_event_mod_and_sign_keys = False
         # if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
         #     if cur_event_data.scancode in active_modifiers._all:
         #         """ Если нажат модификатор, проверяем - не идет ли с ним
@@ -790,10 +790,11 @@ def process_one_event_and_exit(keyboard, ui, event):
         #     # Если нажат модификатор и идет другое событие с утройства - игнорируем его
 
             # Дальше обрабатываем только нажатия
-        if cur_event_data.keystate in [1, 2] and not double_event_mod_and_sign_keys:  # Down and Hold events only
+        if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
+            #   and not double_event_mod_and_sign_keys
 
             global_modifiers = active_modifiers.get()
-            print('You Pressed the %s key, active keys from this device is: %s, and global modifiers: %s' % (
+            print('You Pressed the %s, active keys from this device is: %s, global modifiers: %s' % (
                             cur_event_data.keycode,
                             verbose_active_keys,
                             global_modifiers))
@@ -816,26 +817,50 @@ def process_one_event_and_exit(keyboard, ui, event):
             # print('-'*20)
             # print('also_pressed_modifiers: %s' % also_pressed_modifiers)
 
-            combinations_events_search = []
-            combinations_events_search.append(verbose_active_keys)
-            for also_mod in also_pressed_modifiers:
-                new_comb=[(also_mod, 0)]+verbose_active_keys
-                # print('new_comb: %s' % new_comb)
-                combinations_events_search.append(new_comb)
-            # print('combinations_events_search: %s' % combinations_events_search)
+            # Для случая одной нажатой клавиши или нескольких нажатых клавиш с одного устройства- просто обрабатываем их, собрав в массив
 
-            for combination in combinations_events_search:
-                # Перебираем комбинации и ищем их в слушаемых событиях
-                strkey = keyboard.processed_events.find_strkey(combination)
-                if strkey:
-                    # print('Found!')
-                    # return False
-                    event_handled = True
-                    keyboard.processed_events.proccess_event(strkey, ui)
-                    # Раньше использовались дополнительные параметры:
-                    # event.type,
-                    # cur_event_data.scancode,
-                    # cur_event_data.keystate
+            # Если активен глобальный модификатор:
+            # 1. проверяем, не из-за модификатора с устройства он активен
+            # 2. если глобальный модификатор отдельно - собираем комбинацию только с ним конкретно (LEFTALT/RIGHTALT) и затем добавляем с его общим варианто (ALT)
+
+            # print('verbose_active_keys: %s' % verbose_active_keys)
+            # combinations_events_search = []
+            # combinations_events_search.append(verbose_active_keys)
+            pressed_combination = verbose_active_keys
+
+            for also_mod in also_pressed_modifiers:
+                # new_comb=[(also_mod, 0)]+verbose_active_keys
+                # print('new_comb: %s' % new_comb)
+                # combinations_events_search.append(new_comb)
+                pressed_combination.append((also_mod, 0))
+
+            # print('combinations_events_search: %s' % combinations_events_search)
+            # print('pressed_combination: %s' % pressed_combination)
+
+            # for combination in combinations_events_search:
+            #     # Перебираем комбинации и ищем их в слушаемых событиях
+            #     print('Для комбинации "%s" ищем ...' % combination)
+            #     strkey = keyboard.processed_events.find_strkey(combination)
+            #     if strkey:
+            #         # print('Нашли: %s' % strkey)
+            #         # return False
+            #         event_handled = True
+            #         keyboard.processed_events.proccess_event(strkey, ui)
+            #         # Раньше использовались дополнительные параметры:
+            #         # event.type,
+            #         # cur_event_data.scancode,
+            #         # cur_event_data.keystate
+            #     # else:
+            #         # print('Не нашли. Конфига для комбинации нет.')
+
+            # print('Для комбинации "%s" ищем ...' % combination)
+            strkey = keyboard.processed_events.find_strkey(pressed_combination)
+            if strkey:
+                # print('Нашли связанное событие для комбинции: %s' % strkey)
+                # return False
+                event_handled = True
+                keyboard.processed_events.proccess_event(strkey, ui)
+
         # Here we decide - whether to skip the event further (whether to do inject)
 
         # Если событие не было из списка отлавливаемых, то возможно надо
@@ -844,7 +869,7 @@ def process_one_event_and_exit(keyboard, ui, event):
         if not event_handled:
             if keyboard.transmit_all:
                 # We decide to inject keyboard event:
-                print('Transmit %s, %s' % (cur_event_data.keycode, cur_event_data.keystate))
+                # print('Transmit %s, %s' % (cur_event_data.keycode, cur_event_data.keystate))
                 ui.write(event.type,
                          cur_event_data.scancode,
                          cur_event_data.keystate)

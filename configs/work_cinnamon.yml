@@ -137,7 +137,7 @@ Logitech G602 mouse:
   KEY_7:
     inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
   ALT KEY_7:
-    command: notify-send Alt+Meta+S
+    command: flameshot gui
 
 
   # G5

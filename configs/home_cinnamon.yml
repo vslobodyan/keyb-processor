@@ -155,6 +155,8 @@ Logitech G600 mouse:
 
   KEY_2:
     inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+  ALT KEY_2:
+    command: flameshot gui
 
   KEY_5:
     plugin: xdotool
