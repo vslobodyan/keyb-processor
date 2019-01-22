@@ -53,6 +53,7 @@ class Active_modifiers:
     meta = False
     shift = False
     pressed = {}
+    abstract_list = ['ALT', 'CTRL', 'SHIFT', 'META']
 
     alts = [ecodes.KEY_LEFTALT, ecodes.KEY_RIGHTALT]
     ctrls = [ecodes.KEY_LEFTCTRL, ecodes.KEY_RIGHTCTRL]
@@ -238,12 +239,14 @@ class _processed_events:
             # print('key: %s ' % key)
             active_keys_str.append(key)
         strkey = self.keys_as_string(active_keys_str)
-        # print('Получили строку для поиска ключей: %s' % strkey)
+        # print(' Получили строку для поиска ключей: %s' % strkey)
         # print('Массив слушаемых событий: %s' % self.listen_events)
         # print('We find %s in %s' % (active_keys_str, self.listen_events))
         if strkey in self.listen_events:
+            # print(' Нашли')
             return strkey
         else:
+            # print(' Не нашли')
             return False
 
     def clear(self):
@@ -815,7 +818,7 @@ def process_one_event_and_exit(keyboard, ui, event):
                     also_pressed_modifiers[modifier] = True
 
             # print('-'*20)
-            # print('also_pressed_modifiers: %s' % also_pressed_modifiers)
+            print('also_pressed_modifiers: %s' % also_pressed_modifiers)
 
             # Для случая одной нажатой клавиши или нескольких нажатых клавиш с одного устройства- просто обрабатываем их, собрав в массив
 
@@ -826,6 +829,9 @@ def process_one_event_and_exit(keyboard, ui, event):
             # print('verbose_active_keys: %s' % verbose_active_keys)
             # combinations_events_search = []
             # combinations_events_search.append(verbose_active_keys)
+
+            variations_pressed_combination = []
+
             pressed_combination = verbose_active_keys
 
             for also_mod in also_pressed_modifiers:
@@ -834,32 +840,66 @@ def process_one_event_and_exit(keyboard, ui, event):
                 # combinations_events_search.append(new_comb)
                 pressed_combination.append((also_mod, 0))
 
-            # print('combinations_events_search: %s' % combinations_events_search)
-            # print('pressed_combination: %s' % pressed_combination)
+            # Добавляем основную нажатую комбинацию с утройства + модификаторы с других
+            variations_pressed_combination.append(pressed_combination)
 
-            # for combination in combinations_events_search:
-            #     # Перебираем комбинации и ищем их в слушаемых событиях
-            #     print('Для комбинации "%s" ищем ...' % combination)
-            #     strkey = keyboard.processed_events.find_strkey(combination)
-            #     if strkey:
-            #         # print('Нашли: %s' % strkey)
-            #         # return False
-            #         event_handled = True
-            #         keyboard.processed_events.proccess_event(strkey, ui)
-            #         # Раньше использовались дополнительные параметры:
-            #         # event.type,
-            #         # cur_event_data.scancode,
-            #         # cur_event_data.keystate
-            #     # else:
-            #         # print('Не нашли. Конфига для комбинации нет.')
+            # print('combinations_events_search: %s' % combinations_events_search)
+            print('pressed_combination: %s' % pressed_combination)
+
+            # Дальше надо добавить измененную комбинацию с утройства на абстрактные ALT / SHIFT / META / CTRL
+            abstract_pressed_combination = []
+            for one_key in pressed_combination:
+                abstract_pressed_combination.append(one_key[0])
+
+            # print('abstract_pressed_combination: %s' % abstract_pressed_combination)
+
+            # abstract_pressed_combination = pressed_combination.copy()
+            get_abstract_pressed_combination = False
+
+            # print('abstract_pressed_combination: %s' % abstract_pressed_combination)
+            for i in range(0, len(abstract_pressed_combination)):
+                # print('i=%s' % i)
+                one_key = abstract_pressed_combination[i]
+                # print('one_key: %s' % one_key)
+                # one_key = abstract_pressed_combination[i]
+                # print('one_key: %s' % abstract_pressed_combination[i])
+
+                for mod in active_modifiers.abstract_list:
+                    # print('look for mod: %s' % mod)
+                    # Ищем такой модификатор в строке и меняем его на абстрактный
+                    if mod in one_key:
+                        abstract_pressed_combination[i] = mod
+                        # print('after replace one_key abstract_pressed_combination= %s' % abstract_pressed_combination)
+                        get_abstract_pressed_combination = True
+
+            # Добавляем цифру к элементам, как при обработке событий
+            for i in range(0, len(abstract_pressed_combination)):
+                abstract_pressed_combination[i] = (abstract_pressed_combination[i], 0)
+
+            if get_abstract_pressed_combination:
+                print('abstract_pressed_combination: %s' % abstract_pressed_combination)
+                variations_pressed_combination.append(abstract_pressed_combination)
+
+            print('variations_pressed_combination: %s' % variations_pressed_combination)
+
+            for combination in variations_pressed_combination:
+                # Перебираем комбинации и ищем их в слушаемых событиях
+                print('Для комбинации "%s" ищем ...' % combination)
+                strkey = keyboard.processed_events.find_strkey(combination)
+                if strkey:
+                    print('Нашли: %s' % strkey)
+                    # return False
+                    event_handled = True
+                    keyboard.processed_events.proccess_event(strkey, ui)
+                    break
+                    # Раньше использовались дополнительные параметры:
+                    # event.type,
+                    # cur_event_data.scancode,
+                    # cur_event_data.keystate
+                # else:
+                    # print('Не нашли. Конфига для комбинации нет.')
 
             # print('Для комбинации "%s" ищем ...' % combination)
-            strkey = keyboard.processed_events.find_strkey(pressed_combination)
-            if strkey:
-                # print('Нашли связанное событие для комбинции: %s' % strkey)
-                # return False
-                event_handled = True
-                keyboard.processed_events.proccess_event(strkey, ui)
 
         # Here we decide - whether to skip the event further (whether to do inject)
 

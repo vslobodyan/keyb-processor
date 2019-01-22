@@ -3,10 +3,10 @@ Logitech G413 keyboard:
   name: Logitech G413 Carbon Mechanical Gaming Keyboard
   capabilities: keyboard
 
-  KEY_LEFTMETA KEY_S:
-    #inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
-    plugin: wmctrl
-    command: raise nemo nemo.Nemo
+#  META KEY_S:
+#    #inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+#    plugin: wmctrl
+#    command: raise nemo nemo.Nemo
 
   KEY_SCROLLLOCK:
     command: flameshot gui
@@ -15,10 +15,10 @@ Logitech G413 keyboard:
     command: cinnamon-screensaver-command -l
     # to lock and disable moinitor:
     # cinnamon-screensaver-command -l; xset dpms force off;
-  KEY_LEFTCTRL KEY_PAUSE:
+  CTRL KEY_PAUSE:
     command: systemctl suspend -i
-  KEY_RIGHTCTRL KEY_PAUSE:
-    command: systemctl suspend -i
+#  KEY_RIGHTCTRL KEY_PAUSE:
+#    command: systemctl suspend -i
 
 
   KEY_KP7:
@@ -44,13 +44,13 @@ Logitech G413 keyboard:
   KEY_KP9:
     plugin: wmctrl
     command: raise pycharm jetbrains-pycharm
-  KEY_LEFTCTRL KEY_KP9:
+  CTRL KEY_KP9:
     plugin: wmctrl
     command: raise inkscape inkscape.Inkscape
-  KEY_RIGHTCTRL KEY_KP9:
-    plugin: wmctrl
-    command: raise inkscape inkscape.Inkscape
- 
+#  KEY_RIGHTCTRL KEY_KP9:
+#    plugin: wmctrl
+#    command: raise inkscape inkscape.Inkscape
+#
 
   KEY_KP4:
     plugin: wmctrl
@@ -63,12 +63,12 @@ Logitech G413 keyboard:
   KEY_KP6:
     plugin: wmctrl
     command: raise okular Okular
-  KEY_LEFTCTRL KEY_KP6:
+  CTRL KEY_KP6:
     plugin: wmctrl
     command: raise goldendict goldendict.GoldenDict
-  KEY_RIGHTCTRL KEY_KP6:
-    plugin: wmctrl
-    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
 
 
 
@@ -76,12 +76,12 @@ Logitech G413 keyboard:
   KEY_KP1:
     plugin: wmctrl
     command: raise relanotes Relanotes
-  KEY_LEFTCTRL KEY_KP1:
+  CTRL KEY_KP1:
     plugin: wmctrl
     command: raise relacalc Relacalc
-  KEY_RIGHTCTRL KEY_KP1:
-    plugin: wmctrl
-    command: raise relacalc Relacalc
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
 
   KEY_KP2:
     plugin: wmctrl
