@@ -32,6 +32,12 @@ Logitech G710 keyboard:
   KEY_KP9:
     plugin: wmctrl
     command: raise pycharm jetbrains-pycharm
+  CTRL KEY_KP9:
+    plugin: wmctrl
+    command: raise inkscape inkscape.Inkscape
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise wing-personal6.1 N/A Wing
 
 
   KEY_KP4:
@@ -200,6 +206,12 @@ Notebook Keyboard:
   KEY_KP9:
     plugin: wmctrl
     command: raise pycharm jetbrains-pycharm
+  CTRL KEY_KP9:
+    plugin: wmctrl
+    command: raise inkscape inkscape.Inkscape
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise wing-personal6.1 N/A Wing
 
 
   KEY_KP4:

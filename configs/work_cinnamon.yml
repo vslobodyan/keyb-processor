@@ -47,10 +47,10 @@ Logitech G413 keyboard:
   CTRL KEY_KP9:
     plugin: wmctrl
     command: raise inkscape inkscape.Inkscape
-#  KEY_RIGHTCTRL KEY_KP9:
-#    plugin: wmctrl
-#    command: raise inkscape inkscape.Inkscape
-#
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise wing-personal6.1 N/A Wing
+
 
   KEY_KP4:
     plugin: wmctrl
@@ -254,7 +254,7 @@ Razer Nostromo:
 
   # 15
   KEY_SPACE:
-    inject_keys: KEY_LEFTMETA KEY_S
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
 
   # Round button (above joystick)
   KEY_LEFTALT:
