@@ -316,7 +316,7 @@ class _processed_events:
         self.processed_events_setup = []
 
 
-class keyboard:
+class Keyboard:
     """Одиночный класс клавиатуры с конфигом."""
     name = ''
     address = ''
@@ -341,8 +341,10 @@ class keyboard:
         #       self.processed_events.processed_events_setup)
         print()
 
-    def __init__(self, name=name, dev_name=dev_name, dev_type=dev_type,transmit_all=True):
+    def __init__(self, name=name, dev_name=None, dev_type=None,transmit_all=True):
         #address=address,
+        print('Нужно создать новую клавиатуру:')
+        print(' name: %s, dev_name: %s, dev_type: %s' % (name, dev_name, dev_type))
         self.name = name
         # self.address = address
         self.dev_name = dev_name
@@ -593,38 +595,19 @@ def load_config(filename):
         cfg = yaml.load(ymlfile)
 
     for section in cfg:
-        # print(section)
+        print(section)
         keyboard_name = section
-        dev_name = ''
-        dev_type = ''
-        keyboard_was_created = False
+        # Создаем клавиатуру только с именем. Остальное добавляем позже
+        new_keyboard = Keyboard(name=keyboard_name)
 
         for key in cfg[section]:
             value = cfg[section][key]
             # print('# key:', key, ', # value:',value)
-
-            if key == 'device':
-                pass
-                # device = value
-                # We has name and device. Now initialize new
-                # keyboard class:
-                # new_keyboard.clear()
-                # new_keyboard = keyboard(keyboard_name, device)
-                pass
-            elif key == 'name':
-                dev_name = value
+            if key == 'name':
+                new_keyboard.dev_name = value
             elif key == 'capabilities':
-                dev_type = value
+                new_keyboard.dev_type = value
             else:
-                if not keyboard_was_created:
-                    # Создаем новую клавиатуру после того, как загружены все необходимые параметры
-                    # new_keyboard = find_and_create_new_keyboard(keyboard_name, dev_name, dev_type)
-                    new_keyboard = keyboard(keyboard_name, dev_name, dev_type)
-                    keyboard_was_created = True
-                    # if not new_keyboard:
-                    #     # Клавиатуры не нашли. Выходим из обработки данной секции
-                    #     break
-
                 # Here is new keyboard event for handle
                 pressed_keys = key
                 # print('Found pressed_keys:', pressed_keys)
@@ -645,12 +628,18 @@ def load_config(filename):
                     plugin=plugin,
                     command=command
                 )
-        if new_keyboard:
-            cfg_keyboards.append(new_keyboard)
+        cfg_keyboards.append(new_keyboard)
 
     print('Configuration file "%s" successfully read' % filename)
-    # for keyb in cfg_keyboards:
-    #     keyb.print_setup()
+
+    for keyb in cfg_keyboards:
+        keyb.print_setup()
+
+    for keyboard in cfg_keyboards:
+        print('In cfg_keyboards:')
+        print(' keyboard: %s, dev_name: %s, dev_type: %s' % (keyboard, keyboard.dev_name, keyboard.dev_type))
+        print('-'*20)
+
     return cfg_keyboards
 
 
@@ -1173,6 +1162,7 @@ def check_plugged_keyboards_and_set_devices(keyboards):
 
     print('Check plugged keyboards and set devices:')
     for keyboard in keyboards:
+        # print(' keyboard: %s, dev_name: %s, dev_type: %s' % (keyboard, keyboard.dev_name, keyboard.dev_type ))
         check_plugged_keyboard_and_set_device(keyboard, plugged_devices)
     print()
 
@@ -1215,6 +1205,12 @@ def main():
         # Запускаем отслеживание изменений файла конфига
         app.keyboards = load_config(args.config)
         # print('keyboards: %s' % keyboards)
+
+        # for keyboard in app.keyboards:
+        #     print('After load config in app.keyboards:')
+        #     print(' keyboard: %s, dev_name: %s, dev_type: %s' % (keyboard, keyboard.dev_name, keyboard.dev_type))
+        #     print('-'*20)
+
         start_config_change_observer(args.config)
         check_plugged_keyboards_and_set_devices(app.keyboards)
         grab_and_process_keyboards(app.keyboards)
