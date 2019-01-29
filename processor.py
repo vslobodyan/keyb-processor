@@ -343,8 +343,8 @@ class Keyboard:
 
     def __init__(self, name=name, dev_name=None, dev_type=None,transmit_all=True):
         #address=address,
-        print('Нужно создать новую клавиатуру:')
-        print(' name: %s, dev_name: %s, dev_type: %s' % (name, dev_name, dev_type))
+        # print('Нужно создать новую клавиатуру:')
+        # print(' name: %s, dev_name: %s, dev_type: %s' % (name, dev_name, dev_type))
         self.name = name
         # self.address = address
         self.dev_name = dev_name
@@ -632,13 +632,13 @@ def load_config(filename):
 
     print('Configuration file "%s" successfully read' % filename)
 
-    for keyb in cfg_keyboards:
-        keyb.print_setup()
-
-    for keyboard in cfg_keyboards:
-        print('In cfg_keyboards:')
-        print(' keyboard: %s, dev_name: %s, dev_type: %s' % (keyboard, keyboard.dev_name, keyboard.dev_type))
-        print('-'*20)
+    # for keyb in cfg_keyboards:
+    #     keyb.print_setup()
+    #
+    # for keyboard in cfg_keyboards:
+    #     print('In cfg_keyboards:')
+    #     print(' keyboard: %s, dev_name: %s, dev_type: %s' % (keyboard, keyboard.dev_name, keyboard.dev_type))
+    #     print('-'*20)
 
     return cfg_keyboards
 

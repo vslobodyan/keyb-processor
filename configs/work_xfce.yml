@@ -6,7 +6,7 @@ Logitech G413 keyboard:
 #  META KEY_S:
 #    #inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
 #    plugin: wmctrl
-#    command: raise nemo nemo.Nemo
+#    command: raise thunar Thunar.Thunar
 
   KEY_SCROLLLOCK:
     command: flameshot gui
@@ -93,7 +93,7 @@ Logitech G413 keyboard:
 
   KEY_KP3:
     plugin: wmctrl
-    command: raise nemo nemo.Nemo
+    command: raise thunar Thunar.Thunar
 
 
   KEY_KPDOT:
@@ -130,7 +130,7 @@ Logitech G413 keyboard:
 
 Logitech G602 mouse:
 #  device: /dev/input/event9
-  name: Logitech USB Receiver
+  name: Logitech USB Receiver Keyboard
   capabilities: keyboard
 
   # G4
@@ -249,7 +249,7 @@ Razer Nostromo:
   # 12
   KEY_Z:
     plugin: wmctrl
-    command: raise nemo nemo.Nemo
+    command: raise thunar Thunar.Thunar
   # 13
   KEY_X:
     plugin: wmctrl
