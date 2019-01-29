@@ -12,13 +12,9 @@ Logitech G413 keyboard:
     command: flameshot gui
 
   KEY_PAUSE:
-    command: cinnamon-screensaver-command -l
-    # to lock and disable moinitor:
-    # cinnamon-screensaver-command -l; xset dpms force off;
+    command: xflock4
   CTRL KEY_PAUSE:
     command: systemctl suspend -i
-#  KEY_RIGHTCTRL KEY_PAUSE:
-#    command: systemctl suspend -i
 
 
   KEY_KP7:
@@ -53,7 +49,7 @@ Logitech G413 keyboard:
     command: raise wing-personal6.1 N/A Wing
   SHIFT KEY_KP9:
     plugin: wmctrl
-    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+    command: raise atom atom.Atom
 
 
   KEY_KP4:
@@ -89,7 +85,7 @@ Logitech G413 keyboard:
 
   KEY_KP2:
     plugin: wmctrl
-    command: raise gnome-terminal Gnome-terminal
+    command: raise xfce4-terminal xfce4-terminal.Xfce4-terminal
 
   KEY_KP3:
     plugin: wmctrl
@@ -98,7 +94,7 @@ Logitech G413 keyboard:
 
   KEY_KPDOT:
     plugin: wmctrl
-    command: raise xed Xed
+    command: raise featherpad featherpad.FeatherPad
 
 
   KEY_KPSLASH:
@@ -253,7 +249,7 @@ Razer Nostromo:
   # 13
   KEY_X:
     plugin: wmctrl
-    command: raise gnome-terminal Gnome-terminal
+    command: raise xfce4-terminal xfce4-terminal.Xfce4-terminal
   # 14
   KEY_C:
     plugin: wmctrl
