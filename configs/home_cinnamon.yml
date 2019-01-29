@@ -18,7 +18,9 @@ Logitech G710 keyboard:
 
   KEY_KP7:
     plugin: wmctrl
-    command: raise telegram-desktop TelegramDesktop
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
 
   KEY_KP8:
     plugin: wmctrl
@@ -38,6 +40,9 @@ Logitech G710 keyboard:
   ALT KEY_KP9:
     plugin: wmctrl
     command: raise wing-personal6.1 N/A Wing
+  SHIFT KEY_KP9:
+    plugin: wmctrl
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
 
 
   KEY_KP4:
@@ -119,7 +124,9 @@ Logitech G600 mouse:
   # G15
   KEY_7:
     plugin: wmctrl
-    command: raise telegram-desktop TelegramDesktop
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
 
   # G16
   KEY_8:
@@ -192,7 +199,8 @@ Notebook Keyboard:
 
   KEY_KP7:
     plugin: wmctrl
-    command: raise telegram-desktop TelegramDesktop
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
 
   KEY_KP8:
     plugin: wmctrl
@@ -212,6 +220,9 @@ Notebook Keyboard:
   ALT KEY_KP9:
     plugin: wmctrl
     command: raise wing-personal6.1 N/A Wing
+  SHIFT KEY_KP9:
+    plugin: wmctrl
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
 
 
   KEY_KP4:
