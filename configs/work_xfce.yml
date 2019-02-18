@@ -27,7 +27,7 @@ Logitech G413 keyboard:
     # Special, to raise all Chromium-browser window
     #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
-    #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     command: raise firefox Navigator.Firefox
     #command: raise_all firefox Navigator.Firefox https://www.youtube.com
     #command: raise opera Opera
@@ -35,7 +35,8 @@ Logitech G413 keyboard:
   CTRL KEY_KP8:
     plugin: wmctrl
     # Raise only Firefox with youtube player
-    command: raise echo Navigator.Firefox https://www.youtube.com
+    command: raise echo Navigator.Firefox YouTube
+    # command: raise firefox Navigator.Firefox
     # YouTube - Mozilla Firefox
 
   KEY_KP9:
@@ -43,11 +44,15 @@ Logitech G413 keyboard:
     command: raise pycharm jetbrains-pycharm
   CTRL KEY_KP9:
     plugin: wmctrl
-    command: raise inkscape inkscape.Inkscape
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
   ALT KEY_KP9:
     plugin: wmctrl
-    command: raise wing-personal6.1 N/A Wing
-  SHIFT KEY_KP9:
+    command: raise inkscape inkscape.Inkscape
+    # command: raise wing-personal6.1 N/A Wing
+  # SHIFT KEY_KP9:
+  #   plugin: wmctrl
+  #   command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  META KEY_KP9:
     plugin: wmctrl
     command: raise atom atom.Atom
 
@@ -58,7 +63,7 @@ Logitech G413 keyboard:
 
   KEY_KP5:
     plugin: wmctrl
-    command: raise cinnamon-settings cinnamon-settings
+    command: raise xfce4-settings-manager xfce4-settings-manager.Xfce4-settings-manager
 
   KEY_KP6:
     plugin: wmctrl
@@ -78,7 +83,7 @@ Logitech G413 keyboard:
     command: raise relanotes Relanotes
   CTRL KEY_KP1:
     plugin: wmctrl
-    command: raise relacalc Relacalc
+    command: raise relacalc relacalc.py.relacalc.py
 #  KEY_RIGHTCTRL KEY_KP1:
 #    plugin: wmctrl
 #    command: raise relacalc Relacalc
@@ -98,10 +103,12 @@ Logitech G413 keyboard:
 
 
   KEY_KPSLASH:
-    command: amixer -q sset Master 5%-
+#    command: amixer -q sset Master 5%-
+    inject_keys: KEY_VOLUMEDOWN
 
   KEY_KPASTERISK:
-    command: amixer -q sset Master 5%+
+#    command: amixer -q sset Master 5%+
+    inject_keys: KEY_VOLUMEUP
 
 
 
@@ -119,9 +126,7 @@ Logitech G413 keyboard:
     command: close
 
   KEY_KPMINUS:
-    #inject_keys: KEY_RIGHTMETA KEY_S
-    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
-
+    command: xfdesktop --windowlist
 
 
 Logitech G602 mouse:
@@ -135,7 +140,7 @@ Logitech G602 mouse:
     command: minimize
   # G7
   KEY_7:
-    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+    command: xfdesktop --windowlist
   ALT KEY_7:
     command: flameshot gui
 
@@ -146,9 +151,14 @@ Logitech G602 mouse:
     # Special, to raise all Chromium-browser window
     #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
-    #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     command: raise firefox Navigator.Firefox
     #command: raise opera Opera
+  CTRL KEY_5:
+    plugin: wmctrl
+    # Raise only Firefox with youtube player
+    command: raise echo Navigator.Firefox YouTube
+
   # G8
   KEY_8:
     inject_keys: KEY_RIGHTCTRL KEY_W
@@ -201,7 +211,7 @@ Razer Nostromo:
     # Special, to raise all Chromium-browser window
     #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
-    #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     command: raise firefox Navigator.Firefox
     #command: raise opera Opera
   # 04
@@ -257,7 +267,7 @@ Razer Nostromo:
 
   # 15
   KEY_SPACE:
-    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+    command: xfdesktop --windowlist
 
   # Round button (above joystick)
   KEY_LEFTALT:
