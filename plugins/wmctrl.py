@@ -25,7 +25,7 @@ class Plugin(plugin.Plugin):
         print('str_outdata: %s' % str_outdata)
         ids = []
 
-        if window_name in str_outdata:
+        if window_name.lower() in str_outdata.lower():
             # Окно (возможно) уже запущено. Ищем совпадение по вхождению указанного класса и заголовка
             print('In wmctrl window list output we have something like "%s"' % window_name)
             for line in str_outdata.splitlines():
