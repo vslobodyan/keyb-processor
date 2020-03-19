@@ -14,7 +14,8 @@ Logitech G413 keyboard:
   KEY_PAUSE:
     command: xflock4
   CTRL KEY_PAUSE:
-    command: systemctl suspend -i
+    # command: systemctl suspend -i
+    command: xfce4-session-logout --suspend
 
 
   KEY_KP7:
@@ -27,6 +28,7 @@ Logitech G413 keyboard:
     # Special, to raise all Chromium-browser window
     #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
+    # command: raise chromium chromium.Chromium
     # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
     command: raise firefox Navigator.Firefox
     #command: raise_all firefox Navigator.Firefox https://www.youtube.com
@@ -35,20 +37,22 @@ Logitech G413 keyboard:
   CTRL KEY_KP8:
     plugin: wmctrl
     # Raise only Firefox with youtube player
-    command: raise echo Navigator.Firefox YouTube
+    command: raise chromium chromium.Chromium
+    # command: raise echo Navigator.Firefox YouTube
     # command: raise firefox Navigator.Firefox
     # YouTube - Mozilla Firefox
 
   KEY_KP9:
     plugin: wmctrl
-    command: raise pycharm jetbrains-pycharm
+    # command: raise pycharm jetbrains-pycharm
+    command: raise wing7.2 N/A Wing
   CTRL KEY_KP9:
     plugin: wmctrl
     command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
   ALT KEY_KP9:
     plugin: wmctrl
     command: raise inkscape inkscape.Inkscape
-    # command: raise wing-personal6.1 N/A Wing
+
   # SHIFT KEY_KP9:
   #   plugin: wmctrl
   #   command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
@@ -67,7 +71,10 @@ Logitech G413 keyboard:
 
   KEY_KP6:
     plugin: wmctrl
-    command: raise okular Okular
+    # command: raise okular Okular
+    command: raise teams microsoft
+
+
   CTRL KEY_KP6:
     plugin: wmctrl
     command: raise goldendict goldendict.GoldenDict
@@ -156,8 +163,9 @@ Logitech G602 mouse:
     #command: raise opera Opera
   CTRL KEY_5:
     plugin: wmctrl
+    command: raise chromium chromium.Chromium
     # Raise only Firefox with youtube player
-    command: raise echo Navigator.Firefox YouTube
+    # command: raise echo Navigator.Firefox YouTube
 
   # G8
   KEY_8:

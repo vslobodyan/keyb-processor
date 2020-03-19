@@ -34,11 +34,11 @@ class Plugin(plugin.Plugin):
                 line_wmclass = line_columns[2]
                 line_wmtitle = " ".join(line_columns[4:])
                 # print('line_wmclass="%s", line_wmtitle="%s"' % (line_wmclass,line_wmtitle))
-                if window_name in line_wmclass:
+                if window_name.lower() in line_wmclass.lower():
                     print('window_name found in line "%s"' % line)
                     if window_title:
                         print('Searching window title "%s" in "%s"' % (window_title, line_wmtitle))
-                        if window_title in line_wmtitle:
+                        if window_title.lower() in line_wmtitle.lower():
                             print(' Title was found. We found exact window.')
                         else:
                             print(' Win title not matching. Continue searching..')

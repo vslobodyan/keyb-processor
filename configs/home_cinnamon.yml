@@ -28,7 +28,7 @@ Logitech G710 keyboard:
     #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
-    command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.firefox
     #command: raise opera Opera
 
   KEY_KP9:
@@ -90,10 +90,13 @@ Logitech G710 keyboard:
 
 
   KEY_KPSLASH:
-    command: amixer -c 1 sset Master 5%-
+    # command: amixer -c 1 sset Master 5%-
+    inject_keys: KEY_VOLUMEDOWN
+
 
   KEY_KPASTERISK:
-    command: amixer -c 1 sset Master 5%+
+    # command: amixer -c 1 sset Master 5%+
+    inject_keys: KEY_VOLUMEUP
 
 
 
@@ -118,7 +121,7 @@ Logitech G710 keyboard:
 
 Logitech G600 mouse:
   #device: /dev/input/event8
-  name: Logitech Gaming Mouse G600
+  name: Logitech Gaming Mouse G600 Keyboard
   capabilities: keyboard
 
   # G15
@@ -133,7 +136,7 @@ Logitech G600 mouse:
     plugin: wmctrl
     # Special, to raise all Chromium-browser window
     #command: raise chromium-browser Chromium-browser
-    command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.firefox
 
 
   # G17
@@ -208,7 +211,7 @@ Notebook Keyboard:
     #command: raise chromium-browser Chromium-browser
     #command: raise chromium-browser chromium-browser.Chromium-browser
     #command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
-    command: raise firefox Navigator.Firefox
+    command: raise firefox Navigator.firefox
     #command: raise opera Opera
 
   KEY_KP9:
@@ -270,10 +273,13 @@ Notebook Keyboard:
 
 
   KEY_KPSLASH:
-    command: amixer -c 1 sset Master 5%-
+    # command: amixer -c 1 sset Master 5%-
+    inject_keys: KEY_VOLUMEDOWN
+
 
   KEY_KPASTERISK:
-    command: amixer -c 1 sset Master 5%+
+    # command: amixer -c 1 sset Master 5%+
+    inject_keys: KEY_VOLUMEUP
 
 
 
