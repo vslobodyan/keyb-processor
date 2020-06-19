@@ -27,7 +27,7 @@ https://gitlab.gnome.org/GNOME/gnome-shell/blob/master/js/ui/lookingGlass.js#L30
 """
 
 import subprocess
-import ast
+# import ast
 
 from plugins.base import plugin
 
@@ -142,20 +142,20 @@ class Plugin(plugin.Plugin):
             stdoutdata = subprocess.getoutput(string_command)
             print('stdoutdata = %s' % stdoutdata)
 
-            def escape_some_symb_in_string(input):
-                need_escape_symbs = ['\'', '"']
-                output = ''
-                good_prev_symb = ['\\', '']
-                prev_symb = ''
-                for symb in input:
-                    if symb in need_escape_symbs:
-                        if prev_symb not in good_prev_symb:
-                            # Need escaping current symb
-                            output += '\\'
-                    output += symb
-
-                print('\nescape_some_symb_in_string output: %s' % output)
-                return output
+            # def escape_some_symb_in_string(input):
+            #     need_escape_symbs = ['\'', '"']
+            #     output = ''
+            #     good_prev_symb = ['\\', '']
+            #     prev_symb = ''
+            #     for symb in input:
+            #         if symb in need_escape_symbs:
+            #             if prev_symb not in good_prev_symb:
+            #                 # Need escaping current symb
+            #                 output += '\\'
+            #         output += symb
+            #
+            #     print('\nescape_some_symb_in_string output: %s' % output)
+            #     return output
 
             # esc_stdoutdata = escape_some_symb_in_string(stdoutdata)
 
