@@ -66,10 +66,10 @@ async def handle_echo(reader, writer):
 
     message = data.decode()
     addr = writer.get_extra_info('peername')
-    print("Received %r from %r" % (message, addr))
+    print("\nReceived %r from %r" % (message, addr))
     executor.process_command(message)
     answer = 'Done'
-    print("Send: %r" % answer)
+    print("\nSend: %r" % answer)
     writer.write(answer.encode())
     await writer.drain()
 

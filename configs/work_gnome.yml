@@ -10,6 +10,14 @@
 # inject_keys=KEY_RIGHTCTRL KEY_W
 # run_command=ls -la
 
+# Format for writing a string for the window raising command:
+# plugin: gnome
+# command: raise "firefox http://youtube.com" Firefox "Video Player"
+# or
+# command: raise exec_command window_class window_title
+# or
+# command: raise "exec_command" "window_class" "window_title"
+
 
 Logitech G413 keyboard:
   name: Logitech G413 Carbon Mechanical Gaming Keyboard
@@ -118,17 +126,18 @@ Logitech G413 keyboard:
 
   KEY_KP1:
     plugin: gnome
-    command: raise relanotes Relanotes
+    # command: raise relanotes Relanotes
+    command: raise relanotes python3 Relanotes
   CTRL KEY_KP1:
     plugin: gnome
-    command: raise relacalc relacalc.py
+    command: raise relacalc python3 RelaCalc
 #  KEY_RIGHTCTRL KEY_KP1:
 #    plugin: gnome
 #    command: raise relacalc Relacalc
 
   KEY_KP2:
     plugin: gnome
-    command: raise gnome-terminal Gnome-terminal
+    command: raise gnome-terminal gnome-terminal-server
 
   KEY_KP3:
     plugin: gnome
@@ -143,7 +152,7 @@ Logitech G413 keyboard:
 
   KEY_KPDOT:
     plugin: gnome
-    command: raise gedit org.gnome.gedit
+    command: raise gedit gedit
     # command: raise /opt/sublime_text/sublime_text Sublime_text
 
 
@@ -283,7 +292,7 @@ Razer Nostromo:
   # 13
   KEY_X:
     plugin: gnome
-    command: raise gnome-terminal Gnome-terminal
+    command: raise gnome-terminal gnome-terminal-server
   # 14
   KEY_C:
     plugin: gnome

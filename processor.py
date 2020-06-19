@@ -16,12 +16,11 @@ Were helpful:
 
 import evdev
 import pyudev
-from evdev import InputDevice, categorize, ecodes, UInput
 import yaml
 import argparse
 import asyncio
 import json
-# import time
+import time
 import os
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -55,10 +54,10 @@ class Active_modifiers:
     pressed = {}
     abstract_list = ['ALT', 'CTRL', 'SHIFT', 'META']
 
-    alts = [ecodes.KEY_LEFTALT, ecodes.KEY_RIGHTALT]
-    ctrls = [ecodes.KEY_LEFTCTRL, ecodes.KEY_RIGHTCTRL]
-    metas = [ecodes.KEY_LEFTMETA, ecodes.KEY_RIGHTMETA]
-    shifts = [ecodes.KEY_LEFTSHIFT, ecodes.KEY_RIGHTSHIFT]
+    alts = [evdev.ecodes.KEY_LEFTALT, evdev.ecodes.KEY_RIGHTALT]
+    ctrls = [evdev.ecodes.KEY_LEFTCTRL, evdev.ecodes.KEY_RIGHTCTRL]
+    metas = [evdev.ecodes.KEY_LEFTMETA, evdev.ecodes.KEY_RIGHTMETA]
+    shifts = [evdev.ecodes.KEY_LEFTSHIFT, evdev.ecodes.KEY_RIGHTSHIFT]
     _all = alts + ctrls + metas + shifts
 
     def get(self):
@@ -123,8 +122,38 @@ class process():
                 self.scancode = scancode
                 self.keystate = keystate
 
+        # Минимально необходимая пауза для стабильной работы и определения нажатий в системе, например в Gnome/Wayland
+        pause = 0.01
+
+        # def write_event(key_code, event_type):
+        #     if event_type:
+        #         event = "Inject press"
+        #     else:
+        #         event = "Inject release"
+        #
+        #     print('%s %s' % (event, one_key_code))
+        #     key = evdev.ecodes.ecodes[key_code]
+        #     ev = evdev.InputEvent(0, 0, evdev.ecodes.EV_KEY, key, event_type)
+        #     ui.write_event(ev)
+        #     time.sleep(pause)
+        #     ui.syn()
+
+        def write_key(key_code, event_type):
+            if event_type:
+                event = "Inject press"
+            else:
+                event = "Inject release"
+
+            print('%s %s' % (event, one_key_code))
+            key = evdev.ecodes.ecodes[key_code]
+            ui.write(evdev.ecodes.EV_KEY, key, event_type)
+            time.sleep(pause)
+            ui.syn()
+
+
         print('We will inject keyb codes now: %s' % keyb_inputs)
-        # delay = 5/10000
+        # Пауза между нажатиями, экспериментальным путём определил что это минимально достаточное расстояние между
+        # нажатиями, чтобы система, в частности Gnome/Wayland, определяли соседние события как раздельные.
 
         # if grabbed_event_strkeys:
         #     print('grabbed_event_strkeys[]: %s' % grabbed_event_strkeys.split())
@@ -150,13 +179,14 @@ class process():
             print('Before this we need UP keys for global modifiers: %s' % active_modifiers.pressed)
             for one_key_code in active_modifiers.pressed:
                 print(' Force release %s' % one_key_code)
+                write_key(one_key_code, 0)
                 # state = active_modifiers.pressed[one_key_code]
-                ui.write(evdev.ecodes.EV_KEY, one_key_code, 0)
+                # ui.write(evdev.ecodes.EV_KEY, one_key_code, 0)
                 # Обновляем в статусе глобальных модификаторов, что данный модификатор больше не нажат
                 my_event = My_event(keystate=0,scancode=one_key_code)
                 # active_modifiers.find_mods_and_change_state(one_key_code, False)
-                # time.sleep(delay)
-                # await asyncio.sleep(1.0)
+                time.sleep(pause)
+                # await asyncio.sleep(pause) // outside async function
             # Обновляем статусы отжатых модификаторов
             for one_key_code in active_modifiers.pressed.copy():
                 my_event = My_event(keystate=0, scancode=one_key_code)
@@ -164,20 +194,22 @@ class process():
 
         # Press
         for one_key_code in keyb_inputs:
+            write_key(one_key_code, 1)
             # key = evdev.ecodes.ecodes['KEY_' + one_key_code.upper()]
-            key = evdev.ecodes.ecodes[one_key_code]
-            ui.write(evdev.ecodes.EV_KEY, key, 1)
-            # time.sleep(delay)
-            # await asyncio.sleep(1.0)
+            # key = evdev.ecodes.ecodes[one_key_code]
+            # ui.write(evdev.ecodes.EV_KEY, key, 1)
+            # time.sleep(pause)
+            # await asyncio.sleep(pause) // outside async function
         # ui.syn()
 
         # Release
         for one_key_code in keyb_inputs:
+            write_key(one_key_code, 0)
             # key = evdev.ecodes.ecodes['KEY_' + one_key_code.upper()]
-            key = evdev.ecodes.ecodes[one_key_code]
-            ui.write(evdev.ecodes.EV_KEY, key, 0)
-            # time.sleep(delay)
-            # await asyncio.sleep(1.0)
+            # key = evdev.ecodes.ecodes[one_key_code]
+            # ui.write(evdev.ecodes.EV_KEY, key, 0)
+            # time.sleep(pause)
+            # await asyncio.sleep(pause) // outside async function
 
         # print('Now we need DOWN keys for global modifiers: %s' % active_modifiers.pressed)
         # for one_key_code in active_modifiers.pressed:
@@ -255,8 +287,9 @@ class _processed_events:
         self.processed_events_setup = []
 
     def add(self, pressed_keys='', inject_keys='', plugin=None, command=''):
-        # print('Add pressed_keys:', pressed_keys, 'transmit:', transmit,
+        # print('Add pressed_keys:', pressed_keys,
         #       'inject_keys:', inject_keys, 'plugin:', plugin, 'command:', command)
+        # 'transmit:', transmit,
 
         # 1. Сортируем отслеживаемые ключи и делаем из них строчку, по типу уникального читаемого ключа
         pressed_keys_string = self.keys_as_string(pressed_keys.split())
@@ -277,7 +310,9 @@ class _processed_events:
         # ev.transmit = transmit
         ev.plugin = plugin
         if command:
-            ev.command = command.split()
+            import shlex
+            ev.command = shlex.split(command)
+
         self.processed_events_setup.append(ev)
         # print('self.processed_events_setup: %s' % self.processed_events_setup)
 
@@ -698,7 +733,7 @@ def grab_and_show_inputs(dev_addr):
     """Захватываем устройство и выводим в консоль все события его кнопок.
     Если нажаты Q или C - выходим.
     """
-    dev = InputDevice(dev_addr)
+    dev = evdev.InputDevice(dev_addr)
     print(dev)
     print('Getting LED states:')
     print(dev.leds(verbose=True))
@@ -709,14 +744,14 @@ def grab_and_show_inputs(dev_addr):
     print('Now press any key to see its code or Ctrl+Q / Ctrl+C to quit programm:')
     dev.grab()
     for event in dev.read_loop():
-        cur_event_data = categorize(event)
+        cur_event_data = evdev.categorize(event)
         print(cur_event_data)
         # print(event)
-        if event.type == ecodes.EV_KEY:
-            cur_event_data = categorize(event)
+        if event.type == evdev.ecodes.EV_KEY:
+            cur_event_data = evdev.categorize(event)
             # print('cur_event_data: %s' % cur_event_data)
             if cur_event_data.keystate in [1, 2]:  # Down and Hold events only
-                if cur_event_data.scancode in [ecodes.KEY_Q, ecodes.KEY_C]:
+                if cur_event_data.scancode in [evdev.ecodes.KEY_Q, evdev.ecodes.KEY_C]:
                     print('You press Q or C, and we quit now.')
                     break
     dev.ungrab()
@@ -727,8 +762,8 @@ def grab_and_show_inputs(dev_addr):
 def process_one_event_and_exit(keyboard, ui, event):
     event_handled = False
     # single_meta_press = False
-    if event.type == ecodes.EV_KEY:
-        cur_event_data = categorize(event)
+    if event.type == evdev.ecodes.EV_KEY:
+        cur_event_data = evdev.categorize(event)
         # cur_active_keys = dev.active_keys()
         # Переводим инфу о нажатых клавишах в понятный формат
         active_keys = keyboard.dev.active_keys()
@@ -793,7 +828,7 @@ def process_one_event_and_exit(keyboard, ui, event):
             # Собираем читабельный массив нажатых клавиш с клавиатуры
             verb_keys = []
             for a_key in active_keys:
-                verb_keys.append(ecodes.KEY[a_key])
+                verb_keys.append(evdev.ecodes.KEY[a_key])
             # Ищем глобальные модификаторы, которых нет в текущих событиях с клавиатуры
             also_pressed_modifiers = {}
             for modifier in global_modifiers:
@@ -1086,7 +1121,7 @@ def grab_and_process_keyboards(keyboards):
     # print('Keyboards for grab and process:')
     # for keyb in keyboards:
     #     print(' - %s' % keyb.name)
-    app.ui = UInput()
+    app.ui = evdev.UInput()
 
     print('Run monitor')
     # asyncio.ensure_future(monitor_devices())

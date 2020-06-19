@@ -143,7 +143,7 @@ Logitech G710 Keyboard:
 
   KEY_KPDOT:
     plugin: gnome
-    command: raise gedit org.gnome.gedit
+    command: raise gedit gedit
     # command: raise /opt/sublime_text/sublime_text Sublime_text
 
 

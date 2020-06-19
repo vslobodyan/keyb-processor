@@ -106,7 +106,9 @@ Logitech G413 keyboard:
 
   KEY_KPDOT:
     plugin: wmctrl
-    command: raise featherpad featherpad.FeatherPad
+    # command: raise featherpad featherpad.FeatherPad
+    command: raise geany geany
+    # command: raise mousepad mousepad   
 
 
   KEY_KPSLASH:

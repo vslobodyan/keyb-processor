@@ -27,6 +27,7 @@ https://gitlab.gnome.org/GNOME/gnome-shell/blob/master/js/ui/lookingGlass.js#L30
 """
 
 import subprocess
+import ast
 
 from plugins.base import plugin
 
@@ -77,7 +78,7 @@ class LG_Command:
         return self.command('global.display.focus_window.delete(global.get_current_time());')
 
     def list_all(self):
-        return self.command('"global.get_window_actors().map(w => [w.toString(), w.get_meta_window().get_wm_class()]);"')
+        return self.command('"global.get_window_actors().map(w => [w.toString(), w.get_meta_window().get_wm_class(), w.get_meta_window().get_title()]);"')
 
 
 
@@ -123,6 +124,12 @@ class Plugin(plugin.Plugin):
             print('prog_exec=%s' % prog_exec)
             window_name = args[0][1]
             print('window_name=%s' % window_name)
+            if len(args[0]) > 2:
+                window_title = args[0][2]
+                print('window_title=%s' % window_title)
+            else:
+                window_title = False
+
             # Проверяем, есть-ли уже такое окно
             # c = self.active_window.lg.window_is_present(window_name)
 
@@ -135,17 +142,39 @@ class Plugin(plugin.Plugin):
             stdoutdata = subprocess.getoutput(string_command)
             print('stdoutdata = %s' % stdoutdata)
 
-            output = stdoutdata
-            output_r = output.rfind("'")
-            output_l = output.find("'")+1
-            print('output_r:', output_r)
-            print('output_l:', output_l)
+            def escape_some_symb_in_string(input):
+                need_escape_symbs = ['\'', '"']
+                output = ''
+                good_prev_symb = ['\\', '']
+                prev_symb = ''
+                for symb in input:
+                    if symb in need_escape_symbs:
+                        if prev_symb not in good_prev_symb:
+                            # Need escaping current symb
+                            output += '\\'
+                    output += symb
 
-            # output = output[output_l,output_r]
-            # print('output[output_l,output_r]: ', output[output_l:output_r])
+                print('\nescape_some_symb_in_string output: %s' % output)
+                return output
 
-            windows_output = output[output_l:output_r].lstrip('[[').rstrip(']]')
-            print('windows_output=%s' % windows_output)
+            # esc_stdoutdata = escape_some_symb_in_string(stdoutdata)
+
+            # outdata = ast.literal_eval(stdoutdata)
+            # print('\noutdata = %s' % outdata)
+
+            # output = stdoutdata
+            # output_r = output.rfind("'")
+            # output_l = output.find("'")+1
+            output_l = stdoutdata.find('"')+1
+            output_r = stdoutdata.rfind('"')
+            print('output_r: %s' % output_r)
+            print('output_l: %s' % output_l)
+
+            output = stdoutdata[output_l:output_r]
+            print('\nstdoutdata[output_l,output_r]: %s' % output)
+
+            windows_output = output.lstrip('[[').rstrip(']]')
+            print('\nwindows_output=%s' % windows_output)
 
 
             window_id = None
@@ -153,16 +182,33 @@ class Plugin(plugin.Plugin):
             # import ast
             # testarray = ast.literal_eval(windows_output)
             windows_array = windows_output.split('],[')
+
+            print('\nwindows_array: %s' % windows_array)
+
             for win in windows_array:
-                print('win: %s' % win)
-                win_id,win_class = win.split(',')
-                win_id = win_id.lstrip('"').rstrip('"')
-                win_class = win_class.lstrip('"').rstrip('"')
-                print('win_id:%s,win_class:%s.' % (win_id,win_class))
+                print('\nwin: %s' % win)
+                win_id, win_class, win_title = win.split('\\\",\\\"')
+                win_id = win_id.lstrip('\\\"')
+                win_title = win_title.rstrip('\\\"')
+
+                # Импортируем массив из ответа системы
+                # win_params = ast.literal_eval(win)
+
+                # print('win_params length: %s, win_params content: %s' % (len(win_params), win_params))
+                # win_id, win_class, win_title = win_params
+                #
+                # # win_id, win_class, win_title = win.split(',')
+                # win_id = win_id.lstrip('"').rstrip('"')
+                # win_class = win_class.lstrip('"').rstrip('"')
+                # win_title = win_title.lstrip('"').rstrip('"')
+
+                print('win_id:%s, win_class:%s, win_title:%s' % (win_id,win_class,win_title))
+
                 if window_name.lower() in win_class.lower():
-                    print('Окно найдено. ID: %s' % win_id)
-                    window_id = win_id
-                    break
+                    if not window_title or window_title.lower() in win_title.lower():
+                        print('\nОкно найдено. ID: %s' % win_id)
+                        window_id = win_id
+                        break
 
             # print('windows_array: %s' % windows_array)
 
