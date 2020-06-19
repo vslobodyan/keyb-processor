@@ -187,9 +187,19 @@ class Plugin(plugin.Plugin):
 
             for win in windows_array:
                 print('\nwin: %s' % win)
-                win_id, win_class, win_title = win.split('\\\",\\\"')
-                win_id = win_id.lstrip('\\\"')
-                win_title = win_title.rstrip('\\\"')
+                # Проверяем, в каком виде пришла строка - слишком изолированная или нормальная
+                extra_escape = '\\\"'
+                extra_escape_separator = '\\\",\\\"'
+                if extra_escape_separator in win:
+                    win_id, win_class, win_title = win.split('\\\",\\\"')
+                    win_id = win_id.lstrip(extra_escape)
+                    win_title = win_title.rstrip(extra_escape)
+                else:
+                    win_id, win_class, win_title = win.split('","')
+                    # win_id = win_id.lstrip('"[').rstrip(']')
+                    win_id = win_id.lstrip('"')
+                    # win_class = win_class.lstrip('"').rstrip('"')
+                    win_title = win_title.rstrip('"')
 
                 # Импортируем массив из ответа системы
                 # win_params = ast.literal_eval(win)
