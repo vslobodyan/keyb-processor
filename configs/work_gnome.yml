@@ -141,7 +141,7 @@ Logitech G413 keyboard:
 
   KEY_KP3:
     plugin: gnome
-    command: raise nautilus Org.gnome.Nautilus
+    command: raise nautilus org.gnome.Nautilus
 
 
 

@@ -165,8 +165,8 @@ class Plugin(plugin.Plugin):
             # output = stdoutdata
             # output_r = output.rfind("'")
             # output_l = output.find("'")+1
-            output_l = stdoutdata.find('"')+1
-            output_r = stdoutdata.rfind('"')
+            output_l = stdoutdata.find('"')
+            output_r = stdoutdata.rfind('"')+1
             print('output_r: %s' % output_r)
             print('output_l: %s' % output_l)
 
