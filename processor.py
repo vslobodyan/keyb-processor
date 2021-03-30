@@ -723,9 +723,11 @@ def show_dev_list():
         if not dev_type:
             str_type = ''
         else:
-            str_type='(%s)' % ', '.join(dev_type)
+            str_type=' <-- %s' % ', '.join(dev_type)
+            str_type = str_type.upper()
         # print(device.path, device.name, device.phys)
-        print(device.fn, '"%s" %s' % (device.name, str_type))
+        # print(device.fn, '"%s" %s' % (device.name, str_type))
+        print('  ', device.path, '"%s" %s' % (device.name, str_type))
 
 
 
@@ -1215,10 +1217,10 @@ def main():
     # args = parser.parse_args()
     #
 
-    parser = argparse.ArgumentParser(description="Warning: most function need sudo! "
+    parser = argparse.ArgumentParser(description="Description about program. "
                                                  "Long decription about program.")
 
-    parser.add_argument("-i", "--install", action="store_true", help="Install parent script to system")
+    parser.add_argument("-i", "--install", action="store_true", help="Make link /usr/local/bin/keyb-processor -> main script. Needs SUDO.")
 
     parser.add_argument("-c", "--config", type=str, help="Load config file")
 
@@ -1230,7 +1232,7 @@ def main():
     parser.add_argument("-e", "--exec", action="store_true", help="Run local executor service. Will execute commands from userspace.")
 
     parser.add_argument("-g", "--grab", type=str,
-                        help="Listing device capabilities. Grab all its events and show information like input codes, mouse moves etc."
+                        help="Listing device capabilities. Grab all its events and show information like input codes, mouse moves etc. Needs SUDO. "
                              "Except C and Q keys, preserved for quit action. "
                              "Example: --grab /dev/input/eventXX")
     args = parser.parse_args()
@@ -1250,7 +1252,7 @@ def main():
         check_plugged_keyboards_and_set_devices(app.keyboards)
         grab_and_process_keyboards(app.keyboards)
     elif args.list:
-        print('Show list of available devices.')
+        print('List of available devices:')
         show_dev_list()
     elif args.plugins:
         plugins = Plugins()
@@ -1261,7 +1263,8 @@ def main():
         dev_addr = args.grab
         grab_and_show_inputs(dev_addr)
     else:
-        print(parser.print_help())
+        # print(parser.print_help())
+        parser.print_help()
         plugins = Plugins()
         plugins.print()
 

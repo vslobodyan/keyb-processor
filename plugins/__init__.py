@@ -16,17 +16,19 @@ class Plugins:
         pass
 
     def print(self):
-        print('Loaded plugins:')
+        print('')
+        print('Available plugins:')
         for key in self.available:
             obj = self.available[key]
             # print(' name: %s, desc: %s' % (key, obj.description))
-            print(' %s - %s' % (key, obj.description))
+            print('  %s - %s' % (key, obj.description))
             obj.functions.print()
         # print()
 
     def __init__(self):
         # print('Initiate plugins.')
         # Импортируем все модули в каталоге
+        print('')
         plugins_path = os.path.dirname(__file__) + os.sep + "*.py"
         print('Path for plugins: %s' % plugins_path)
         modules = glob.glob(plugins_path)
