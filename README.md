@@ -2,6 +2,14 @@
 
 
 
+![Скрин окна программы](https://raw.githubusercontent.com/vslobodyan/keyb-processor/master/screenshots/keyb_1.png "Скрин окна программы")
+
+
+![Скрин окна программы](https://raw.githubusercontent.com/vslobodyan/keyb-processor/master/screenshots/exec_1.png "Скрин окна программы")
+
+
+
+
 ```
 $ keyb-processor -c ./configs/work_gnome.yml
 keyb-processor (keyboard and mouse events processor)
