@@ -1,0 +1,340 @@
+Logitech G710 Keyboard:
+  #device: /dev/input/event9
+  name: Logitech Logitech G710 Keyboard
+  capabilities: keyboard
+
+  KEY_SCROLLLOCK:
+    command: flameshot gui
+
+  KEY_PAUSE:
+    command: xflock4
+  CTRL KEY_PAUSE:
+    #command: systemctl suspend -i
+    command: xfce4-session-logout --suspend
+
+
+  KEY_KP7:
+    plugin: wmctrl
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+
+  KEY_KP8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    # command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    command: raise firefox Navigator.Firefox
+    # command: raise opera Opera
+
+  KEY_KP9:
+    plugin: wmctrl
+    # command: raise pycharm jetbrains-pycharm
+    command: raise wing7.2 N/A Wing
+  CTRL KEY_KP9:
+    plugin: wmctrl
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise inkscape inkscape.Inkscape
+  # SHIFT KEY_KP9:
+  #   plugin: wmctrl
+  #   command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+
+
+  KEY_KP4:
+    plugin: wmctrl
+    command: raise skype Skype
+
+  KEY_KP5:
+    plugin: wmctrl
+    command: raise xfce4-settings-manager xfce4-settings-manager.Xfce4-settings-manager
+
+  KEY_KP6:
+    plugin: wmctrl
+    # command: raise okular Okular
+    command: raise teams microsoft
+
+
+  CTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
+
+
+
+  KEY_KP1:
+    plugin: wmctrl
+    command: raise relanotes Relanotes
+  CTRL KEY_KP1:
+    plugin: wmctrl
+    command: raise relacalc relacalc.py.relacalc.py
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
+
+  KEY_KP2:
+    plugin: wmctrl
+    command: raise xfce4-terminal xfce4-terminal.Xfce4-terminal
+
+  KEY_KP3:
+    plugin: wmctrl
+    command: raise thunar Thunar.Thunar
+
+
+  KEY_KPDOT:
+    plugin: wmctrl
+    # command: raise featherpad featherpad.FeatherPad
+    command: raise geany geany
+    # command: raise mousepad mousepad
+
+
+
+  KEY_KPSLASH:
+#    command: amixer -c 1 sset Master 5%-
+    inject_keys: KEY_VOLUMEDOWN
+
+  KEY_KPASTERISK:
+#    command: amixer -c 1 sset Master 5%+
+    inject_keys: KEY_VOLUMEUP
+
+
+
+  KEY_KPPLUS:
+    # In subsection - keys, must be handled
+    # And what we must do with it below.
+    inject_keys: KEY_RIGHTCTRL KEY_W
+
+
+  KEY_KP0:
+    plugin: xdotool
+    command: minimize
+
+  KEY_KPENTER:
+    plugin: wmctrl
+    command: close
+
+  KEY_KPMINUS:
+    command: xfdesktop --windowlist
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Logitech Gaming Mouse G600:
+  #device: /dev/input/event8
+  name: Logitech Gaming Mouse G600 Keyboard
+  capabilities: keyboard
+
+  # G15
+  KEY_7:
+    plugin: wmctrl
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+
+  # G16
+  KEY_8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    # command: raise chromium-browser Chromium-browser
+    command: raise firefox Navigator.Firefox
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    # command: raise opera Opera
+
+
+
+  # G17
+  KEY_9:
+    plugin: wmctrl
+    command: raise pycharm jetbrains-pycharm
+
+
+
+  # G18
+  KEY_0:
+    plugin: wmctrl
+    command: raise skype Skype
+  KEY_P:
+    plugin: wmctrl
+    command: raise relanotes Relanotes
+
+
+  # G19
+  KEY_MINUS:
+    plugin: wmctrl
+    command: raise xfce4-terminal xfce4-terminal.Xfce4-terminal
+
+  # G20
+  KEY_EQUAL:
+    plugin: wmctrl
+    command: raise thunar Thunar.Thunar
+
+
+#  KEY_LEFTCTRL KEY_W:
+#    inject_keys: KEY_LEFTCTRL KEY_W
+
+  KEY_2:
+    command: xfdesktop --windowlist
+  ALT KEY_2:
+    command: flameshot gui
+
+  KEY_5:
+    plugin: xdotool
+    command: minimize
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Notebook Keyboard:
+  #device: /dev/input/event3
+  name: AT Translated Set 2 keyboard
+  capabilities: keyboard
+
+
+  KEY_SCROLLLOCK:
+    command: flameshot gui
+
+  KEY_PAUSE:
+    command: xflock4
+    # to lock and disable moinitor:
+    # cinnamon-screensaver-command -l; xset dpms force off;
+  CTRL KEY_PAUSE:
+    command: systemctl suspend -i
+#  KEY_RIGHTCTRL KEY_PAUSE:
+#    command: systemctl suspend -i
+
+
+  KEY_KP7:
+    plugin: wmctrl
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+  KEY_KP8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    # command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    command: raise firefox Navigator.Firefox
+    # command: raise opera Opera
+
+  KEY_KP9:
+    plugin: wmctrl
+    command: raise pycharm jetbrains-pycharm
+  CTRL KEY_KP9:
+    plugin: wmctrl
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise inkscape inkscape.Inkscape
+  # SHIFT KEY_KP9:
+  #   plugin: wmctrl
+  #   command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+
+
+  KEY_KP4:
+    plugin: wmctrl
+    command: raise skype Skype
+
+  KEY_KP5:
+    plugin: wmctrl
+    command: raise xfce4-settings-manager xfce4-settings-manager.Xfce4-settings-manager
+
+  KEY_KP6:
+    plugin: wmctrl
+    # command: raise okular Okular
+    command: raise teams microsoft
+
+    
+  CTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
+
+
+
+  KEY_KP1:
+    plugin: wmctrl
+    command: raise relanotes Relanotes
+  CTRL KEY_KP1:
+    plugin: wmctrl
+    command: raise relacalc Relacalc
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
+
+  KEY_KP2:
+    plugin: wmctrl
+    command: raise xfce4-terminal xfce4-terminal.Xfce4-terminal
+
+  KEY_KP3:
+    plugin: wmctrl
+    command: raise thunar Thunar.Thunar
+
+
+  KEY_KPDOT:
+    plugin: wmctrl
+    # command: raise featherpad featherpad.FeatherPad
+    command: raise geany geany
+    # command: raise mousepad mousepad
+    
+
+
+  KEY_KPSLASH:
+    command: amixer -c 1 sset Master 5%-
+
+  KEY_KPASTERISK:
+    command: amixer -c 1 sset Master 5%+
+
+
+
+  KEY_KPPLUS:
+    # In subsection - keys, must be handled
+    # And what we must do with it below.
+    inject_keys: KEY_RIGHTCTRL KEY_W
+
+
+  KEY_KP0:
+    plugin: xdotool
+    command: minimize
+
+  KEY_KPENTER:
+    plugin: wmctrl
+    command: close
+
+  KEY_KPMINUS:
+    command: xfdesktop --windowlist

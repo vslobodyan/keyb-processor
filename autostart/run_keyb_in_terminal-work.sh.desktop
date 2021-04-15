@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/vchs/Dropbox/Settings/keyb-processor/autostart/run_keyb_in_terminal-work.sh
+X-GNOME-Autostart-enabled=true
+NoDisplay=false
+Hidden=false
+Name[ru]=/home/vchs/Dropbox/Settings/keyb-processor/autostart/run_keyb_in_terminal-work.sh
+Comment[ru]=Описание отсутствует
+X-GNOME-Autostart-Delay=4
