@@ -22,40 +22,13 @@ import asyncio
 import json
 import time
 import os
+
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
 
-from settings import settings
+from settings import Settings
 from plugins import Plugins
-
-# class settings:
-#     key = None
-#     host = None
-#     port = None
-#
-#     def __init__(self):
-#         # Загружаем конфиг.
-#
-#         # Используем безопасную загрузку конфига, чтобы там не оказалось ничего исполняемого
-#         with open(filename, 'r') as ymlfile:
-#             try:
-#                 cfg = yaml.safe_load(ymlfile)
-#             except yaml.YAMLError as exc:
-#                 print(exc)
-#                 exit()
-#
-#         for section in cfg:
-#             print(section)
-#             keyboard_name = section
-#             # Создаем клавиатуру только с именем. Остальное добавляем позже
-#             new_keyboard = Keyboard(name=keyboard_name)
-#
-#             for key in cfg[section]:
-#                 value = cfg[section][key]
-#                 # print('# key:', key, ', # value:',value)
-#
-#         # Если конфига не нашли - записываем свой
 
 
 class app:
@@ -118,7 +91,7 @@ class Active_modifiers:
 
 async def tcp_echo_client(message, loop):
     """Функция передачи команды на приемник в клиентской части системы."""
-    reader, writer = await asyncio.open_connection(settings.host, settings.port,
+    reader, writer = await asyncio.open_connection(app.settings.host, app.settings.port,
                                                    loop=loop)
     print('Send to executioner: %r' % message)
     writer.write(message.encode())
@@ -247,7 +220,7 @@ class process():
     def send_command(command, plugin=None):
         # command = ["ls", "-l"]
         print('Prepare to send command: %s under plugin: %s' % (command, plugin))
-        message_dict = {'key': settings.key,
+        message_dict = {'key': app.settings.key,
                         'plugin': plugin,
                         'command': command,
                         }
@@ -1281,6 +1254,7 @@ def main():
                              "Example: --grab /dev/input/eventXX")
     args = parser.parse_args()
     if args.config:
+        app.settings = Settings()
         print('Load config: %s' % args.config)
         app.config_filename = args.config
         # Запускаем отслеживание изменений файла конфига

@@ -12,10 +12,12 @@ import asyncio
 import json
 import subprocess
 
-from settings import settings
+from settings import Settings
 
 from plugins import Plugins
 
+class app:
+    pass
 
 class Executor:
     plugins = None
@@ -25,7 +27,7 @@ class Executor:
         message_dict = json.loads(message)
         print('message_dict: %s' % message_dict)
         # 2. Проверка на безопасность
-        if "key" in message_dict and message_dict["key"] == settings.key:
+        if "key" in message_dict and message_dict["key"] == app.settings.key:
             print('Прошли проверку безопасности.')
             command = None
             # Проверка наличия команды
@@ -79,7 +81,7 @@ async def handle_echo(reader, writer):
 
 def Main():
     loop = asyncio.get_event_loop()
-    coro = asyncio.start_server(handle_echo, settings.host, settings.port, loop=loop)
+    coro = asyncio.start_server(handle_echo, app.settings.host, app.settings.port, loop=loop)
     server = loop.run_until_complete(coro)
 
     # Serve requests until Ctrl+C is pressed
@@ -96,5 +98,6 @@ def Main():
 
 
 if __name__ == '__main__':
+    app.settings = Settings()
     executor = Executor()
     Main()
