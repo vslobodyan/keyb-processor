@@ -1,14 +1,31 @@
 # Keyboard Processor
 
+### Цели и задачи
 
 
+
+### Описание возможностей
+
+
+
+### Архитектура
+
+| Нижний уровень | Средний уровень | Верхний уровень |
+|--------|-------|---------|
+| Пространство sudo | GNOME, Wayland / KDE / XFCE / etc. | Пространство пользователя |
+| **keyb-processor**  перехватывает клавиатурные события с или создаёт нужные | --> | **keyb-processor executor** выполняет нужные команды |
+| Использует конфиг устройств и перехватывает события до их попадания в графическую среду | сообщения что нужно делать отправляются на сокет | Слушает сокет и выполняет нужные команды используя плагины для конкретных DE|
+
+### Скриншоты
+
+keyb-processor с загруженным конфигом устройств:
 ![Скрин окна программы](https://raw.githubusercontent.com/vslobodyan/keyb-processor/master/screenshots/keyb_1.png "Скрин окна программы")
 
-
+keyb-processor executor загрузил плагины и ждёт команды:
 ![Скрин окна программы](https://raw.githubusercontent.com/vslobodyan/keyb-processor/master/screenshots/exec_1.png "Скрин окна программы")
 
 
-
+### Примеры листинга keyb-processor в режиме отслеживания событий
 
 ```
 $ keyb-processor -c ./configs/work_gnome.yml
@@ -70,6 +87,7 @@ Run monitor
 Grab keyboards
 ```
 
+### Примеры листинга keyb-processor в режиме executor
 
 ```
 $ keyb-processor -e
@@ -107,7 +125,7 @@ Serving on ('127.0.0.1', 5001)
 
 
 
-
+### Примеры листинга keyb-processor при выведении списка доступных устройств
 
 ```
 $ keyb-processor -l
