@@ -29,7 +29,33 @@ from watchdog.events import PatternMatchingEventHandler
 from settings import settings
 from plugins import Plugins
 
-
+# class settings:
+#     key = None
+#     host = None
+#     port = None
+#
+#     def __init__(self):
+#         # Загружаем конфиг.
+#
+#         # Используем безопасную загрузку конфига, чтобы там не оказалось ничего исполняемого
+#         with open(filename, 'r') as ymlfile:
+#             try:
+#                 cfg = yaml.safe_load(ymlfile)
+#             except yaml.YAMLError as exc:
+#                 print(exc)
+#                 exit()
+#
+#         for section in cfg:
+#             print(section)
+#             keyboard_name = section
+#             # Создаем клавиатуру только с именем. Остальное добавляем позже
+#             new_keyboard = Keyboard(name=keyboard_name)
+#
+#             for key in cfg[section]:
+#                 value = cfg[section][key]
+#                 # print('# key:', key, ', # value:',value)
+#
+#         # Если конфига не нашли - записываем свой
 
 
 class app:
@@ -626,8 +652,17 @@ def load_config(filename):
     устройств.
     """
     cfg_keyboards = [] # Начальная очистка списка клавиатур из конфига
+
+    # with open(filename, 'r') as ymlfile:    <-- а вот это опасный вариант
+    #     cfg = yaml.load(ymlfile)
+
+    # Используем безопасную загрузку конфига, чтобы там не оказалось ничего исполняемого
     with open(filename, 'r') as ymlfile:
-        cfg = yaml.load(ymlfile)
+        try:
+            cfg = yaml.safe_load(ymlfile)
+        except yaml.YAMLError as exc:
+            print(exc)
+            exit()
 
     for section in cfg:
         print(section)
@@ -735,6 +770,9 @@ def grab_and_show_inputs(dev_addr):
     """Захватываем устройство и выводим в консоль все события его кнопок.
     Если нажаты Q или C - выходим.
     """
+    # from evdev import UInput
+    # ui = UInput()
+
     dev = evdev.InputDevice(dev_addr)
     print(dev)
     print('Getting LED states:')
@@ -756,6 +794,12 @@ def grab_and_show_inputs(dev_addr):
                 if cur_event_data.scancode in [evdev.ecodes.KEY_Q, evdev.ecodes.KEY_C]:
                     print('You press Q or C, and we quit now.')
                     break
+        # Прокидываем событие с клавиатуры дальше в систему
+        # dev.write_event(event)
+        # ui.write_event(event)
+        # ui.syn()
+
+    # ui.close()
     dev.ungrab()
 
 
