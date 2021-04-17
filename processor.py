@@ -32,6 +32,7 @@ from plugins import Plugins
 
 
 class app:
+    name = 'keyb-processor'
     ui = None
     keyboards = []
     devs_need_grab = []
@@ -681,6 +682,13 @@ def load_config(filename):
     """Загрузка конфига и создание нужных классов для захватываемых
     устройств.
     """
+    #print('filename[0]:', filename[0])
+    if filename[0] not in ['.', '/', '\\']:
+        full_filename = './configs/%s.yml' % filename
+        print('В качестве файла конфигурации было указано сокращённое имя (алиас) "%s". Разворачиваю его в полноценный путь: %s' % (filename,full_filename))
+        filename = full_filename
+        app.config_filename = filename
+    
     cfg_keyboards = [] # Начальная очистка списка клавиатур из конфига
 
     cfg = load_yml_file(filename)
@@ -1303,9 +1311,9 @@ def main():
     parser = argparse.ArgumentParser(description="Description about program. "
                                                  "Long decription about program.")
 
-    parser.add_argument("-i", "--install", action="store_true", help="Make link /usr/local/bin/keyb-processor -> main script. Needs SUDO.")
+    parser.add_argument("-c", "--config", type=str, help="Load config file. You can use shortname like 'gnome'. We will use configs from ./configs folder. Usage: %s -c gnome" % app.name)
 
-    parser.add_argument("-c", "--config", type=str, help="Load config file")
+    parser.add_argument("-i", "--install", action="store_true", help="Make link /usr/local/bin/keyb-processor -> main script. Needs SUDO.")
 
     parser.add_argument("-l", "--list", action="store_true", help="Show list of available devices:")
 
@@ -1324,7 +1332,7 @@ def main():
         print('Load config: %s' % args.config)
         app.config_filename = args.config
         # Запускаем отслеживание изменений файла конфига
-        app.keyboards = load_config(args.config)
+        app.keyboards = load_config(app.config_filename)
         # print('keyboards: %s' % keyboards)
 
         # for keyboard in app.keyboards:
@@ -1332,7 +1340,8 @@ def main():
         #     print(' keyboard: %s, dev_name: %s, dev_type: %s' % (keyboard, keyboard.dev_name, keyboard.dev_type))
         #     print('-'*20)
 
-        start_config_change_observer(args.config)
+        #start_config_change_observer(args.config)
+        start_config_change_observer(app.config_filename)
         check_plugged_keyboards_and_set_devices(app.keyboards)
         grab_and_process_keyboards(app.keyboards)
     elif args.list:

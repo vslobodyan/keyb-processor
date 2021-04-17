@@ -55,6 +55,9 @@ keyb-processor executor загрузил плагины и ждёт команд
 
 ### Примеры листинга keyb-processor в режиме отслеживания событий
 
+Примечание: **теперь можно использовать короткое имя конфига без пути и расширения**.
+Например: `keyb-processor -c gnome`
+
 ```
 $ keyb-processor -c ./configs/work_gnome.yml
 keyb-processor (keyboard and mouse events processor)
