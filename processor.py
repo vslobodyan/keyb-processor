@@ -633,6 +633,50 @@ def load_yml_file(filename):
     return cfg
 
 
+def add_event_to_keyboard_settings(key, value, new_keyboard):
+    # Here is new keyboard event for handle
+    pressed_keys = key
+    # print('Found pressed_keys:', pressed_keys)
+    inject_keys = None
+    plugin = None
+    command = None
+    if 'inject_keys' in value:
+        inject_keys = value['inject_keys']
+        # print('Found inject_keys:', inject_keys)
+    if 'plugin' in value:
+        plugin = value['plugin']
+    if 'command' in value:
+        command = value['command']
+        # print('Found command:', command)
+    new_keyboard.processed_events.add(
+        pressed_keys=pressed_keys,
+        inject_keys=inject_keys,
+        plugin=plugin,
+        command=command
+    )
+    
+def load_keyboard_section(cfg_key_values, new_keyboard):
+    include_cfgs = [] # Массив включаемых конфигов для данного устройства
+    
+    for key in cfg_key_values:
+        value = cfg_key_values[key]
+        # print('# key:', key, ', # value:',value)
+        if key == 'include':
+            print('Встретили инструкцию на добавление настройки из файла %s' % value)
+            include_cfgs.append(load_yml_file(value))
+        elif key == 'name':
+            new_keyboard.dev_name = value
+        elif key == 'capabilities':
+            new_keyboard.dev_type = value
+        else:
+            add_event_to_keyboard_settings(key, value, new_keyboard)
+
+    # Если встретили include и загрузили эти конфиги
+    for one_include_cfg in include_cfgs:
+        # Выполняем рекурсивную загрузку этих секций
+        load_keyboard_section(one_include_cfg, new_keyboard)
+    
+
 def load_config(filename):
     """Загрузка конфига и создание нужных классов для захватываемых
     устройств.
@@ -657,43 +701,41 @@ def load_config(filename):
         keyboard_name = section
         # Создаем клавиатуру только с именем. Остальное добавляем позже
         new_keyboard = Keyboard(name=keyboard_name)
-        include_cfgs = [] # Массив включаемых конфигов для данного устройства
 
-        for key in cfg[section]:
-            value = cfg[section][key]
-            # print('# key:', key, ', # value:',value)
-            if key == 'include':
-                print('Встретили инструкцию на добавление настройки из файла %s' % value)
-                include_cfgs.append(load_yml_file(value))
-            elif key == 'name':
-                new_keyboard.dev_name = value
-            elif key == 'capabilities':
-                new_keyboard.dev_type = value
-            else:
-                # Here is new keyboard event for handle
-                pressed_keys = key
-                # print('Found pressed_keys:', pressed_keys)
-                inject_keys = None
-                plugin = None
-                command = None
-                if 'inject_keys' in value:
-                    inject_keys = value['inject_keys']
-                    # print('Found inject_keys:', inject_keys)
-                if 'plugin' in value:
-                    plugin = value['plugin']
-                if 'command' in value:
-                    command = value['command']
-                    # print('Found command:', command)
-                new_keyboard.processed_events.add(
-                    pressed_keys=pressed_keys,
-                    inject_keys=inject_keys,
-                    plugin=plugin,
-                    command=command
-                )
-        if include_cfgs:
-            # У нас список дополнительных конфигов, которые надо включить
-            pass
-        # А что, если в добавляемом конфиге тоже будут include?
+        load_keyboard_section(cfg[section], new_keyboard)
+        
+        #for key in cfg[section]:
+            #value = cfg[section][key]
+            ## print('# key:', key, ', # value:',value)
+            #if key == 'include':
+                #print('Встретили инструкцию на добавление настройки из файла %s' % value)
+                #include_cfgs.append(load_yml_file(value))
+            #elif key == 'name':
+                #new_keyboard.dev_name = value
+            #elif key == 'capabilities':
+                #new_keyboard.dev_type = value
+            #else:
+                #add_event_to_keyboard_settings(key, value, new_keyboard)
+                ### Here is new keyboard event for handle
+                ##pressed_keys = key
+                ### print('Found pressed_keys:', pressed_keys)
+                ##inject_keys = None
+                ##plugin = None
+                ##command = None
+                ##if 'inject_keys' in value:
+                    ##inject_keys = value['inject_keys']
+                    ### print('Found inject_keys:', inject_keys)
+                ##if 'plugin' in value:
+                    ##plugin = value['plugin']
+                ##if 'command' in value:
+                    ##command = value['command']
+                    ### print('Found command:', command)
+                ##new_keyboard.processed_events.add(
+                    ##pressed_keys=pressed_keys,
+                    ##inject_keys=inject_keys,
+                    ##plugin=plugin,
+                    ##command=command
+                ##)
         
         cfg_keyboards.append(new_keyboard)
 
