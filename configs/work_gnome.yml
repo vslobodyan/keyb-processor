@@ -23,6 +23,7 @@ Logitech G413 keyboard:
   name: Logitech G413 Carbon Mechanical Gaming Keyboard
   capabilities: keyboard
 
+  include: ./configs/includes/typical_keyboard_gnome.yml
 
   KEY_SCROLLLOCK:
     command: flameshot gui
@@ -309,14 +310,14 @@ Razer Nostromo:
     inject_keys: KEY_LEFTCTRL
 
   # Joystick:
-#    KEY_DOWN:
-#        command: notify-send Button-Down
-#    KEY_RIGHT:
-#        inject_keys: KEY_PAGEDOWN
-#    KEY_UP:
-#        command: notify-send Button-Up
-#    KEY_LEFT:
-#        inject_keys: KEY_PAGEUP
+  #    KEY_DOWN:
+  #        command: notify-send Button-Down
+  #    KEY_RIGHT:
+  #        inject_keys: KEY_PAGEDOWN
+  #    KEY_UP:
+  #        command: notify-send Button-Up
+  #    KEY_LEFT:
+  #        inject_keys: KEY_PAGEUP
 
 
 

@@ -619,13 +619,7 @@ def compare_loaded_and_new_keyboards(new_keyboards):
             grab_and_process_keyboard(new_keyboard)
 
 
-
-def load_config(filename):
-    """Загрузка конфига и создание нужных классов для захватываемых
-    устройств.
-    """
-    cfg_keyboards = [] # Начальная очистка списка клавиатур из конфига
-
+def load_yml_file(filename):
     # with open(filename, 'r') as ymlfile:    <-- а вот это опасный вариант
     #     cfg = yaml.load(ymlfile)
 
@@ -636,17 +630,42 @@ def load_config(filename):
         except yaml.YAMLError as exc:
             print(exc)
             exit()
+    return cfg
+
+
+def load_config(filename):
+    """Загрузка конфига и создание нужных классов для захватываемых
+    устройств.
+    """
+    cfg_keyboards = [] # Начальная очистка списка клавиатур из конфига
+
+    cfg = load_yml_file(filename)
+
+    # # with open(filename, 'r') as ymlfile:    <-- а вот это опасный вариант
+    # #     cfg = yaml.load(ymlfile)
+    #
+    # # Используем безопасную загрузку конфига, чтобы там не оказалось ничего исполняемого
+    # with open(filename, 'r') as ymlfile:
+    #     try:
+    #         cfg = yaml.safe_load(ymlfile)
+    #     except yaml.YAMLError as exc:
+    #         print(exc)
+    #         exit()
 
     for section in cfg:
         print(section)
         keyboard_name = section
         # Создаем клавиатуру только с именем. Остальное добавляем позже
         new_keyboard = Keyboard(name=keyboard_name)
+        include_cfgs = [] # Массив включаемых конфигов для данного устройства
 
         for key in cfg[section]:
             value = cfg[section][key]
             # print('# key:', key, ', # value:',value)
-            if key == 'name':
+            if key == 'include':
+                print('Встретили инструкцию на добавление настройки из файла %s' % value)
+                include_cfgs.append(load_yml_file(value))
+            elif key == 'name':
                 new_keyboard.dev_name = value
             elif key == 'capabilities':
                 new_keyboard.dev_type = value
@@ -671,6 +690,11 @@ def load_config(filename):
                     plugin=plugin,
                     command=command
                 )
+        if include_cfgs:
+            # У нас список дополнительных конфигов, которые надо включить
+            pass
+        # А что, если в добавляемом конфиге тоже будут include?
+        
         cfg_keyboards.append(new_keyboard)
 
     print('Configuration file "%s" successfully read' % filename)
