@@ -1214,7 +1214,21 @@ def grab_and_process_keyboards(keyboards):
     # print('Keyboards for grab and process:')
     # for keyb in keyboards:
     #     print(' - %s' % keyb.name)
-    app.ui = evdev.UInput()
+    # app.ui = evdev.UInput()
+
+    for keyboard in keyboards:
+        if keyboard.enabled:
+            print('Найдена включённая клавиатура, на основе которой сделаем виртуальное устройство ввода:', keyboard.name, keyboard.dev, keyboard.address)
+            dev = evdev.InputDevice(keyboard.address)
+            app.ui = evdev.UInput.from_device(dev, name='kbdprocessor')
+            break
+    else:
+        app.ui = evdev.UInput()
+
+    # dev_addr = '/dev/input/event8'
+    # dev = evdev.InputDevice(keyboard.address)
+    # app.ui = evdev.UInput.from_device(dev, name='kbdprocessor')
+
 
     print('Run monitor')
     # asyncio.ensure_future(monitor_devices())
