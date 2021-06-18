@@ -329,6 +329,18 @@ Razer Nostromo:
 
 
 
+# Logitech MX Master 3:
+#   name: Logitech MX Master 3
+#   capabilities: keyboard
+
+#   BTN_SIDE:
+#     plugin: gnome
+#     command: minimize
+
+#   BTN_EXTRA:
+#     plugin: gnome
+#     inject_keys: KEY_LEFTMETA
+
 
 
 
@@ -366,9 +378,11 @@ Logitech Gaming Mouse G600:
 
 
   # G18
-  KEY_0:
+  # KEY_0:
+  KEY_LEFTCTRL KEY_LEFTSHIFT KEY_F8:
     plugin: gnome
-    command: raise skype Skype
+    # command: raise skype Skype
+    command: raise slack Slack
   KEY_P:
     plugin: gnome
     command: raise relanotes Relanotes

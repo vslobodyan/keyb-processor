@@ -1327,7 +1327,7 @@ def main():
 
     parser.add_argument("-c", "--config", type=str, help="Load config file. You can use shortname like 'gnome'. We will use configs from ./configs folder. Usage: %s -c gnome" % app.name)
 
-    parser.add_argument("-i", "--install", action="store_true", help="Make link /usr/local/bin/keyb-processor -> main script. Needs SUDO.")
+    parser.add_argument("-i", "--install", action="store_true", help="Make link /usr/local/bin/keyb-processor and /usr/local/bin/kp -> main script. Needs SUDO.")
 
     parser.add_argument("-l", "--list", action="store_true", help="Show list of available devices:")
 

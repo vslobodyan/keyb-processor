@@ -2,6 +2,7 @@
   KEY_SCROLLLOCK:
     command: flameshot gui
 
+
   KEY_PAUSE:
     plugin: gnome
     command: lock
@@ -9,6 +10,9 @@
   CTRL KEY_PAUSE:
     command: systemctl suspend
 
+# Тут нужна новая функция: remap
+# Что заменить событие с KEY_RIGHTALT на события с KEY_LEFTALT
+# Чтобы в Gnome можно было управлять навигацией стрелками с правым альтом (сейчас невозможно)
 
 
   KEY_KPSLASH:
@@ -59,8 +63,11 @@
 
   KEY_KP9:
     plugin: gnome
-    command: raise pycharm jetbrains-pycharm
+    # command: raise pycharm jetbrains-pycharm-ce
     # command: raise wing7.0 N/A Wing
+    # command: raise wing-personal7.2 "Wing Personal"
+    command: raise wing7.2 "Wing Pro"
+
   CTRL KEY_KP9:
     plugin: gnome
     command: raise /opt/sublime_text/sublime_text Sublime_text
@@ -79,7 +86,8 @@
 
   KEY_KP4:
     plugin: gnome
-    command: raise skype Skype
+    # command: raise skype Skype
+    command: raise slack Slack
 
   KEY_KP5:
     plugin: gnome
@@ -104,7 +112,8 @@
   KEY_KP1:
     plugin: gnome
     # command: raise relanotes Relanotes
-    command: raise relanotes python3 Relanotes
+    # command: raise relanotes python3 Relanotes
+    command: raise /home/vchs/bin/Joplin/Joplin Joplin
   CTRL KEY_KP1:
     plugin: gnome
     command: raise relacalc python3 RelaCalc

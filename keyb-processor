@@ -21,8 +21,9 @@ echo "keyb-processor (keyboard and mouse events processor)"
 
 case "$1" in
     -i|--install)
-    echo "Install: we will make link to this script at \"$LINK_PATH\""
+    echo "Install: we will make link to this script at \"$LINK_PATH\" (kp and $THIS_FILE_NAME)"
     sudo ln -v -s "$LINK_TARGET" "$LINK_PATH"
+    sudo ln -v -s "$LINK_TARGET" "$LINK_PATH/kp"
     exit
     ;;
 
