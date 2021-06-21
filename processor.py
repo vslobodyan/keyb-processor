@@ -362,6 +362,7 @@ class Keyboard:
     task = None
     processed_events = None
     enabled = False
+    ui = None
 
     def print_setup(self):
         # Печать текущих настроек в отладочных целях
@@ -914,8 +915,9 @@ def process_one_event_and_exit(keyboard, ui, event):
             #   and not double_event_mod_and_sign_keys
 
             global_modifiers = active_modifiers.get()
-            print('You Pressed the %s, active keys from this device is: %s, global modifiers: %s' % (
+            print('You Pressed the %s, active keys from this (%s) device is: %s, global modifiers: %s' % (
                             cur_event_data.keycode,
+                            keyboard.name,
                             verbose_active_keys,
                             global_modifiers))
             # Собираем читабельный массив нажатых клавиш с клавиатуры
