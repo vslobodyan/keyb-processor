@@ -19,6 +19,38 @@
 # command: raise "exec_command" "window_class" "window_title"
 
 
+
+Logitech MX Master Mouse:
+  name: Logitech MX Master 3 - 
+  capabilities: mouse
+  uinput_dev: duplication
+  
+  BTN_EXTRA:
+    #command: flameshot gui
+  BTN_SIDE:
+    #command: flameshot gui
+
+  REL_HWHEEL:   
+  
+    up:
+    #
+
+    up up up:
+    ###
+
+    up up up up up:
+    ###
+    
+    down:
+    ##
+
+    down down down:
+    ##
+
+    down down down down down down:
+    ##
+
+
 Logitech G710 Keyboard:
   name: Logitech Logitech G710 Keyboard
   capabilities: keyboard

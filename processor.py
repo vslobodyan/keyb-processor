@@ -33,7 +33,7 @@ from plugins import Plugins
 
 class app:
     name = 'keyb-processor'
-    ui = None
+    # ui = None
     keyboards = []
     devs_need_grab = []
     need_reload_config = False
@@ -1049,11 +1049,13 @@ async def proccess_events(keyboard):
 
             # print(keyboard.dev.path, evdev.categorize(event), sep=': ')
 
-            exit_now = process_one_event_and_exit(keyboard, app.ui, event)
+            # exit_now = process_one_event_and_exit(keyboard, app.ui, event)
+            exit_now = process_one_event_and_exit(keyboard, keyboard.ui, event)
             # После обработки события происходит синхронизация ввода.
             # Возможно, уже записаны новые коды ввода:
             # новая комбинация или просто ретрансляция вводимого.
-            app.ui.syn()
+            # app.ui.syn()
+            keyboard.ui.syn()
             if exit_now:
                 exit()
     except OSError:
@@ -1069,6 +1071,8 @@ def ungrab_and_release_keyboard(keyboard):
     """Освобождаем захват устройства, выключаем класс и заканчиваем цикл ожидания сигналов."""
     print('  Освобождаем захват устройства, выключаем класс и заканчиваем цикл ожидания сигналов.')
     keyboard.enabled = False
+    if keyboard.ui:
+        keyboard.ui.close()
     if keyboard.dev:
         keyboard.dev.ungrab()
         keyboard.dev = None
@@ -1078,11 +1082,18 @@ def ungrab_and_release_keyboard(keyboard):
         keyboard.task = None
 
 
+def make_uinput_dev(keyboard):
+    """Функция создания UInput на основе данного реального девайса"""
+    print('Делаем виртуальное устройство ввода:', keyboard.name, keyboard.dev, keyboard.address)
+    dev = evdev.InputDevice(keyboard.address)
+    keyboard.ui = evdev.UInput.from_device(dev, name=keyboard.name+' kbdprocessor')
+
 
 def grab_and_process_keyboard(keyboard):
     """Функция захвата и обработки событий одной клавиатуры"""
     if keyboard.enabled:
         # Если клавиатура включена, то у неё должен быть адрес и прикрепленное устройство
+        make_uinput_dev(keyboard)
         keyboard.dev.grab()
         # asyncio.ensure_future(proccess_events(keyboard))
         keyb_task = asyncio.ensure_future(proccess_events(keyboard))
@@ -1218,14 +1229,15 @@ def grab_and_process_keyboards(keyboards):
     #     print(' - %s' % keyb.name)
     # app.ui = evdev.UInput()
 
-    for keyboard in keyboards:
-        if keyboard.enabled:
-            print('Найдена включённая клавиатура, на основе которой сделаем виртуальное устройство ввода:', keyboard.name, keyboard.dev, keyboard.address)
-            dev = evdev.InputDevice(keyboard.address)
-            app.ui = evdev.UInput.from_device(dev, name='kbdprocessor')
-            break
-    else:
-        app.ui = evdev.UInput()
+    # Кусок кода более не актуален - все устройства работают со своими собственными UI
+    # for keyboard in keyboards:
+        # if keyboard.enabled:
+            # print('Найдена включённая клавиатура, на основе которой сделаем виртуальное устройство ввода:', keyboard.name, keyboard.dev, keyboard.address)
+            # dev = evdev.InputDevice(keyboard.address)
+            # app.ui = evdev.UInput.from_device(dev, name='kbdprocessor')
+            # break
+    # else:
+        # app.ui = evdev.UInput()
 
     # dev_addr = '/dev/input/event8'
     # dev = evdev.InputDevice(keyboard.address)
@@ -1260,9 +1272,10 @@ def grab_and_process_keyboards(keyboards):
     loop.run_forever()
 
     for keyboard in keyboards:
-        keyboard.dev.ungrab()
+        # keyboard.dev.ungrab()
+        ungrab_and_release_keyboard(keyboard)
 
-    app.ui.close()
+    # app.ui.close()
 
 
 def check_plugged_keyboard_and_set_device(keyboard, plugged_devices, set_enabled=True):
