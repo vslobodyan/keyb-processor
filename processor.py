@@ -22,6 +22,8 @@ import asyncio
 import json
 import time
 import os
+import datetime
+import traceback
 
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -38,6 +40,7 @@ class app:
     devs_need_grab = []
     need_reload_config = False
     config_filename = None
+    ui_suffix = 'kbdprocessor'
 
 # class asyn:
 #     loop = None
@@ -550,6 +553,9 @@ def compare_loaded_and_new_keyboards(new_keyboards):
 
     # Поиск новыйх клавиатур и изменений в имеющихся
     for new_keyboard in new_keyboards:
+        # if app.ui_suffix in new_keyboard.name:
+            # print('У нас новая подключенное виртуальное устройство, созданное %s: %s. Пропускаем его.' % (app.ui_suffix, new_keyboard.name) )
+            # continue
         keyboard_was_changed = False
         need_regrab = False
         exist_keyboard = get_configured_keyboard(app.keyboards, name=new_keyboard.name)
@@ -856,14 +862,44 @@ def grab_and_show_inputs(dev_addr):
 def process_one_event_and_exit(keyboard, ui, event):
     event_handled = False
     # single_meta_press = False
+
+    cur_event_data = evdev.categorize(event)
+    time_now = datetime.datetime.now()
+    # sig_events.check(time_now)    
+    
+    if event.type == evdev.ecodes.EV_REL:
+        # События колёсика
+        # print('У нас событие колёсика или перемещения мышки')
+        if event.code == evdev.ecodes.REL_HWHEEL:
+            print('%s У нас событие горизонтального колёсика. Value: %s' % (time_now, event.value))
+
+            # sig_events.add(time=time_now, type=evdev.ecodes.REL_HWHEEL, value=event.value)
+    
+    
     if event.type == evdev.ecodes.EV_KEY:
-        cur_event_data = evdev.categorize(event)
+        # cur_event_data = evdev.categorize(event)
         # cur_active_keys = dev.active_keys()
         # Переводим инфу о нажатых клавишах в понятный формат
         active_keys = keyboard.dev.active_keys()
-        verbose_active_keys = keyboard.dev.active_keys(verbose=True)
+        verbose_active_keys_raw = keyboard.dev.active_keys(verbose=True)
+
+        # verbose_active_keys = keyboard.dev.active_keys(verbose=True)
+        verbose_active_keys = []
+        
+        # Проверка на кривые коды клавиш и исправление этого
+        for one_rec in verbose_active_keys_raw:
+            k_name,k_code = one_rec
+            print('one_rec: %s, %s' % (k_name,k_code))
+            if '?' in k_name:
+                print('Найден ? в записи. Замещаем на код.')
+                k_name = '_%s' % k_code
+            verbose_active_keys.append((k_name, k_code))
+        print('Результирующий verbose_active_keys:')
+        print(verbose_active_keys)
+        
         # print()
-        # print('Событие: %s (активные клавиши: %s)' % (cur_event_data.keycode, verbose_active_keys))
+        print('Событие: %s (активные клавиши: %s)' % (cur_event_data.keycode, verbose_active_keys))
+        # print('Все активные клавиши: %s' % active_keys)
 
         # Глотаем нажатия META-клавиши до нажатия другой значащей клавиши
         # if 'META' in cur_event_data.keycode and not verbose_active_keys and cur_event_data.keystate in [1, 2]:
@@ -888,7 +924,7 @@ def process_one_event_and_exit(keyboard, ui, event):
         # print('active_modifiers._all=%s' % active_modifiers._all)
         # Проверяем - не модификатор ли нажат
         if cur_event_data.scancode in active_modifiers._all and not event_handled:
-            # print('It\'s modifier key: %s' % cur_event_data.keycode)
+            print('It\'s modifier key: %s' % cur_event_data.keycode)
             active_modifiers.update(cur_event_data)
 
         # Check for double event modifier and sign key combination, like from self-programming Logitech devices: G602, G600 etc.
@@ -923,7 +959,16 @@ def process_one_event_and_exit(keyboard, ui, event):
             # Собираем читабельный массив нажатых клавиш с клавиатуры
             verb_keys = []
             for a_key in active_keys:
-                verb_keys.append(evdev.ecodes.KEY[a_key])
+                print('a_key: %s' % a_key)
+                try:
+                    verb_keys.append(evdev.ecodes.KEY[a_key])
+                except:
+                    code_key = '_%s' % a_key
+                    # Тут происходит ошибка при добавлении нажатых на мышке клавиш
+                    print('Ошибка при добавлении клавиши в массив. Замещаем кодом клавиши: %s' % code_key)
+                    verb_keys.append(code_key)
+                    
+            print('verb_keys: %s' % verb_keys)
             # Ищем глобальные модификаторы, которых нет в текущих событиях с клавиатуры
             also_pressed_modifiers = {}
             for modifier in global_modifiers:
@@ -937,7 +982,7 @@ def process_one_event_and_exit(keyboard, ui, event):
                     also_pressed_modifiers[modifier] = True
 
             # print('-'*20)
-            # print('also_pressed_modifiers: %s' % also_pressed_modifiers)
+            print('also_pressed_modifiers: %s' % also_pressed_modifiers)
 
             # Для случая одной нажатой клавиши или нескольких нажатых клавиш с одного устройства- просто обрабатываем их, собрав в массив
 
@@ -959,18 +1004,18 @@ def process_one_event_and_exit(keyboard, ui, event):
                 # combinations_events_search.append(new_comb)
                 pressed_combination.append((also_mod, 0))
 
-            # Добавляем основную нажатую комбинацию с утройства + модификаторы с других
+            # Добавляем основную нажатую комбинацию с устройства + модификаторы с других
             variations_pressed_combination.append(pressed_combination)
 
             # print('combinations_events_search: %s' % combinations_events_search)
-            # print('pressed_combination: %s' % pressed_combination)
+            print('pressed_combination: %s' % pressed_combination)
 
             # Дальше надо добавить измененную комбинацию с утройства на абстрактные ALT / SHIFT / META / CTRL
             abstract_pressed_combination = []
             for one_key in pressed_combination:
                 abstract_pressed_combination.append(one_key[0])
 
-            # print('abstract_pressed_combination: %s' % abstract_pressed_combination)
+            print('abstract_pressed_combination: %s' % abstract_pressed_combination)
 
             # abstract_pressed_combination = pressed_combination.copy()
             get_abstract_pressed_combination = False
@@ -999,14 +1044,14 @@ def process_one_event_and_exit(keyboard, ui, event):
                 # print('abstract_pressed_combination: %s' % abstract_pressed_combination)
                 variations_pressed_combination.append(abstract_pressed_combination)
 
-            # print('variations_pressed_combination: %s' % variations_pressed_combination)
+            print('variations_pressed_combination: %s' % variations_pressed_combination)
 
             for combination in variations_pressed_combination:
                 # Перебираем комбинации и ищем их в слушаемых событиях
-                # print('Для комбинации "%s" ищем ...' % combination)
+                print('Для комбинации "%s" ищем ...' % combination)
                 strkey = keyboard.processed_events.find_strkey(combination)
                 if strkey:
-                    # print('Нашли: %s' % strkey)
+                    print('Нашли: %s' % strkey)
                     # return False
                     event_handled = True
                     keyboard.processed_events.proccess_event(strkey, ui)
@@ -1022,21 +1067,29 @@ def process_one_event_and_exit(keyboard, ui, event):
 
         # Here we decide - whether to skip the event further (whether to do inject)
 
-        # Если событие не было из списка отлавливаемых, то возможно надо
-        # ретранслировать это событие дальше, в зависимости от настроек
-        # клавиатуры.
-        if not event_handled:
-            if keyboard.transmit_all:
-                # We decide to inject keyboard event:
-                # print('Transmit %s, %s' % (cur_event_data.keycode, cur_event_data.keystate))
-                ui.write(event.type,
-                         cur_event_data.scancode,
-                         cur_event_data.keystate)
-                # ui.syn()
-    else:
-        #All non-key events
+        # # Если событие не было из списка отлавливаемых, то возможно надо
+        # # ретранслировать это событие дальше, в зависимости от настроек
+        # # клавиатуры.
+        # if not event_handled:
+            # if keyboard.transmit_all:
+                # # We decide to inject keyboard event:
+                # # print('Transmit %s, %s' % (cur_event_data.keycode, cur_event_data.keystate))
+                # ui.write(event.type,
+                         # cur_event_data.scancode,
+                         # cur_event_data.keystate)
+                # # ui.syn()
+    # else:
+        # #All non-key events
+        # ui.write_event(event)
+        
+    if not event_handled:
+        # Все не-кнопочные события и кнопочные, которые не перехвачены/обработаны
+        # print('Событие не обработано и транслируется дальше')
         ui.write_event(event)
-
+    else:
+        # print('Событие было обработано и не выводится в поток виртуального устройства')
+        pass
+    
     return False
 
 
@@ -1064,8 +1117,10 @@ async def proccess_events(keyboard):
                                                                           keyboard.dev_type))
         print('Останавливаем цикл их обработки' )
         keyboard.enabled = False
-
-
+    # except Exception as e: print(e)
+    except Exception:
+        traceback.print_exc()
+        
 
 def ungrab_and_release_keyboard(keyboard):
     """Освобождаем захват устройства, выключаем класс и заканчиваем цикл ожидания сигналов."""
@@ -1086,7 +1141,7 @@ def make_uinput_dev(keyboard):
     """Функция создания UInput на основе данного реального девайса"""
     print('Делаем виртуальное устройство ввода:', keyboard.name, keyboard.dev, keyboard.address)
     dev = evdev.InputDevice(keyboard.address)
-    keyboard.ui = evdev.UInput.from_device(dev, name=keyboard.name+' kbdprocessor')
+    keyboard.ui = evdev.UInput.from_device(dev, name=keyboard.name+' ' + app.ui_suffix)
 
 
 def grab_and_process_keyboard(keyboard):
@@ -1286,13 +1341,13 @@ def check_plugged_keyboard_and_set_device(keyboard, plugged_devices, set_enabled
         dev_name, dev_type, address, dev = plug_dev
         if keyboard.dev_name == dev_name and keyboard.dev_type in dev_type:
             # print('    Нашли соответствующее устройство %s %s %s' % (dev_name, dev_type, address))
-            print('  Нашли соответствующее устройство на %s и включаем её.' % address)
+            print('    Нашли соответствующее устройство на %s и включаем её.' % address)
             keyboard.dev = dev
             keyboard.address = address
             keyboard.enabled = True
             break
     if not keyboard.enabled:
-        print('  Соответствующего устройства не нашли но будем ждать его подключения позднее.')
+        print('    Соответствующего устройства не нашли но будем ждать его подключения позднее.')
 
 
 def get_plugged_devices_array():
