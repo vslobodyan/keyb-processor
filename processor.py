@@ -357,7 +357,7 @@ class _processed_events:
 
 class Significant_events:
     """Класс для работы с накапливаемым краткосрочным массивом значимых событий с устройства. Например, анализ движения колёсика дополнительного скроллинга для определения - каким образом реагировать на сделанное пользователем движение или жест."""
-    timeout = 200
+    timeout = 100
     accepted = []
 
     class event:
@@ -539,15 +539,36 @@ async def check_significant_events_and_react():
                     if keyboard.significant_events.time_for_receiving_has_expired():
                         # Если истёк - сообщаем о том что получили мета-событие и на него надо реагировать
                         sig_events_str = []
+                        sig_events_dict = {}
                         for event in keyboard.significant_events.accepted:
                             sig_events_str.append((event.type, event.value))
+                            # Формируем словарь типов с массивами значимых событий (типа группировка)
+                            if not event.type in sig_events_dict:
+                                sig_events_dict[event.type] = []
+                            sig_events_dict[event.type].append(str(event.value))
                         print('.. Обнаружен законченный массив принятых событий у устройства %s: %s' % (
                         keyboard.name, sig_events_str))
+                        print('.. sig_events_dict: %s' % sig_events_dict)
+                        for one_type in sig_events_dict:
+                            keys = []
+                            for key in sig_events_dict[one_type]:
+                                # Проводим обработку значений, чтобы если от устройства пришли повышенные значения мы их разложили в единицы
+                                for ind in range(0, abs(int(key))):
+                                    if int(key)>0: mini_key = '1'
+                                    else: mini_key = '-1'
+                                    keys.append(mini_key)
+                            print('keys: %s' % keys)
+                            strkey = one_type + ':' + ','.join(keys)
+                            print('.. strkey: %s' % strkey)
+                            # print('.. keyboard.processed_events.listen_events: %s' % keyboard.processed_events.listen_events)
+                            if strkey in keyboard.processed_events.listen_events:
+                                print('.. Это событие есть в конфиге.')
+                                keyboard.processed_events.proccess_event(strkey, keyboard.ui)
                         # print('.. Таймаут принятия новых событий вышел - фиксируем, обрабатываем, очищаем очередь.')
                         # Очищаем массив принятых событий для данного устройства
                         keyboard.significant_events.accepted = []
 
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.05)
 
 
 
@@ -980,8 +1001,9 @@ def process_one_event_and_exit(keyboard, ui, event):
         if event.code == evdev.ecodes.REL_HWHEEL:
             print('%s У нас событие горизонтального колёсика. Value: %s' % (time_now, event.value))
 
-            keyboard.significant_events.add(time=time_now, type=evdev.ecodes.REL_HWHEEL, value=event.value)
-    
+            # keyboard.significant_events.add(time=time_now, type=evdev.ecodes.REL_HWHEEL, value=event.value)
+            keyboard.significant_events.add(time=time_now, type='REL_HWHEEL', value=event.value)
+
     
     if event.type == evdev.ecodes.EV_KEY:
         # cur_event_data = evdev.categorize(event)
@@ -1154,7 +1176,7 @@ def process_one_event_and_exit(keyboard, ui, event):
 
             for combination in variations_pressed_combination:
                 # Перебираем комбинации и ищем их в слушаемых событиях
-                # print('Для комбинации "%s" ищем ...' % combination)
+                print('Для комбинации "%s" ищем назначение в конфиге' % combination)
                 strkey = keyboard.processed_events.find_strkey(combination)
                 if strkey:
                     # print('Нашли: %s' % strkey)

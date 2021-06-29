@@ -36,25 +36,72 @@ Logitech MX Master Mouse:
     inject_keys: KEY_LEFTMETA KEY_H
 
 
-  REL_HWHEEL:   
+  # up
+  REL_HWHEEL:-1:
+      inject_keys: KEY_LEFTMETA
+  REL_HWHEEL:-1,-1:
+      inject_keys: KEY_LEFTMETA
+
+  REL_HWHEEL:-1,-1,-1:
+    plugin: gnome
+    command: raise firefox Firefox
+  REL_HWHEEL:-1,-1,-1,-1:
+    plugin: gnome
+    command: raise firefox Firefox
+
+
+  REL_HWHEEL:-1,-1,-1,-1,-1:
+    plugin: gnome
+    command: raise slack Slack
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1:
+    plugin: gnome
+    command: raise slack Slack
+
+
+
+
+  # down
+  REL_HWHEEL:1:
+      inject_keys: KEY_LEFTMETA KEY_H
+  REL_HWHEEL:1,1:
+      inject_keys: KEY_LEFTMETA KEY_H
+
+
+  REL_HWHEEL:1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+
+
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+
+
+
+  # # 6
+  # REL_HWHEEL:
   
-    up:
-    #
+  #   # up:
+  #   -1:
 
-    up up up:
-    ###
 
-    up up up up up:
-    ###
+  #   -1, -1:
+  #   #
     
-    down:
-    ##
+  #   #down:
+  #   1:
+  #   ##
 
-    down down down:
-    ##
+  #   1, 1:
 
-    down down down down down down:
-    ##
 
 
 Logitech G710 Keyboard:
