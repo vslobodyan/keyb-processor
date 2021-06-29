@@ -354,6 +354,88 @@ class _processed_events:
         self.processed_events_setup = []
 
 
+
+class Significant_events:
+    """Класс для работы с накапливаемым краткосрочным массивом значимых событий с устройства. Например, анализ движения колёсика дополнительного скроллинга для определения - каким образом реагировать на сделанное пользователем движение или жест."""
+    timeout = 200
+    accepted = []
+
+    class event:
+        time=None
+        type=None
+        value=None
+
+    def time_for_receiving_has_expired(self, time=None):
+        # Время ожидания новых событий для добавления в очередь вышло
+        if not time:
+            time = datetime.datetime.now()
+        len_accept = len(self.accepted)
+        diff_time_mili = 0
+
+        if len_accept>0:
+            diff_time = time - self.accepted[len_accept-1].time
+            diff_time_mili = int(diff_time.total_seconds()*1000)
+        if diff_time_mili>self.timeout:
+            # print('У события слишком большая разница по времени. Анализируем полученный массив принятых событий.')
+            # self.print()
+            # self.accepted = []
+            # print('Очищаем массив принятых событий')
+            return True
+        else:
+            # Ещё есть время для новых событий в этой очереди
+            return False
+
+    # def check(self, time=None):
+    #     # print('Check sig events')
+    #
+    #     len_accept = len(self.accepted)
+    #     diff_time_mili = 0
+    #
+    #     if len_accept>0:
+    #         diff_time = time - self.accepted[len_accept-1].time
+    #         diff_time_mili = int(diff_time.total_seconds()*1000)
+    #     if diff_time_mili>self.timeout:
+    #         print('У события слишком большая разница по времени. Анализируем полученный массив принятых событий.')
+    #         self.print()
+    #         self.accepted = []
+    #         print('Очищаем массив принятых событий')
+    #         return False
+    #     else:
+    #         # print('Разница по времени с предыдущим событием: %s' % diff_time_mili)
+    #         return True
+
+
+    def print(self):
+        print('Массив accepted в данный момент:')
+        for one_event in self.accepted:
+            print('  event: %s, %s, %s' % (one_event.time, one_event.type, one_event.value) )
+
+
+    def add(self, time=None, type=None, value=None):
+
+        if not self.time_for_receiving_has_expired(time=time):
+        # len_accept = len(self.accepted)
+        # diff_time_mili = 0
+
+        # if len_accept>0:
+            # diff_time = time - self.accepted[len_accept-1].time
+            # diff_time_mili = int(diff_time.total_seconds()*1000)
+        # if diff_time_mili>self.timeout:
+            # print('У события слишком большая разница по времени. Анализируем полученный массив принятых событий.')
+            # self.print()
+            # self.accepted = []
+            # print('Очищаем массив принятых событий')
+        # else:
+            # print('Добавляем значимое событие. Разница по времени с предыдущим: %s' % diff_time_mili)
+            new_event = self.event()
+            new_event.time = time
+            new_event.type = type
+            new_event.value = value
+            self.accepted.append(new_event)
+            # print('Added new event: %s, %s, %s' % (new_event.time, new_event.type, new_event.value))
+
+
+
 class Keyboard:
     """Одиночный класс клавиатуры с конфигом."""
     name = ''
@@ -366,6 +448,7 @@ class Keyboard:
     processed_events = None
     enabled = False
     ui = None
+    significant_events = Significant_events()
 
     def print_setup(self):
         # Печать текущих настроек в отладочных целях
@@ -442,6 +525,30 @@ def start_config_change_observer(file_path):
     # except KeyboardInterrupt:
     #     observer.stop()
     # observer.join()
+
+
+
+async def check_significant_events_and_react():
+    while True:
+        # Обходим активные "клавиатуры"
+        for keyboard in app.keyboards:
+            if keyboard.enabled:
+                # Проверяем наличие значимых событий у каждой
+                if keyboard.significant_events.accepted:
+                    # Проверяем - истёк ли таймаут для какой-то очереди
+                    if keyboard.significant_events.time_for_receiving_has_expired():
+                        # Если истёк - сообщаем о том что получили мета-событие и на него надо реагировать
+                        sig_events_str = []
+                        for event in keyboard.significant_events.accepted:
+                            sig_events_str.append((event.type, event.value))
+                        print('.. Обнаружен законченный массив принятых событий у устройства %s: %s' % (
+                        keyboard.name, sig_events_str))
+                        # print('.. Таймаут принятия новых событий вышел - фиксируем, обрабатываем, очищаем очередь.')
+                        # Очищаем массив принятых событий для данного устройства
+                        keyboard.significant_events.accepted = []
+
+        await asyncio.sleep(0.1)
+
 
 
 
@@ -865,7 +972,7 @@ def process_one_event_and_exit(keyboard, ui, event):
 
     cur_event_data = evdev.categorize(event)
     time_now = datetime.datetime.now()
-    # sig_events.check(time_now)    
+    # keyboard.significant_events.check(time_now)
     
     if event.type == evdev.ecodes.EV_REL:
         # События колёсика
@@ -873,7 +980,7 @@ def process_one_event_and_exit(keyboard, ui, event):
         if event.code == evdev.ecodes.REL_HWHEEL:
             print('%s У нас событие горизонтального колёсика. Value: %s' % (time_now, event.value))
 
-            # sig_events.add(time=time_now, type=evdev.ecodes.REL_HWHEEL, value=event.value)
+            keyboard.significant_events.add(time=time_now, type=evdev.ecodes.REL_HWHEEL, value=event.value)
     
     
     if event.type == evdev.ecodes.EV_KEY:
@@ -889,13 +996,12 @@ def process_one_event_and_exit(keyboard, ui, event):
         # Проверка на кривые коды клавиш и исправление этого
         for one_rec in verbose_active_keys_raw:
             k_name,k_code = one_rec
-            print('one_rec: %s, %s' % (k_name,k_code))
+            # print('one_rec: %s, %s' % (k_name,k_code))
             if '?' in k_name:
-                print('Найден ? в записи. Замещаем на код.')
+                # print('Найден ? в записи. Замещаем на код.')
                 k_name = '_%s' % k_code
             verbose_active_keys.append((k_name, k_code))
-        print('Результирующий verbose_active_keys:')
-        print(verbose_active_keys)
+        # print('Результирующий verbose_active_keys: %s' % verbose_active_keys)
         
         # print()
         print('Событие: %s (активные клавиши: %s)' % (cur_event_data.keycode, verbose_active_keys))
@@ -959,7 +1065,7 @@ def process_one_event_and_exit(keyboard, ui, event):
             # Собираем читабельный массив нажатых клавиш с клавиатуры
             verb_keys = []
             for a_key in active_keys:
-                print('a_key: %s' % a_key)
+                # print('a_key: %s' % a_key)
                 try:
                     verb_keys.append(evdev.ecodes.KEY[a_key])
                 except:
@@ -968,7 +1074,7 @@ def process_one_event_and_exit(keyboard, ui, event):
                     print('Ошибка при добавлении клавиши в массив. Замещаем кодом клавиши: %s' % code_key)
                     verb_keys.append(code_key)
                     
-            print('verb_keys: %s' % verb_keys)
+            # print('verb_keys: %s' % verb_keys)
             # Ищем глобальные модификаторы, которых нет в текущих событиях с клавиатуры
             also_pressed_modifiers = {}
             for modifier in global_modifiers:
@@ -982,7 +1088,7 @@ def process_one_event_and_exit(keyboard, ui, event):
                     also_pressed_modifiers[modifier] = True
 
             # print('-'*20)
-            print('also_pressed_modifiers: %s' % also_pressed_modifiers)
+            # print('also_pressed_modifiers: %s' % also_pressed_modifiers)
 
             # Для случая одной нажатой клавиши или нескольких нажатых клавиш с одного устройства- просто обрабатываем их, собрав в массив
 
@@ -1008,14 +1114,14 @@ def process_one_event_and_exit(keyboard, ui, event):
             variations_pressed_combination.append(pressed_combination)
 
             # print('combinations_events_search: %s' % combinations_events_search)
-            print('pressed_combination: %s' % pressed_combination)
+            # print('pressed_combination: %s' % pressed_combination)
 
             # Дальше надо добавить измененную комбинацию с утройства на абстрактные ALT / SHIFT / META / CTRL
             abstract_pressed_combination = []
             for one_key in pressed_combination:
                 abstract_pressed_combination.append(one_key[0])
 
-            print('abstract_pressed_combination: %s' % abstract_pressed_combination)
+            # print('abstract_pressed_combination: %s' % abstract_pressed_combination)
 
             # abstract_pressed_combination = pressed_combination.copy()
             get_abstract_pressed_combination = False
@@ -1044,14 +1150,14 @@ def process_one_event_and_exit(keyboard, ui, event):
                 # print('abstract_pressed_combination: %s' % abstract_pressed_combination)
                 variations_pressed_combination.append(abstract_pressed_combination)
 
-            print('variations_pressed_combination: %s' % variations_pressed_combination)
+            # print('variations_pressed_combination: %s' % variations_pressed_combination)
 
             for combination in variations_pressed_combination:
                 # Перебираем комбинации и ищем их в слушаемых событиях
-                print('Для комбинации "%s" ищем ...' % combination)
+                # print('Для комбинации "%s" ищем ...' % combination)
                 strkey = keyboard.processed_events.find_strkey(combination)
                 if strkey:
-                    print('Нашли: %s' % strkey)
+                    # print('Нашли: %s' % strkey)
                     # return False
                     event_handled = True
                     keyboard.processed_events.proccess_event(strkey, ui)
@@ -1317,6 +1423,8 @@ def grab_and_process_keyboards(keyboards):
     asyncio.ensure_future(wait_for_new_devices())
     # Отслеживаем сообщение о необходимости обновить конфиг
     asyncio.ensure_future(wait_for_reload_config())
+    # Отслеживаем накопленные значимые события у устройств и реагируем на них
+    asyncio.ensure_future(check_significant_events_and_react())
 
     # Начинаем мониторить подключаемые-отключаемые устройства
     # asyncio.ensure_future(monitor_devices())

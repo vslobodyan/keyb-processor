@@ -23,41 +23,38 @@
 Logitech MX Master Mouse:
   name: Logitech MX Master 3
   capabilities: mouse
-  #uinput_dev: duplication
-
+  # uinput_dev: duplication
+  
   #BTN_EXTRA:
   _276:
-    inject_keys: KEY_LEFTMETA KEY_S
-    #plugin: gnome
-    #command: raise telegram-desktop TelegramDesktop
+    #command: flameshot gui
+    inject_keys: KEY_LEFTMETA
 
-
-  #BTN_SIDE:
-  _275: 
+  # BTN_SIDE:
+  _275:
+    #command: flameshot gui
     inject_keys: KEY_LEFTMETA KEY_H
-    #plugin: gnome
-    #command: raise firefox Firefox
+
+
+  REL_HWHEEL:   
   
+    up:
+    #
 
-  #REL_HWHEEL:   
-  
-    #up:
-      #command: flameshot gui
+    up up up:
+    ###
 
-    #up up up:
-      #command: flameshot gui
-
-    #up up up up up:
-      #command: flameshot gui
+    up up up up up:
+    ###
     
-    #down:
-      #command: flameshot gui
+    down:
+    ##
 
-    #down down down:
-      #command: flameshot gui
+    down down down:
+    ##
 
-    #down down down down down down:
-      #command: flameshot gui
+    down down down down down down:
+    ##
 
 
 Logitech G710 Keyboard:
