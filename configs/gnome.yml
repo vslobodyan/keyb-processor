@@ -25,15 +25,15 @@ Logitech MX Master Mouse:
   capabilities: mouse
   # uinput_dev: duplication
   
-  #BTN_EXTRA:
-  _276:
-    #command: flameshot gui
-    inject_keys: KEY_LEFTMETA
+  # #BTN_EXTRA:
+  # _276:
+  #   #command: flameshot gui
+  #   inject_keys: KEY_LEFTMETA
 
-  # BTN_SIDE:
-  _275:
-    #command: flameshot gui
-    inject_keys: KEY_LEFTMETA KEY_H
+  # # BTN_SIDE:
+  # _275:
+  #   #command: flameshot gui
+  #   inject_keys: KEY_LEFTMETA KEY_H
 
 
   # up
@@ -56,7 +56,23 @@ Logitech MX Master Mouse:
   REL_HWHEEL:-1,-1,-1,-1,-1,-1:
     plugin: gnome
     command: raise slack Slack
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1:
+    plugin: gnome
+    command: raise slack Slack
 
+
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: gnome
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: gnome
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: gnome
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: gnome
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
 
 
 
@@ -72,6 +88,8 @@ Logitech MX Master Mouse:
   REL_HWHEEL:1,1,1,1:
       inject_keys: KEY_LEFTCTRL KEY_W
   REL_HWHEEL:1,1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1,1,1:
       inject_keys: KEY_LEFTCTRL KEY_W
 
 
@@ -102,6 +120,11 @@ Logitech MX Master Mouse:
 
   #   1, 1:
 
+
+Logitech USB Keyboard:
+  name: Logitech USB Keyboard
+  capabilities: keyboard
+  include: ./configs/includes/typical_keyboard_gnome.yml
 
 
 Logitech G710 Keyboard:

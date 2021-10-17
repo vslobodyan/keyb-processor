@@ -357,7 +357,7 @@ class _processed_events:
 
 class Significant_events:
     """Класс для работы с накапливаемым краткосрочным массивом значимых событий с устройства. Например, анализ движения колёсика дополнительного скроллинга для определения - каким образом реагировать на сделанное пользователем движение или жест."""
-    timeout = 100
+    timeout = 150
     accepted = []
 
     class event:
@@ -568,7 +568,7 @@ async def check_significant_events_and_react():
                         # Очищаем массив принятых событий для данного устройства
                         keyboard.significant_events.accepted = []
 
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.01)
 
 
 
@@ -1003,6 +1003,7 @@ def process_one_event_and_exit(keyboard, ui, event):
 
             # keyboard.significant_events.add(time=time_now, type=evdev.ecodes.REL_HWHEEL, value=event.value)
             keyboard.significant_events.add(time=time_now, type='REL_HWHEEL', value=event.value)
+            event_handled = True
 
     
     if event.type == evdev.ecodes.EV_KEY:
@@ -1309,8 +1310,8 @@ def devices_observer_event(action, device):
     """
     # print('Событие %s с устройством %s' % (action, device))
 
-    if 'DEVNAME' in device:
-        dev_name = device['DEVNAME']
+    if 'DEVNAME' in device.properties:
+        dev_name = device.properties['DEVNAME']
         print('Monitor devices: {0} input device {1}'.format(action, dev_name))
 
         if format(action) == 'add':
