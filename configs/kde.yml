@@ -1,0 +1,630 @@
+Logitech G710 Keyboard:
+  #device: /dev/input/event9
+  name: Logitech Logitech G710 Keyboard
+  capabilities: keyboard
+
+#  META KEY_S:
+#    #inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+#    plugin: wmctrl
+#    command: raise thunar Thunar.Thunar
+
+  # KEY_LEFTMETA: 
+  #   inject_keys: KEY_LEFTCTRL KEY_F9
+
+
+  KEY_SCROLLLOCK:
+    command: flameshot gui
+
+  KEY_PAUSE:
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_L
+  CTRL KEY_PAUSE:
+    command: systemctl suspend -i
+
+
+  KEY_KP7:
+    plugin: wmctrl
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+  KEY_KP8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    #command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
+    # command: raise chromium chromium.Chromium
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    command: raise firefox Navigator.Firefox
+    #command: raise_all firefox Navigator.Firefox https://www.youtube.com
+    #command: raise opera Opera
+  #KEY_LEFTCTRL KEY_KP8:
+  CTRL KEY_KP8:
+    plugin: wmctrl
+    # Raise only Firefox with youtube player
+    command: raise chromium-browser chromium.Chromium
+    # command: raise echo Navigator.Firefox YouTube
+    # command: raise firefox Navigator.Firefox
+    # YouTube - Mozilla Firefox
+
+  KEY_KP9:
+    plugin: wmctrl
+    command: raise pycharm jetbrains-pycharm
+    # command: raise wing7.0 N/A Wing
+  CTRL KEY_KP9:
+    plugin: wmctrl
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise inkscape inkscape.Inkscape
+    # command: raise wing-personal6.1 N/A Wing
+  # SHIFT KEY_KP9:
+  #   plugin: wmctrl
+  #   command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  META KEY_KP9:
+    plugin: wmctrl
+    command: raise atom atom.Atom
+
+
+  KEY_KP4:
+    plugin: wmctrl
+    command: raise skype skype.Skype
+
+  KEY_KP5:
+    plugin: wmctrl
+    command: raise systemsettings5 systemsettings5.systemsettings
+
+  KEY_KP6:
+    plugin: wmctrl
+    command: raise okular okular.okular
+  CTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
+
+
+
+
+  KEY_KP1:
+    plugin: wmctrl
+    command: raise relanotes relanotes.py.Relanotes
+  CTRL KEY_KP1:
+    plugin: wmctrl
+    command: raise relacalc relacalc.py.relacalc.py
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
+
+  KEY_KP2:
+    plugin: wmctrl
+    command: raise konsole konsole.konsole
+
+  KEY_KP3:
+    plugin: wmctrl
+    command: raise dolphin dolphin.dolphin
+
+
+  KEY_KPDOT:
+    plugin: wmctrl
+    # command: raise kate kate.kate
+    command: raise kwrite kwrite.kwrite
+
+
+  KEY_KPSLASH:
+#    command: amixer -q sset Master 5%-
+    inject_keys: KEY_VOLUMEDOWN
+
+  KEY_KPASTERISK:
+#    command: amixer -q sset Master 5%+
+    inject_keys: KEY_VOLUMEUP
+
+
+
+  KEY_KPPLUS:
+    # In subsection - keys, must be handled
+    # And what we must do with it below.
+    inject_keys: KEY_RIGHTCTRL KEY_W
+
+  KEY_KP0:
+    plugin: xdotool
+    command: minimize
+
+  KEY_KPENTER:
+    plugin: wmctrl
+    command: close
+
+  KEY_KPMINUS:
+    #command: xfdesktop --windowlist
+    inject_keys: KEY_LEFTCTRL KEY_F9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Logitech G413 keyboard:
+  name: Logitech G413 Carbon Mechanical Gaming Keyboard
+  capabilities: keyboard
+
+#  META KEY_S:
+#    #inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+#    plugin: wmctrl
+#    command: raise thunar Thunar.Thunar
+
+  # KEY_LEFTMETA: 
+  #   inject_keys: KEY_LEFTCTRL KEY_F9
+
+
+  KEY_SCROLLLOCK:
+    command: flameshot gui
+
+  KEY_PAUSE:
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_L
+  CTRL KEY_PAUSE:
+    command: systemctl suspend -i
+
+
+  KEY_KP7:
+    plugin: wmctrl
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+  KEY_KP8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    #command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
+    # command: raise chromium chromium.Chromium
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    command: raise firefox Navigator.Firefox
+    #command: raise_all firefox Navigator.Firefox https://www.youtube.com
+    #command: raise opera Opera
+  #KEY_LEFTCTRL KEY_KP8:
+  CTRL KEY_KP8:
+    plugin: wmctrl
+    # Raise only Firefox with youtube player
+    command: raise chromium-browser chromium.Chromium
+    # command: raise echo Navigator.Firefox YouTube
+    # command: raise firefox Navigator.Firefox
+    # YouTube - Mozilla Firefox
+
+  KEY_KP9:
+    plugin: wmctrl
+    command: raise pycharm jetbrains-pycharm
+    # command: raise wing7.0 N/A Wing
+  CTRL KEY_KP9:
+    plugin: wmctrl
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise inkscape inkscape.Inkscape
+    # command: raise wing-personal6.1 N/A Wing
+  # SHIFT KEY_KP9:
+  #   plugin: wmctrl
+  #   command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  META KEY_KP9:
+    plugin: wmctrl
+    command: raise atom atom.Atom
+
+
+  KEY_KP4:
+    plugin: wmctrl
+    command: raise skype skype.Skype
+
+  KEY_KP5:
+    plugin: wmctrl
+    command: raise systemsettings5 systemsettings5.systemsettings
+
+  KEY_KP6:
+    plugin: wmctrl
+    command: raise okular okular.okular
+  CTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
+
+
+
+
+  KEY_KP1:
+    plugin: wmctrl
+    command: raise relanotes relanotes.py.Relanotes
+  CTRL KEY_KP1:
+    plugin: wmctrl
+    command: raise relacalc relacalc.py.relacalc.py
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
+
+  KEY_KP2:
+    plugin: wmctrl
+    command: raise konsole konsole.konsole
+
+  KEY_KP3:
+    plugin: wmctrl
+    command: raise dolphin dolphin.dolphin
+
+
+  KEY_KPDOT:
+    plugin: wmctrl
+    # command: raise kate kate.kate
+    command: raise kwrite kwrite.kwrite
+
+
+  KEY_KPSLASH:
+#    command: amixer -q sset Master 5%-
+    inject_keys: KEY_VOLUMEDOWN
+
+  KEY_KPASTERISK:
+#    command: amixer -q sset Master 5%+
+    inject_keys: KEY_VOLUMEUP
+
+
+
+  KEY_KPPLUS:
+    # In subsection - keys, must be handled
+    # And what we must do with it below.
+    inject_keys: KEY_RIGHTCTRL KEY_W
+
+  KEY_KP0:
+    plugin: xdotool
+    command: minimize
+
+  KEY_KPENTER:
+    plugin: wmctrl
+    command: close
+
+  KEY_KPMINUS:
+    #command: xfdesktop --windowlist
+    inject_keys: KEY_LEFTCTRL KEY_F9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Logitech Gaming Mouse G600:
+  #device: /dev/input/event8
+  name: Logitech Gaming Mouse G600 Keyboard
+  capabilities: keyboard
+
+  # G15
+  KEY_7:
+    plugin: wmctrl
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+
+  # G16
+  KEY_8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    #command: raise chromium-browser Chromium-browser
+    command: raise firefox Navigator.Firefox
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+
+
+
+  # G17
+  KEY_9:
+    plugin: wmctrl
+    # command: raise wing7.0 N/A Wing
+    command: raise pycharm jetbrains-pycharm
+
+
+
+  # G18
+  KEY_0:
+    plugin: wmctrl
+    command: raise skype skype.Skype
+  KEY_P:
+    plugin: wmctrl
+    command: raise relanotes relanotes.py.Relanotes
+
+
+  # G19
+  KEY_MINUS:
+    plugin: wmctrl
+    command: raise konsole konsole.konsole
+
+  # G20
+  KEY_EQUAL:
+    plugin: wmctrl
+    command: raise dolphin dolphin.dolphin
+
+
+#  KEY_LEFTCTRL KEY_W:
+#    inject_keys: KEY_LEFTCTRL KEY_W
+
+  KEY_2:
+    inject_keys: KEY_LEFTCTRL KEY_F9
+  ALT KEY_2:
+    command: flameshot gui
+
+  KEY_5:
+    plugin: xdotool
+    command: minimize
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Notebook Keyboard:
+  #device: /dev/input/event3
+  name: AT Translated Set 2 keyboard
+  capabilities: keyboard
+
+
+  KEY_SCROLLLOCK:
+    command: flameshot gui
+
+  KEY_PAUSE:
+    inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_L
+  CTRL KEY_PAUSE:
+    command: systemctl suspend -i
+
+
+  KEY_KP7:
+    plugin: wmctrl
+    # command: raise telegram-desktop TelegramDesktop
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+  KEY_KP8:
+    plugin: wmctrl
+    # Special, to raise all Chromium-browser window
+    #command: raise chromium-browser Chromium-browser
+    #command: raise chromium-browser chromium-browser.Chromium-browser
+    # command: raise chromium chromium.Chromium
+    # command: raise vivaldi-stable vivaldi-stable.Vivaldi-stable
+    command: raise firefox Navigator.Firefox
+    #command: raise_all firefox Navigator.Firefox https://www.youtube.com
+    #command: raise opera Opera
+  #KEY_LEFTCTRL KEY_KP8:
+  CTRL KEY_KP8:
+    plugin: wmctrl
+    # Raise only Firefox with youtube player
+    command: raise chromium-browser chromium.Chromium
+    # command: raise echo Navigator.Firefox YouTube
+    # command: raise firefox Navigator.Firefox
+    # YouTube - Mozilla Firefox
+
+  KEY_KP9:
+    plugin: wmctrl
+    command: raise pycharm jetbrains-pycharm
+    # command: raise wing7.0 N/A Wing
+  CTRL KEY_KP9:
+    plugin: wmctrl
+    command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  ALT KEY_KP9:
+    plugin: wmctrl
+    command: raise inkscape inkscape.Inkscape
+    # command: raise wing-personal6.1 N/A Wing
+  # SHIFT KEY_KP9:
+  #   plugin: wmctrl
+  #   command: raise /opt/sublime_text/sublime_text sublime_text.Sublime_text
+  META KEY_KP9:
+    plugin: wmctrl
+    command: raise atom atom.Atom
+
+
+  KEY_KP4:
+    plugin: wmctrl
+    command: raise skype skype.Skype
+
+  KEY_KP5:
+    plugin: wmctrl
+    command: raise systemsettings5 systemsettings5.systemsettings
+
+  KEY_KP6:
+    plugin: wmctrl
+    command: raise okular okular.okular
+  CTRL KEY_KP6:
+    plugin: wmctrl
+    command: raise goldendict goldendict.GoldenDict
+#  KEY_RIGHTCTRL KEY_KP6:
+#    plugin: wmctrl
+#    command: raise goldendict goldendict.GoldenDict
+
+
+
+
+  KEY_KP1:
+    plugin: wmctrl
+    command: raise relanotes relanotes.py.Relanotes
+  CTRL KEY_KP1:
+    plugin: wmctrl
+    command: raise relacalc relacalc.py.relacalc.py
+#  KEY_RIGHTCTRL KEY_KP1:
+#    plugin: wmctrl
+#    command: raise relacalc Relacalc
+
+  KEY_KP2:
+    plugin: wmctrl
+    command: raise konsole konsole.konsole
+
+  KEY_KP3:
+    plugin: wmctrl
+    command: raise dolphin dolphin.dolphin
+
+
+  KEY_KPDOT:
+    plugin: wmctrl
+    # command: raise kate kate.kate
+    command: raise kwrite kwrite.kwrite
+
+
+  KEY_KPSLASH:
+#    command: amixer -q sset Master 5%-
+    inject_keys: KEY_VOLUMEDOWN
+
+  KEY_KPASTERISK:
+#    command: amixer -q sset Master 5%+
+    inject_keys: KEY_VOLUMEUP
+
+
+
+  KEY_KPPLUS:
+    # In subsection - keys, must be handled
+    # And what we must do with it below.
+    inject_keys: KEY_RIGHTCTRL KEY_W
+
+  KEY_KP0:
+    plugin: xdotool
+    command: minimize
+
+  KEY_KPENTER:
+    plugin: wmctrl
+    command: close
+
+  KEY_KPMINUS:
+    #command: xfdesktop --windowlist
+    inject_keys: KEY_LEFTCTRL KEY_F9
+
+
+
+
+
+
+
+
+
+
+Logitech MX Master Mouse:
+  name: Logitech MX Master 3
+  capabilities: mouse
+  # uinput_dev: duplication
+  
+  # #BTN_EXTRA:
+  # _276:
+  #   #command: flameshot gui
+  #   inject_keys: KEY_LEFTMETA
+
+  # # BTN_SIDE:
+  # _275:
+  #   #command: flameshot gui
+  #   inject_keys: KEY_LEFTMETA KEY_H
+
+
+  # up
+  REL_HWHEEL:-1:
+      inject_keys: KEY_LEFTMETA
+  REL_HWHEEL:-1,-1:
+      inject_keys: KEY_LEFTMETA
+
+  REL_HWHEEL:-1,-1,-1:
+    plugin: wmctrl
+    command: raise firefox Firefox
+  REL_HWHEEL:-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise firefox Firefox
+
+
+  REL_HWHEEL:-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise slack Slack
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise slack Slack
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise slack Slack
+
+
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+
+
+  # down
+  REL_HWHEEL:1:
+      plugin: xdotool
+      command: minimize
+  REL_HWHEEL:1,1:
+      plugin: xdotool
+      command: minimize
+
+
+  REL_HWHEEL:1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+
+
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+
+
+
+  # # 6
+  # REL_HWHEEL:
+  
+  #   # up:
+  #   -1:
+
+
+  #   -1, -1:
+  #   #
+    
+  #   #down:
+  #   1:
+  #   ##
+
+  #   1, 1:

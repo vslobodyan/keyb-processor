@@ -1,0 +1,119 @@
+
+
+Logitech USB Keyboard:
+  name: Logitech USB Keyboard
+  capabilities: keyboard
+  include: ./configs/includes/typical_keyboard_cinnamon.yml
+
+
+Logitech G710 Keyboard:
+  name: Logitech Logitech G710 Keyboard
+  capabilities: keyboard
+  include: ./configs/includes/typical_keyboard_cinnamon.yml
+
+
+Logitech G413 keyboard:
+  name: Logitech G413 Carbon Mechanical Gaming Keyboard
+  capabilities: keyboard
+  include: ./configs/includes/typical_keyboard_cinnamon.yml
+
+
+
+Notebook Keyboard:
+  #device: /dev/input/event3
+  name: AT Translated Set 2 keyboard
+  capabilities: keyboard
+  include: ./configs/includes/typical_keyboard_cinnamon.yml
+
+
+
+
+
+
+
+
+Logitech MX Master Mouse:
+  name: Logitech MX Master 3
+  capabilities: mouse
+  # uinput_dev: duplication
+  
+  # #BTN_EXTRA:
+  # _276:
+  #   #command: flameshot gui
+  #   inject_keys: KEY_LEFTMETA
+
+  # # BTN_SIDE:
+  # _275:
+  #   #command: flameshot gui
+  #   inject_keys: KEY_LEFTMETA KEY_H
+
+
+  # up
+  REL_HWHEEL:-1:
+      # inject_keys: KEY_LEFTMETA
+      inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+
+  REL_HWHEEL:-1,-1:
+      # inject_keys: KEY_LEFTMETA
+      inject_keys: KEY_LEFTCTRL KEY_LEFTALT KEY_DOWN
+
+  REL_HWHEEL:-1,-1,-1:
+    plugin: wmctrl
+    command: raise firefox Firefox
+  REL_HWHEEL:-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise firefox Firefox
+
+
+  REL_HWHEEL:-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise slack Slack
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise slack Slack
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise slack Slack
+
+
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+  REL_HWHEEL:-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1:
+    plugin: wmctrl
+    command: raise ~/bin/Telegram/Telegram TelegramDesktop
+
+
+
+  # down
+  REL_HWHEEL:1:
+      inject_keys: KEY_LEFTMETA KEY_H
+  REL_HWHEEL:1,1:
+      inject_keys: KEY_LEFTMETA KEY_H
+
+
+  REL_HWHEEL:1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+  REL_HWHEEL:1,1,1,1,1,1:
+      inject_keys: KEY_LEFTCTRL KEY_W
+
+
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+  REL_HWHEEL:1,1,1,1,1,1,1,1,1,1,1,1:
+      inject_keys: KEY_LEFTALT KEY_F4
+
