@@ -564,6 +564,10 @@ async def check_significant_events_and_react():
                             if strkey in keyboard.processed_events.listen_events:
                                 print('.. Это событие есть в конфиге.')
                                 keyboard.processed_events.proccess_event(strkey, keyboard.ui)
+                            # else:
+                            #     print('.. В конфиге не нашли. Вывожу весь конфиг по девайсу:')
+                            #     print(keyboard.processed_events.listen_events)
+                            #     print('.. -------')
                         # print('.. Таймаут принятия новых событий вышел - фиксируем, обрабатываем, очищаем очередь.')
                         # Очищаем массив принятых событий для данного устройства
                         keyboard.significant_events.accepted = []
