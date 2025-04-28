@@ -1493,7 +1493,8 @@ def get_plugged_devices_array():
         # print('dev: %s' % dev)
         capabilities = dev.capabilities(verbose=True)
         _dev_type = get_dev_type(capabilities)
-        plugged_devices.append((dev.name, _dev_type, dev.fn, dev))
+        #plugged_devices.append((dev.name, _dev_type, dev.fn, dev))
+        plugged_devices.append((dev.name, _dev_type, dev.path, dev))
     return plugged_devices # (dev_name, dev_type, address, dev)
 
 
